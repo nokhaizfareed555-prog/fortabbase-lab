@@ -266,7 +266,7 @@
       const s = ([a, b]) => clamp((p - a) / (b - a)), v = {};
       const arrive = out(s(T.arrive)), labelIn = ease(s(T.label)), near = ease(s(T.capNear)), needle = ease(s(T.needle)), filled = s(T.fill), nOut = ease(s(T.needleOut)), twist = s(T.twist), rock = s(T.rock), lay = ease(s(T.lay)), print = s(T.print), hh = 11 * Math.tan(fov / 2), hw = hh * asp;
       const bx = portrait ? mix(hw * .46, 0, lay) : Math.min(hw * .42, 2.5);
-      const up = portrait ? Math.min(.78, hw * .42) : .64, flat = portrait ? Math.min(.82, hw * 2 / 6.2) : .86, sc = mix(mix(up * .82, up, arrive), flat, lay);
+      const up = portrait ? Math.min(.78, hw * .42) : .56, flat = portrait ? Math.min(.82, hw * 2 / 6.2) : .86, sc = mix(mix(up * .82, up, arrive), flat, lay);
       const ease2 = Math.sin(rock * Math.PI * 3) * (1 - rock * .3) * (portrait ? .43 : .72) * (rock < 1 ? 1 : 0);
       const swayX = Math.sin(rock * Math.PI * 3 + .7) * .22 * Math.sin(rock * Math.PI);
       v.x = mix(-hw - 3.5, bx, arrive) + swayX; v.y = portrait ? mix(-.87 * sc, .5, lay) : mix(-.3 * sc, 0, lay) - .12 * (1 - lay); v.z = mix(-3, 0, arrive);
