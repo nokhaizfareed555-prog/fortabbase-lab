@@ -22,6 +22,7 @@
   }
   function map() {
     if (!isBlog()) {
+      if (!window.FAAdmin) return BLOG_TABS.map(blogLine).join("\n");
       const m = window.FAAdmin.map();
       save(localStorage, MAIN, { sub: subOf(), text: m.own });
       return m.own + (m.blog ? "\n" + BLOG_TABS.map(blogLine).join("\n") : "");
@@ -32,7 +33,7 @@
   function go(key) {
     const [page, rest] = [key.slice(0, key.indexOf(":")), key.slice(key.indexOf(":") + 1)];
     if (page === "admin") {
-      if (!isBlog()) return window.FAAdmin.go(rest);
+      if (!isBlog()) return window.FAAdmin && window.FAAdmin.go(rest);
       try { sessionStorage.setItem("fa_chat_go", rest); } catch {}
       location.href = "/admin"; return;
     }
@@ -42,8 +43,8 @@
     location.href = "/admin/blog#" + tab;
   }
 
-  const css = `.fac-b{position:fixed;right:18px;bottom:18px;z-index:60;width:54px;height:54px;border:0;border-radius:50%;background:${ACC};color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 24px rgba(14,24,44,.3)}.fac-b:focus-visible,.fac button:focus-visible{outline:3px solid #f5b301;outline-offset:2px}
-.fac{padding:0;margin:0;position:fixed;right:18px;bottom:84px;z-index:60;width:min(390px,calc(100vw - 32px));height:min(560px,calc(100dvh - 110px));display:flex;flex-direction:column;background:#fff;color:#1b2a41;border:1px solid #dfe3ea;border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(14,24,44,.28);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}.fac[hidden],.fac-b[hidden]{display:none}
+  const css = `.fac-b{position:fixed;right:18px;bottom:18px;z-index:130;width:54px;height:54px;border:0;border-radius:50%;background:${ACC};color:#fff;cursor:pointer;display:grid;place-items:center;box-shadow:0 8px 24px rgba(14,24,44,.3)}.fac-b:focus-visible,.fac button:focus-visible{outline:3px solid #f5b301;outline-offset:2px}
+.fac{padding:0;margin:0;position:fixed;right:18px;bottom:84px;z-index:130;width:min(390px,calc(100vw - 32px));height:min(560px,calc(100dvh - 110px));display:flex;flex-direction:column;background:#fff;color:#1b2a41;border:1px solid #dfe3ea;border-radius:16px;overflow:hidden;box-shadow:0 18px 50px rgba(14,24,44,.28);font:15px/1.5 system-ui,-apple-system,"Segoe UI",sans-serif}.fac[hidden],.fac-b[hidden]{display:none}
 .fac-h{display:flex;align-items:center;gap:8px;padding:12px 14px;background:${ACC};color:#fff}.fac-h b{flex:1;font-size:15px}.fac-h button{background:none;border:0;color:#fff;cursor:pointer;font:inherit;font-size:13px;padding:4px 6px;min-height:32px}
 .fac-l{flex:1;overflow:auto;padding:14px;display:flex;flex-direction:column;gap:10px;background:#f6f7f9}.fac-m{max-width:88%;padding:9px 12px;border-radius:12px;background:#fff;border:1px solid #e6e9ef;white-space:pre-wrap;overflow-wrap:anywhere}.fac-m.u{align-self:flex-end;background:${ACC};color:#fff;border:0}.fac-m.e{background:#fdeeee;border-color:#f3c9c9;color:#8a1c1c}.fac-m button{display:inline-block;margin:3px 0;padding:3px 9px;border:1px solid ${ACC};border-radius:8px;background:#fff;color:${ACC};font:inherit;font-size:13px;font-weight:600;cursor:pointer}
 .fac-s{display:flex;flex-wrap:wrap;gap:6px}.fac-s button{padding:6px 10px;border:1px solid #d5dae3;border-radius:16px;background:#fff;color:#1b2a41;font:inherit;font-size:13px;cursor:pointer}
@@ -100,13 +101,16 @@
   const ready = () => {
     if (!window.FA || !FA.session() || !FA.session().access_token) return false;
     if (isBlog()) { const a = document.getElementById("app"); return !!a && !a.hidden; }
-    return !!(window.FAAdmin && window.FAAdmin.ready());
+    return !!document.querySelector(".ad");
   };
   function tick() {
     if (!els) { if (!ready()) return; build(); }
     const on = ready();
     els.btn.hidden = !on;
     if (!on) els.box.hidden = true;
+    /* A modal window makes the rest of the page unclickable, so the helper moves inside the one that is open. */
+    const open = [...document.querySelectorAll("dialog[open]")].pop() || document.body;
+    if (els.btn.parentElement !== open) open.append(els.btn, els.box);
   }
-  tick(); setInterval(tick, 1500);
+  tick(); setInterval(tick, 500);
 })();
