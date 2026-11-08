@@ -1,0 +1,13 @@
+:root{--ink:#14305c;--muted:#5a6a85;--line:#dfe5ee;--bg:#f6f8fb;--red:#d81f26;--teal:#0c8f8b}
+*{box-sizing:border-box}body{margin:0;background:var(--bg);color:var(--ink);font:400 1rem/1.6 "Inter",system-ui,sans-serif}
+a{color:inherit}h1,h2,h3{font-family:"Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.02em;line-height:1.15;margin:0;text-wrap:balance}
+.lb-w{width:min(1040px,100%);margin:auto;padding:0 clamp(16px,4vw,32px)}
+.lb-top{position:sticky;top:0;z-index:20;background:rgba(246,248,251,.9);-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.lb-top .lb-w{display:flex;align-items:center;gap:10px;min-height:56px;font-size:.92rem}.lb-top a{text-decoration:none;font-weight:600}.lb-top a:hover{text-decoration:underline}.lb-top span{color:var(--muted)}.lb-top .r{margin-left:auto}
+.lb-hd{padding:clamp(40px,8vw,84px) 0 clamp(24px,4vw,40px)}.lb-hd h1{font-size:clamp(2rem,1.4rem + 3vw,3.4rem);font-weight:800;margin-bottom:12px}.lb-hd p{margin:0;color:var(--muted);max-width:60ch;font-size:1.06rem}
+.lb-tag{display:inline-block;font:700 .74rem/1 ui-monospace,Menlo,Consolas,monospace;padding:6px 9px;border-radius:7px;background:#fdecec;color:#b3161c}.lb-tag.ok{background:#e3f4f3;color:#08716e}
+.lb-sec{padding-bottom:clamp(32px,5vw,56px)}.lb-sec h2{font-size:1.2rem;font-weight:800;margin-bottom:14px}
+.lb-g{display:grid;grid-template-columns:repeat(auto-fill,minmax(min(300px,100%),1fr));gap:16px}
+.lb-c{display:flex;flex-direction:column;align-items:flex-start;gap:10px;padding:22px;background:#fff;border:1px solid var(--line);border-radius:16px;text-decoration:none;transition:border-color .2s,transform .2s}a.lb-c:hover{border-color:var(--red);transform:translateY(-2px)}.lb-c h3{font-size:1.14rem;font-weight:800}.lb-c p{margin:0;color:var(--muted);font-size:.95rem}.lb-go{margin-top:auto;font-weight:700;color:var(--red);font-size:.93rem}
+.lb-empty{padding:20px;border:1px dashed #c6d0de;border-radius:16px;color:var(--muted);font-size:.95rem}
+.lb-note{padding:clamp(48px,9vw,96px) 0;text-align:center}.lb-note h2{font-size:clamp(1.3rem,1.1rem + 1vw,1.9rem);font-weight:800;margin-bottom:8px}.lb-note p{margin:0 auto;color:var(--muted);max-width:52ch}

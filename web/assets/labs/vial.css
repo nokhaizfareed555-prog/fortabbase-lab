@@ -1,0 +1,41 @@
+/* Labs: sample vial scroll section. Everything is scoped to .vx so it can move to another page later. */
+.vx{--vx-ink:#14305c;--vx-muted:#51627f;--vx-red:#d81f26;--vx-glass:rgba(255,255,255,.72);--vx-edge:rgba(255,255,255,.9);position:relative;height:760vh;color:var(--vx-ink);background:#dfe4ee;font-family:"Inter",system-ui,sans-serif}
+.vx *{box-sizing:border-box}
+.vx-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.vx-cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vx-panel,.vx-end,.vx-toast{background:var(--vx-glass);border:1px solid var(--vx-edge);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);box-shadow:0 18px 44px -22px rgba(20,48,92,.55)}
+.vx-copy{position:absolute;left:max(24px,calc(50vw - 560px));top:50%;width:min(390px,38vw);transform:translateY(-50%);min-height:190px}
+.vx-step{position:absolute;inset:auto 0 50%;transform:translateY(calc(50% + 14px));opacity:0;visibility:hidden;transition:opacity .35s,transform .45s cubic-bezier(.2,.8,.2,1),visibility .35s}
+.vx-step.on{opacity:1;visibility:visible;transform:translateY(50%)}
+.vx-panel{padding:22px 24px;border-radius:18px}
+.vx-n{display:block;font:700 .78rem/1 ui-monospace,Menlo,Consolas,monospace;color:var(--vx-red);margin-bottom:10px}
+.vx-step h3,.vx-end h2{font-family:"Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.02em;text-wrap:balance;margin:0}
+.vx-step h3{font-size:clamp(1.3rem,1.05rem + .9vw,1.8rem);font-weight:800;line-height:1.15;margin-bottom:8px}
+.vx-step p{margin:0;color:var(--vx-muted);line-height:1.55}
+.vx-end{position:absolute;left:max(24px,calc(50vw - 560px));top:50%;width:min(470px,42vw);padding:30px 32px;border-radius:22px;opacity:0;visibility:hidden;transform:translateY(calc(-50% + 22px));transition:opacity .45s,transform .55s cubic-bezier(.2,.8,.2,1),visibility .45s}
+.vx-end.on{opacity:1;visibility:visible;transform:translateY(-50%)}
+.vx-end h2{font-size:clamp(1.65rem,1.2rem + 1.7vw,2.7rem);font-weight:800;line-height:1.1;margin-bottom:14px}
+.vx-end p{margin:0;color:var(--vx-muted);line-height:1.6;font-size:1.05rem}
+.vx-toast{position:absolute;right:max(20px,calc(50vw - 560px));top:clamp(18px,5vh,44px);width:min(350px,calc(100vw - 32px));display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.9);opacity:0;visibility:hidden;transform:translateY(-26px) scale(.95);transition:opacity .3s,transform .5s cubic-bezier(.2,1.5,.4,1),visibility .3s}
+.vx-toast.on{opacity:1;visibility:visible;transform:none}
+.vx-dot{flex:none;width:38px;height:38px;border-radius:50%;background:var(--vx-red);display:grid;place-items:center}
+.vx-dot svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
+.vx-toast small{display:block;font-size:.76rem;color:var(--vx-muted)}
+.vx-toast b{display:block;font:700 1rem/1.3 "Plus Jakarta Sans",system-ui,sans-serif}
+.vx-toast code{display:block;margin-top:2px;font:600 .84rem/1.3 ui-monospace,Menlo,Consolas,monospace;color:var(--vx-red)}
+.vx-rail{position:absolute;right:14px;top:50%;height:min(240px,34vh);width:3px;border-radius:3px;background:rgba(20,48,92,.16);transform:translateY(-50%)}
+.vx-rail i{position:absolute;inset:0;border-radius:3px;background:var(--vx-red);transform:scaleY(0);transform-origin:top}
+/* Reduced motion or no 3D: one still screen instead of the long scroll */
+.vx.still{height:auto}.vx.still .vx-stage{position:relative;min-height:100svh;height:auto}.vx.still .vx-rail,.vx.still .vx-copy{display:none}
+.vx.nogl .vx-cv{display:none}.vx.nogl .vx-toast{display:none}
+@media (max-width:860px){
+.vx{height:680vh}
+.vx-copy{left:16px;right:16px;width:auto;top:auto;bottom:max(18px,env(safe-area-inset-bottom));transform:none;min-height:150px}
+.vx-step{inset:auto 0 0;transform:translateY(14px)}.vx-step.on{transform:none}
+.vx-panel{padding:16px 18px;border-radius:16px}.vx-step h3{font-size:1.25rem;margin-bottom:5px}.vx-step p{font-size:.94rem;line-height:1.45}.vx-n{margin-bottom:7px}
+.vx-end{left:16px;right:16px;width:auto;top:auto;bottom:max(18px,env(safe-area-inset-bottom));padding:20px;border-radius:18px;transform:translateY(22px)}.vx-end.on{transform:none}
+.vx-end h2{font-size:1.55rem;margin-bottom:8px}.vx-end p{font-size:.96rem;line-height:1.5}
+.vx-toast{right:16px;left:16px;width:auto;top:14px}
+.vx-rail{right:6px;top:30%;height:150px}
+}
+@media (prefers-reduced-motion:reduce){.vx *{transition:none!important}}
