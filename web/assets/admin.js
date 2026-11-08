@@ -255,9 +255,16 @@ let wired=false;
 async function start(){if(!FA.session())return login();try{me=await FA.rpc('my_profile')}catch{me=null}if(!me){FA.logout();return login('This account has no access.')}if(me.must_change_password)return force();
  live=await FA.content();ensureViews(live);FA.applyTheme(live);FA.setIcon(live.brand.adminFavicon);FA.ripple(()=>draft?.effects||live.effects);draft=clone(live);
  let saved=null;try{saved=JSON.parse(localStorage.getItem(dk()))}catch{}
- shell();const first=['bookings',...Object.keys(S),...Object.keys(PAGES)].find(k=>(S[k]||PAGES[k])&&(k==='users'?me.real_role!=='user':can(k)));cur=first;if(!cur){$('#pg').innerHTML='<p>Your account has no sections assigned yet.</p>';$('#side').innerHTML=nav();return}
+ shell();const first=['bookings',...Object.keys(S),...Object.keys(PAGES)].find(k=>(S[k]||PAGES[k])&&(k==='users'?me.real_role!=='user':can(k)));cur=first;try{const g=sessionStorage.getItem('fa_chat_go');sessionStorage.removeItem('fa_chat_go');if(g&&(S[g]||PAGES[g])&&(g==='users'?me.real_role!=='user':can(g)))cur=g}catch{}if(!cur){$('#pg').innerHTML='<p>Your account has no sections assigned yet.</p>';$('#side').innerHTML=nav();return}
  if(!wired){wire();wired=true}
  if(saved&&Object.keys(saved).some(k=>S[k]))pop(`<h3>Restore unsaved changes?</h3><p>You have changes that were never saved: ${Object.keys(saved).filter(k=>S[k]).map(k=>e(S[k].label)).join(', ')}.</p><div class="acts"><button class="btn ghost sm" id="n">Keep last saved version</button><button class="btn acc sm" id="y">Restore my changes</button></div>`,p=>{$('#n',p).onclick=()=>{localStorage.removeItem(dk());close();paint()};$('#y',p).onclick=()=>{Object.keys(saved).forEach(k=>{if(S[k])draft[k]=saved[k]});cur=Object.keys(saved).find(k=>S[k]&&can(k))||cur;close();paint()}});
  paint()}
+window.FAAdmin={ready:()=>!!me&&!!$('.ad'),
+ go(k){if(!(S[k]||PAGES[k])||!(k==='users'?me.real_role!=='user':can(k)))return;cur=k;$('#side').classList.remove('open');scrollTo(0,0);paint()},
+ map(){const ok=k=>k==='users'?me.real_role!=='user':can(k),names=f=>(f||[]).filter(x=>x.l).map(x=>x.l+(x.f?' ('+names(x.f)+')':'')).join(', ');
+  const a=Object.keys(S).filter(ok).map(k=>`admin:${k} | ${S[k].group||''} > ${S[k].label} | ${DIR[k]?DIR[k]+' ':''}Fields: ${names(S[k].f)}`);
+  const b=Object.keys(PAGES).filter(ok).map(k=>`admin:${k} | ${PAGES[k][1]} > ${PAGES[k][0]} | `);
+  const c=REL.filter(r=>S[r[1]]||PAGES[r[1]]).filter(r=>ok(r[1])).map(r=>`how-to: "${r[3]}" is at admin:${r[1]} (related words: ${r[0]})`);
+  return{own:[...a,...b,...c].join('\n'),blog:can('blog_agent')||can('blog')}}};
 start();
 })();
