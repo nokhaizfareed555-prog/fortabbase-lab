@@ -414,6 +414,7 @@ async function storeImage(ctx: Ctx, url: string, name: string): Promise<string |
 /* Every place an article's photo appears has its own shape. wide: article cover and top story. card: article cards and the phone cover. square: small list rows. */
 const SHAPES = { wide: { w: 1920, h: 1080 }, card: { w: 1200, h: 900 }, square: { w: 800, h: 800 } } as const;
 type Shape = keyof typeof SHAPES;
+const CLINICAL = /laborator|test tube|blood|medic|doctor|nurse|stethoscope|sample|pipette|microscope|patient|clinic|hospital|health/i;
 const NO_CREDIT_NEEDED = /^(CC0|Public Domain|Pexels)/;
 const latinOnly = (t: string) => /^[\u0000-ɏ‐-‧]*$/.test(t);
 /* The photo has enough pixels and is close enough to the shape that little is cut off. */
@@ -450,7 +451,7 @@ async function stockCover(ctx: Ctx, art: any): Promise<Record<string, unknown> |
   for (const list of [own, general]) for (const q of list) {
     const specific = list === own;
     const raw = await web.openverse(q);
-    const wide = raw.filter((p) => safe(p) && fresh(p) && suits(p, "wide") && (!specific || about(p)));
+    const wide = raw.filter((p) => safe(p) && fresh(p) && suits(p, "wide") && (specific ? about(p) : CLINICAL.test(p.alt) && !/beamline|physics|nuclear|chemical weapon/i.test(p.alt)));
     await ctx.log("info", `Photo search "${q}": ${raw.length} found, ${wide.length} good enough`);
     for (const p of wide.slice(0, 5)) {
       const u = await storeImage(ctx, p.url, `${name}-wide`);
