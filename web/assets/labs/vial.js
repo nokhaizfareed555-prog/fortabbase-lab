@@ -95,6 +95,49 @@
     c=mix(c,c*vec3(1.,.86,.87),s*uRed);
     o=vec4(c,1.);
   }`;
+  /* Frosted glass background: a grid of rounded glass tiles over a soft glow that follows the tube. Drawn as one full-screen pass. */
+  const VS_FROST = `#version 300 es
+  void main(){ vec2 p=vec2(gl_VertexID==1?3.:-1.,gl_VertexID==2?3.:-1.); gl_Position=vec4(p,.999,1.); }`;
+  const FS_FROST = `#version 300 es
+  precision highp float;
+  uniform vec2 uRes,uA,uB; uniform float uT,uTile,uPulse,uPulseR,uFill;
+  out vec4 o;
+  const vec3 BG=vec3(.953,.957,.957);
+  float cap(vec2 p){vec2 d=uB-uA;float t=clamp(dot(p-uA,d)/max(dot(d,d),.0001),0.,1.);return length(p-uA-d*t);}
+  float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
+  vec3 glow(vec2 p){
+    vec2 c=(uA+uB)*.5, drift=vec2(sin(uT*.31),cos(uT*.23))*.035;
+    float g=exp(-pow(cap(p+drift)/.38,2.))*mix(.84,1.,uFill);
+    vec3 col=mix(vec3(.2,.53,.15),vec3(.3,.76,.03),smoothstep(.24,-.14,p.y-c.y));
+    vec2 l=p-c-vec2(.12+sin(uT*.27)*.04,-.13+cos(uT*.36)*.03);
+    col=mix(col,vec3(.8,.9,.05),exp(-dot(l,l)/.03));
+    return mix(BG,col,clamp(g,0.,1.));
+  }
+  float box(vec2 p,float b,float r){vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}
+  void main(){
+    vec2 p=(gl_FragCoord.xy-.5*uRes)/uRes.y;
+    vec2 g=p/uTile+.5, id=floor(g), f=fract(g)-.5;
+    float px=1./(uRes.y*uTile), d=box(f,.495,.17);
+    vec3 c=glow(p);
+    float inside=smoothstep(px,-px,d);
+    if(inside>0.){
+      float a=hash(id)*6.283+uT*.05;
+      /* Each tile bends what is behind it, so neighbouring tiles do not line up */
+      vec2 cen=(id)*uTile, off=vec2(cos(a),sin(a))*uTile*.3;
+      vec3 t=(glow(cen+f*uTile*.3+off)*.5+glow(cen-f*uTile*.75-off*.6)*.5);
+      float edge=smoothstep(.1,.5,max(abs(f.x),abs(f.y)));
+      float patch1=exp(-dot(f-vec2(cos(a),sin(a))*.36,f-vec2(cos(a),sin(a))*.36)/.09);
+      t=mix(t,vec3(1.),.03+edge*.07+patch1*.13);
+      float l=length(cen-(uA+uB)*.5);
+      t+=uPulse*.2*exp(-pow(l-uPulseR*.1,2.)*22.);
+      c=mix(c,t,inside);
+    }
+    /* Thin bright outline with a slightly brighter top-left */
+    float line=smoothstep(1.3*px,.3*px,abs(d+px)), near=exp(-pow(cap(p)/.5,2.));
+    c=mix(c,vec3(1.),line*mix(.3,.85,near)*(.75+.25*smoothstep(-.5,.5,f.y-f.x)));
+    c+=(hash(gl_FragCoord.xy)-.5)/170.;
+    o=vec4(c,1.);
+  }`;
   const VS = `#version 300 es
   in vec3 aP; in vec3 aN;
   uniform mat4 uVP,uM;
@@ -216,7 +259,7 @@
     if (still) sec.classList.add("still");
 
     const prog = (v, f) => { const mk = (t, s) => { const x = gl.createShader(t); gl.shaderSource(x, s); gl.compileShader(x); if (!gl.getShaderParameter(x, gl.COMPILE_STATUS)) throw new Error(gl.getShaderInfoLog(x)); return x; }; const p = gl.createProgram(); gl.attachShader(p, mk(gl.VERTEX_SHADER, v)); gl.attachShader(p, mk(gl.FRAGMENT_SHADER, f)); gl.linkProgram(p); if (!gl.getProgramParameter(p, gl.LINK_STATUS)) throw new Error(gl.getProgramInfoLog(p)); const u = {}, a = {}; for (let i = 0, n = gl.getProgramParameter(p, gl.ACTIVE_UNIFORMS); i < n; i++) { const nm = gl.getActiveUniform(p, i).name; u[nm] = gl.getUniformLocation(p, nm); } for (let i = 0, n = gl.getProgramParameter(p, gl.ACTIVE_ATTRIBUTES); i < n; i++) { const nm = gl.getActiveAttrib(p, i).name; a[nm] = gl.getAttribLocation(p, nm); } return { p, u, a }; };
-    const pCube = prog(VS_CUBE, FS_CUBE), pMat = prog(VS, FS), pLbl = prog(VS_LBL, FS_LBL);
+    const frost = sec.dataset.bg !== "cubes", pCube = prog(VS_CUBE, FS_CUBE), pMat = prog(VS, FS), pLbl = prog(VS_LBL, FS_LBL), pFrost = frost ? prog(VS_FROST, FS_FROST) : null, noVerts = gl.createVertexArray();
     const attr = (loc, data, size, div) => { const b = gl.createBuffer(); gl.bindBuffer(gl.ARRAY_BUFFER, b); gl.bufferData(gl.ARRAY_BUFFER, data, gl.STATIC_DRAW); if (loc >= 0) { gl.enableVertexAttribArray(loc); gl.vertexAttribPointer(loc, size, gl.FLOAT, false, 0, 0); if (div) gl.vertexAttribDivisor(loc, 1); } return b; };
     const mesh = (m) => { const v = gl.createVertexArray(); gl.bindVertexArray(v); attr(pMat.a.aP, m.P, 3); attr(pMat.a.aN, m.N, 3); const b = gl.createBuffer(); gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, b); gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, m.I, gl.STATIC_DRAW); return { v, n: m.I.length }; };
     const tube = mesh(lathe(TUBE)), blood = mesh(lathe(BLOOD)), cap = mesh(lathe(CAP, 96)), thread = mesh(lathe([[1, 0], [1, 1]], 18));
@@ -329,12 +372,19 @@
       const tA = M.pt(base, 0, -2.5, 0), tB = M.pt(base, 0, 2.5, 0), k = 18 / 11;
       gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
 
+      if (frost) {
+        const u = pFrost.u, sy = 22 * Math.tan(fov / 2);
+        gl.disable(gl.DEPTH_TEST); gl.useProgram(pFrost.p); gl.uniform2f(u.uRes, W, H); gl.uniform1f(u.uT, clock); gl.uniform1f(u.uTile, portrait ? .2 : .19);
+        gl.uniform2f(u.uA, tA[0] / sy, tA[1] / sy); gl.uniform2f(u.uB, tB[0] / sy, tB[1] / sy); gl.uniform1f(u.uPulse, pulse); gl.uniform1f(u.uPulseR, pulseR); gl.uniform1f(u.uFill, clamp(v.fill));
+        gl.bindVertexArray(noVerts); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.enable(gl.DEPTH_TEST);
+      } else {
       gl.useProgram(pCube.p); gl.uniformMatrix4fv(pCube.u.uVP, false, VP);
       gl.uniform1f(pCube.u.uT, clock); gl.uniform1f(pCube.u.uCell, cell); gl.uniform1f(pCube.u.uPulse, pulse); gl.uniform1f(pCube.u.uPulseR, pulseR);
       const q = p * 3, w0 = clamp(1 - Math.abs(q - .4) * 1.2), w1 = clamp(1 - Math.abs(q - 1.5) * 1.2), w2 = clamp(1 - Math.abs(q - 2.6) * 1.2), ws = (w0 + w1 + w2) || 1;
       gl.uniform3f(pCube.u.uMix, w0 / ws, w1 / ws, w2 / ws);
       gl.uniform2f(pCube.u.uA, tA[0] * k + .55, tA[1] * k - .5); gl.uniform2f(pCube.u.uB, tB[0] * k + .55, tB[1] * k - .5); gl.uniform1f(pCube.u.uRed, clamp(v.fill) * .9);
       gl.bindVertexArray(box); gl.drawElementsInstanced(gl.TRIANGLES, 30, gl.UNSIGNED_SHORT, 0, instN);
+      }
 
       gl.useProgram(pMat.p); gl.uniformMatrix4fv(pMat.u.uVP, false, VP); gl.uniform3fv(pMat.u.uCam, cam); gl.uniform1f(pMat.u.uT, clock); gl.uniform1f(pMat.u.uS, v.s);
       const c = Math.cos(tilt), s = Math.sin(tilt); gl.uniformMatrix3fv(pMat.u.uE, false, new Float32Array([c, -s, 0, s, c, 0, 0, 0, 1]));
