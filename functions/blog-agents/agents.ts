@@ -292,6 +292,10 @@ ${WRITER_SCHEMA}`, { maxTokens: 8192, temperature: 0.7 });
   const { posts, cats } = await blogState(ctx);
   const cat = cats.find((c: any) => c.slug === topic.category_slug) || cats.find((c: any) => c.slug === "lab-tests-explained") || cats[0];
   const pillar = !topic.is_pillar && topic.cluster ? (await ctx.db.from("blog_topics").select("post_id").eq("cluster", topic.cluster).eq("is_pillar", true).not("post_id", "is", null).limit(1)).data?.[0]?.post_id : null;
+  const words_ = MD.plain(String(r.body_md)).split(/\s+/).length;
+  if (words_ < min * 0.6 && ctx.job.attempts < 2) throw new RetryLater(`The draft came back short (${words_} words) — writing it again`, 30);
+  const refs = (t: string) => String(t || "").replace(/\s?\[(\d{1,2})\](?!\()/g, (m, n) => { const x = sources[Number(n) - 1]; return x ? ` ([${n}](${x.url}))` : ""; });
+  r.body_md = refs(r.body_md); r.answer_summary = refs(r.answer_summary);
   const used = new Set((Array.isArray(r.sources_used) ? r.sources_used : []).map(Number));
   const cited = sources.filter((x, i) => used.has(i + 1) || String(r.body_md).includes(x.url));
   let slug = slugOf(r.title) || slugOf(topic.query) || "article", n = 2;
@@ -405,15 +409,17 @@ export async function imager(ctx: Ctx): Promise<Out> {
     }
   }
   if (!cover && (mode === "openverse" || mode === "products_then_openverse")) {
-    const queries = [art.focus_query, ...(art.tags || []), "medical laboratory"].filter(Boolean).slice(0, 4);
-    for (const q of queries) {
-      const photos = await web.openverse(q);
-      const pick = photos[0];
-      if (pick) {
-        const own = await storeImage(ctx, pick.url, art.slug.slice(0, 40));
-        cover = { url: own || pick.url, alt: clip(pick.alt ? `${pick.alt} — illustration for “${art.title}”` : art.title, 160), credit: pick.credit, license: pick.license, license_url: pick.license_url, source_url: pick.source_url, kind: "openverse", original_url: pick.url };
-        break;
-      }
+    // a cover must be about the article and never a graphic medical picture; otherwise a calm general photo
+    const BAD = /histolog|micrograph|patholog|autopsy|surgery|surgical|wound|tumou?r|lesion|biopsy|cadaver|disease|x-?ray of|stain/i;
+    const want = new Set(words(`${art.focus_query} ${(art.tags || []).join(" ")}`).filter((w) => w.length > 3 && !STOP.has(w) && !["test", "tests", "health", "level", "levels", "normal", "range"].includes(w)));
+    const fits = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`) && words(x.alt).some((w) => want.has(w));
+    const safe = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`);
+    let pick: web.Photo | undefined;
+    for (const q of [art.focus_query, ...(art.tags || [])].filter(Boolean).slice(0, 3)) { pick = (await web.openverse(q)).find(fits); if (pick) break; }
+    if (!pick) for (const q of ["medical laboratory test tubes", "blood sample laboratory", "doctor talking to patient", "stethoscope"]) { const list = (await web.openverse(q)).filter(safe); pick = list[Math.floor(Math.random() * Math.min(list.length, 6))]; if (pick) break; }
+    if (pick) {
+      const own = await storeImage(ctx, pick.url, art.slug.slice(0, 40));
+      cover = { url: own || pick.url, alt: clip(`Illustration for “${art.title}”`, 160), credit: pick.credit, license: pick.license, license_url: pick.license_url, source_url: pick.source_url, kind: "openverse", original_url: pick.url };
     }
   }
   if (cover) await save(ctx, art.id, { cover_image: cover });
@@ -498,7 +504,7 @@ Return JSON: {"score":0-100,"unsupported":[{"claim":"exact words","why":"..."}],
     const claims = [...(fc.unsupported || []).map((u: any) => String(u.claim || "")), ...notes.filter((n) => n.agent === "writer").map((n) => (n.message.match(/"(.+)"/)?.[1] || "").replace(/…$/, ""))].filter((c) => c.length > 12);
     let removed = 0;
     for (const c of claims) removed += drop((x) => !x.includes(c));
-    removed += drop((x) => !(STAT_RE.test(x) && !/\]\(https?:/.test(x)));
+    removed += drop((x) => !(STAT_RE.test(x) && !/\]\(https?:|\[\d{1,2}\]/.test(x)));
     removed += drop((x) => !HARD_RE.test(x));
     for (const n of notes) if (n.level === "check" && !/^(Safety:|Fact-check score|Title is very close|Possibly invented)/.test(n.message)) n.level = "fixed";
     if (removed) note("fixed", `Removed ${removed} sentence(s) that could not be verified or that gave medicine or dose instructions.`);
