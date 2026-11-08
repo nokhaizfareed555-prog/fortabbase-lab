@@ -89,8 +89,8 @@ export type Photo = { url: string; alt: string; credit: string; license: string;
 const LICENSE_NAME: Record<string, string> = { cc0: "CC0", pdm: "Public Domain Mark", by: "CC BY", "by-sa": "CC BY-SA" };
 export async function openverse(q: string, shape: "wide" | "square" = "wide"): Promise<Photo[]> {
   try {
-    const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&license=cc0,pdm,by,by-sa&mature=false&category=photograph&aspect_ratio=${shape}&size=large&page_size=40`, { headers: { "User-Agent": UA }, signal: T(15_000) });
-    if (!r.ok) return [];
+    const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&license=cc0,pdm,by,by-sa&mature=false&category=photograph&aspect_ratio=${shape}&size=large&page_size=20`, { headers: { "User-Agent": UA }, signal: T(15_000) });
+    if (!r.ok) { console.warn(`openverse ${r.status} for "${q}": ${(await r.text()).slice(0, 200)}`); return []; }
     const j = await r.json();
     return (j.results || []).filter((x: any) => x.url && /^https:/.test(x.url) && /\.jpe?g($|\?)/i.test(x.url) && (x.width || 0) >= 800 && LICENSE_NAME[x.license])
       .map((x: any) => ({ url: x.url, alt: String(x.title || "").slice(0, 120), credit: `${x.creator ? String(x.creator).slice(0, 80) : "Unknown"} via ${x.source || "Openverse"}`,

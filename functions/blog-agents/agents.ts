@@ -417,7 +417,7 @@ type Shape = keyof typeof SHAPES;
 const NO_CREDIT_NEEDED = /^(CC0|Public Domain|Pexels)/;
 const latinOnly = (t: string) => /^[\u0000-ɏ‐-‧]*$/.test(t);
 /* The photo has enough pixels and is close enough to the shape that little is cut off. */
-const suits = (p: web.Photo, s: Shape) => { const t = SHAPES[s], want = t.w / t.h, have = p.width / p.height; return p.width >= t.w && p.height >= t.h && have / want < (s === "square" ? 1.12 : 1.3) && want / have < (s === "square" ? 1.12 : 1.15); };
+const suits = (p: web.Photo, s: Shape) => { const t = SHAPES[s], want = t.w / t.h, have = p.width / p.height; return p.width >= t.w && p.height >= t.h && have / want < (s === "square" ? 1.12 : 1.3) && want / have < (s === "square" ? 1.12 : s === "wide" ? 1.3 : 1.15); };
 const sized = (url: string, s: Shape) => `${url}?auto=compress&cs=tinysrgb&fit=crop&w=${SHAPES[s].w}&h=${SHAPES[s].h}`;
 const credits = (p: web.Photo) => ({ credit: p.credit, license: p.license, license_url: p.license_url, source_url: p.source_url });
 
@@ -425,7 +425,7 @@ async function stockCover(ctx: Ctx, art: any): Promise<Record<string, unknown> |
   const { data: others } = await ctx.db.from("blog_posts").select("id,cover_image").neq("id", art.id);
   const used = new Set((others || []).flatMap((o: any) => [o.cover_image?.source_url, ...Object.values(o.cover_image?.sizes || {}).map((x: any) => x?.source_url)]).filter(Boolean));
   const fresh = (p: web.Photo) => !used.has(p.source_url);
-  const safe = (p: web.Photo) => !COVER_BAD.test(`${p.alt} ${p.url}`) && latinOnly(p.alt);
+  const safe = (p: web.Photo) => !COVER_BAD.test(`${p.alt.replace(/photograph/gi, "")} ${p.url.replace(/photograph/gi, "")}`) && latinOnly(p.alt);
   const want = new Set(words(`${art.focus_query} ${(art.tags || []).join(" ")}`).filter((w) => w.length > 3 && !STOP.has(w) && !COVER_GENERIC.includes(w)));
   const about = (p: web.Photo) => words(p.alt).some((w) => want.has(w));
   const own = [art.focus_query, ...(art.tags || [])].filter(Boolean).slice(0, 3) as string[];
@@ -449,7 +449,9 @@ async function stockCover(ctx: Ctx, art: any): Promise<Record<string, unknown> |
   // Openly licensed photos, each shape its own photo. A photo that needs a credit stays on the article page, where the credit is printed.
   for (const list of [own, general]) for (const q of list) {
     const specific = list === own;
-    const wide = (await web.openverse(q)).filter((p) => safe(p) && fresh(p) && suits(p, "wide") && (!specific || about(p)));
+    const raw = await web.openverse(q);
+    const wide = raw.filter((p) => safe(p) && fresh(p) && suits(p, "wide") && (!specific || about(p)));
+    await ctx.log("info", `Photo search "${q}": ${raw.length} found, ${wide.length} good enough`);
     for (const p of wide.slice(0, 5)) {
       const u = await storeImage(ctx, p.url, `${name}-wide`);
       if (!u) continue;
