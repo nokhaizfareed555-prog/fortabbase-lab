@@ -1,0 +1,3 @@
+-- Applied to the live database on 9 Nov 2026 as migration "booking_email_consent".
+-- bookings gains email, email_consent, email_consent_at; create_booking validates and stores them.
+-- Loyalty emails must only go to rows with email_consent true. The full SQL is in the database migration history.

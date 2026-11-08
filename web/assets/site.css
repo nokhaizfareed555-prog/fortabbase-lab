@@ -320,3 +320,7 @@ body[data-page=tests] .cart{position:relative;top:auto;height:100%;min-height:0;
 body[data-page=tests] .cart>#cart{height:100%;max-height:none;overflow-y:auto}
 }
 .rp-loy{display:flex;flex-wrap:wrap;align-items:center;gap:14px 34px;padding:16px 20px;margin:14px 0}.rp-loy small{display:block;color:var(--muted)}.rp-loy b{font:800 1.5rem var(--fh);color:var(--base)}.rp-aw{display:flex;flex-wrap:wrap;gap:8px;margin-inline-start:auto}.rp-aw span{padding:5px 11px;border-radius:99px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);font-size:.84rem;font-weight:700;color:var(--base)}@media(max-width:600px){.rp-aw{margin-inline-start:0}}
+/* Checkout icon in the menu and the email consent line on booking forms. */
+.cartl{position:relative;display:inline-flex;align-items:center;justify-content:center;width:40px;height:40px;flex:none;color:inherit;text-decoration:none}.cartl:hover{opacity:.7}.cartl i{position:absolute;top:1px;inset-inline-end:0;min-width:17px;height:17px;padding:0 4px;border-radius:99px;background:var(--hi);color:#fff;font:700 .68rem/17px var(--fb);text-align:center}.cartl i[hidden]{display:none}
+.f .mc{display:flex;align-items:flex-start;gap:9px;font-size:.82rem;line-height:1.4;color:var(--muted);cursor:pointer}.f .mc input{flex:none;width:18px;height:18px;min-height:0;margin:1px 0 0;padding:0;accent-color:var(--accent)}
+@media(max-width:400px){.nav .wrap{gap:6px}.logo{gap:6px;font-size:.76rem;min-width:0}.logo img{width:36px;height:36px}.nav .lang{padding:0 9px;font-size:.78rem}.cartl{width:34px}}
