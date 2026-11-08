@@ -84,3 +84,15 @@ body{background:var(--cv)}
 .tb-pm{border-top:1px solid var(--bd);padding-top:12px;margin-bottom:10px}.tb-pm h4{margin:0 0 10px}.tb-2{display:grid;grid-template-columns:1fr 1fr;gap:10px}.tb-sum{font-size:.86rem;background:#f4f6f9;border-radius:9px;padding:9px 11px;margin:0 0 13px}.tb-c{display:flex;gap:8px;align-items:center;font-size:.86rem;margin-bottom:8px}.tb-err{color:#b3161c;font-size:.85rem;margin:0 0 6px;min-height:1em}.tb-a{display:flex;justify-content:flex-end;gap:8px}
 .tb-p{flex:none;border:1px solid var(--bd);background:#fff;color:var(--muted);border-radius:99px;padding:5px 10px;font:600 .74rem/1.2 inherit;font-family:inherit;cursor:pointer;white-space:nowrap}.tb-p.on{background:var(--soft);border-color:color-mix(in srgb,var(--accent) 45%,var(--bd));color:var(--accent)}
 .tb-note{font-size:.82rem;color:var(--muted);margin:-3px 0 12px}.tb-l{border:0;background:none;padding:0;color:var(--accent);font:inherit;font-weight:600;text-decoration:underline;cursor:pointer}
+
+/* Sections: two rows of small tabs. The open or hovered tab widens and shows its full name. */
+.side button.sgo{margin-top:12px}
+.stabs{display:grid;gap:4px;padding:6px clamp(14px,3vw,32px) 8px;border-bottom:1px solid var(--bd);background:#fff}.stabs[hidden]{display:none}
+.strow{display:flex;gap:4px}
+.stab{position:relative;flex:1 1 0;min-width:0;height:30px;padding:0 8px;border:0;border-radius:8px;background:color-mix(in srgb,var(--base) 5%,#fff);color:color-mix(in srgb,var(--ink) 74%,#fff);font:500 .76rem var(--fb);white-space:nowrap;overflow:hidden;cursor:pointer;transition:flex-grow .24s cubic-bezier(.2,.8,.2,1),background .18s,color .18s}
+.stab .f{display:none}.stab:hover,.stab:focus-visible,.stab.on{flex-grow:2.8}.stab:hover .s,.stab:focus-visible .s,.stab.on .s{display:none}.stab:hover .f,.stab:focus-visible .f,.stab.on .f{display:inline}
+.stab:hover{background:color-mix(in srgb,var(--base) 11%,#fff);color:var(--ink)}.stab.on{background:var(--base);color:#fff;font-weight:700}
+.stab:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.stab.dirty::after{content:"";position:absolute;top:4px;inset-inline-end:4px;width:6px;height:6px;border-radius:50%;background:var(--hi,#d81f26)}
+@media(prefers-reduced-motion:reduce){.stab{transition:none}}
+@media(max-width:860px){.stabs{overflow-x:auto;padding-inline:10px;scrollbar-width:none}.strow{width:max-content;min-width:100%}.stab{flex:1 0 66px}.stab:hover,.stab:focus-visible,.stab.on{flex:1 0 auto}}
