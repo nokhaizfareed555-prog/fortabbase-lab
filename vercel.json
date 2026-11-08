@@ -1,0 +1,1 @@
+{"outputDirectory":"web","cleanUrls":false,"rewrites":[{"source":"/blog","destination":"/api/blog"},{"source":"/blog/:slug","destination":"/api/blog?slug=:slug"},{"source":"/sitemap.xml","destination":"/api/blog?sitemap=1"},{"source":"/admin","destination":"/admin/index.html"}]}

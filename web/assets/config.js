@@ -1,0 +1,1 @@
+window.FA_CONFIG={url:'https://mdndkrpyrcgrpytdtiim.supabase.co',anon:'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im1kbmRrcnB5cmNncnB5dGR0aWltIiwicm9sZSI6ImFub24iLCJpYXQiOjE3OTQxMjk0MTQsImV4cCI6MjEwOTcwNTQxNH0.ntei4VlKp2FWnYgwlrG__mDGdLubJPPfbhdwmF3WrQ4'};
