@@ -81,11 +81,22 @@ const FA=window.FA={demo,D,merge,
   /* Rings start below the home section; pages without one use the whole page. */
   const place=()=>{const h=e.meshBehindHero?null:document.querySelector('.hero');m.style.top=(h?h.getBoundingClientRect().bottom+scrollY:0)+'px'};place();
   FA._mo?.disconnect();if(window.ResizeObserver){FA._mo=new ResizeObserver(place);FA._mo.observe(document.body)}},
+ /* Hover animation for section widgets. The site and the admin sample cards share this, so the preview is exact. */
+ hoverSel:{services:'#services .card',team:'#team .person',panels:'#panels .card',glance:'.gl-i',trust:'.trust-i',gallery:'.gal-i',faq:'#faq details',visit:'.visit',tests:'.ti'},
+ hoverCss(h,only){if(!h||!h.on)return'';const list=only?[only]:Object.keys(FA.hoverSel).filter(k=>h[k]).map(k=>FA.hoverSel[k]);if(!list.length)return'';
+  const a=Math.max(0,+h.amount||0),ms=Math.max(0,+h.speed||0),[dx,dy]={up:[0,-1],down:[0,1],left:[-1,0],right:[1,0],upleft:[-.7,-.7],upright:[.7,-.7],downleft:[-.7,.7],downright:[.7,.7]}[h.direction]||[0,-1],col=/^#[0-9a-f]{3,8}$/i.test(h.color||'')?h.color:'#0c8f8b',ease={smooth:'cubic-bezier(.2,.8,.2,1)',snappy:'cubic-bezier(.85,0,.15,1)',bouncy:'cubic-bezier(.34,1.56,.64,1)',gentle:'ease-in-out',linear:'linear'}[h.ease]||'ease',n=x=>+x.toFixed(3),mv=k=>`translate(${n(dx*a*k)}px,${n(dy*a*k)}px)`,soft=`0 ${n(a*.5)}px ${n(a*1.1)}px -${n(a*.45)}px rgba(20,30,50,.45)`;
+  const FX={lift:{t:mv(.4),s:soft},slide:{t:mv(.4)},grow:{t:`scale(${n(1+a*.002)})`,s:soft},shrink:{t:`perspective(320px) translateZ(-${n(a*.5)}px)`},tilt:{p:`perspective(700px) rotateX(${n(-dy*a*.3)}deg) rotateY(${n(dx*a*.3)}deg)`,s:soft},glow:{s:`0 0 ${n(a*.8)}px ${n(a*.14)}px ${col}`},ring:{s:`0 0 0 ${n(Math.max(1,a*.1))}px ${col}`},wash:{s:`inset 0 0 0 999px color-mix(in srgb,${col} ${n(Math.min(70,a*.5))}%,transparent)`},shine:{shine:1},image:{img:1},float:{a0:'translate(0,0)',a1:mv(.3)},pulse:{a0:'scale(1)',a1:`scale(${n(1+a*.0015)})`},wiggle:{a0:`rotate(-${n(a*.06)}deg)`,a1:`rotate(${n(a*.06)}deg)`}};
+  const fx=[h.effect,h.effect2].map(k=>FX[k]).filter(Boolean),pre=fx.map(f=>f.p||'').join(''),T=pre+fx.map(f=>f.t||'').join(''),sh=fx.map(f=>f.s).filter(Boolean).join(','),a0=fx.map(f=>f.a0||'').join(''),a1=fx.map(f=>f.a1||'').join(''),anim=!!a0,img=fx.some(f=>f.img),shine=fx.some(f=>f.shine),from=dx<0?'120%':'-120%',to=dx<0?'-120%':'120%';
+  const X=list.map(x=>'html '+x).join(','),on=s=>list.map(x=>`html ${x}:hover${s}`).join(','),pr=s=>list.map(x=>`html ${x}.press${s}`).join(','),both=(s,b)=>`@media(hover:hover){${on(s)}{${b}}}`+(only||h.touch?`${pr(s)}{${b}}`:''),tr=`${ms}ms ${ease}`;
+  let c=`${X}{transition:transform ${tr},box-shadow ${tr}!important${img||shine?';overflow:hidden':''}}`,b='';if(anim){const k='hv'+(only?'p':'s');c+=`@keyframes ${k}{from{transform:${T} ${a0}}to{transform:${T} ${a1}}}`;b+=`animation:${k} ${Math.max(240,ms*2)}ms ease-in-out infinite alternate;`}else if(T)b+=`transform:${T}!important;`;if(sh)b+=`box-shadow:${sh}!important;`;if(b)c+=both('',b);
+  if(img){const G=list.map(x=>`html ${x} img`).join(',');c+=`${G}{transition:transform ${tr}}`+both(' img',`transform:scale(${n(1+a*.004)})`)}
+  if(shine){c+=list.map(x=>`html ${x}::after`).join(',')+`{content:""!important;display:block!important;position:absolute;inset:0;opacity:1!important;pointer-events:none;border-radius:inherit;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,${n(Math.min(.95,.25+a*.008))}) 50%,transparent 70%)!important;transform:translateX(${from});transition:transform ${tr}}`+both('::after',`transform:translateX(${to})`)}
+  return c},
  /* Touch screens have no hover: a finger on a button, or dragged across buttons, shows the same animation. */
- press(){if(FA._p||!matchMedia('(hover:none),(pointer:coarse)').matches)return;FA._p=1;const S='.btn,.chip,.lang,.person,.trust-i';let cur=null,last=0;
+ press(extra=''){if(FA._p||!matchMedia('(hover:none),(pointer:coarse)').matches)return;FA._p=1;const S='.btn,.chip,.lang,.person,.trust-i',S0=extra?S+','+extra:S;let cur=null,last=0;
   const set=el=>{if(el===cur)return;if(cur){const o=cur;o._pt=setTimeout(()=>o.classList.remove('press'),170)}cur=el;if(el){clearTimeout(el._pt);el.classList.add('press')}};
   const at=t=>{const n=document.elementFromPoint(t.clientX,t.clientY);return n&&n.closest?n.closest(S):null};
-  const opt={passive:true,capture:true};document.addEventListener('touchstart',ev=>set(ev.target.closest?.(S)||null),opt);
+  const opt={passive:true,capture:true};document.addEventListener('touchstart',ev=>set(ev.target.closest?.(S0)||null),opt);
   document.addEventListener('touchmove',ev=>{const now=performance.now();if(now-last<48)return;last=now;set(at(ev.touches[0]))},opt);
   for(const n of['touchend','touchcancel'])document.addEventListener(n,()=>set(null),opt)},
  ripple(getE){if(FA._r)return;FA._r=1;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
