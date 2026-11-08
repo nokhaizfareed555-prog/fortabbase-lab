@@ -51,7 +51,7 @@
 .fac-f{display:flex;gap:8px;padding:10px;border-top:1px solid #e6e9ef}.fac-f textarea{flex:1;resize:none;height:42px;max-height:110px;padding:9px 10px;border:1px solid #d5dae3;border-radius:10px;font:inherit;color:inherit;background:#fff}.fac-f button{border:0;border-radius:10px;padding:0 14px;background:${ACC};color:#fff;font:inherit;font-weight:600;cursor:pointer}.fac-f button:disabled{opacity:.55}.fac-n{margin:0;padding:0 12px 8px;font-size:12px;color:#5d6878}
 @media(max-width:520px){.fac{right:16px;bottom:82px}}`;
   const ICON = '<svg viewBox="0 0 24 24" width="25" height="25" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 12a8 8 0 0 1-11.6 7.1L4 20l1-4.6A8 8 0 1 1 21 12z"/></svg>';
-  const SUGGEST = ["How many bookings came today?", "Which lab reports need approval?", "How do I change the logo?"];
+  const SUGGEST = ["How many bookings came today?", "Which lab reports need approval?", "Where do I edit lab reports?", "How do I change the logo?"];
   let log = load(sessionStorage, CHAT, []), busy = false, els = null;
 
   function format(text, keys) {
