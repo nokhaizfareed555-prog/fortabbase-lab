@@ -35,6 +35,13 @@ const FA=window.FA={demo,D,merge,
  async content(){let rows={};if(demo)rows=demoDb().sections;else{try{const r=await fetch(`${URL_}/rest/v1/site_sections?select=key,data`,{headers:{apikey:KEY,authorization:'Bearer '+KEY},cache:'no-store'});(await r.json()).forEach(x=>rows[x.key]=x.data)}catch{}}
   if(new URLSearchParams(location.search).has('fa_preview')){const p=rs('fa_preview');if(p)Object.assign(rows,p)}
   const o={};for(const k in D)o[k]=merge(D[k],rows[k]);return o},
+ /* Returning visitors get the page at once from saved content, then it is checked against the database. */
+ async contentFast(){const q=new URLSearchParams(location.search);if(demo||q.has('fa_preview'))return FA.content();
+  const build=r=>{const o={};for(const k in D)o[k]=merge(D[k],r[k]);return o},get=async()=>{const r=await fetch(`${URL_}/rest/v1/site_sections?select=key,data&order=key`,{headers:{apikey:KEY,authorization:'Bearer '+KEY},cache:'no-store'});if(!r.ok)throw 0;const o={};(await r.json()).forEach(x=>o[x.key]=x.data);if(o.optimize)delete o.optimize.history;return o};
+  let old=null;try{old=localStorage.getItem('fa_rows')}catch{}
+  const put=t=>{try{localStorage.setItem('fa_rows',t)}catch{}};
+  if(old){try{const rows=JSON.parse(old);get().then(n=>{const t=JSON.stringify(n);if(t!==old){put(t);let last=0;try{last=+sessionStorage.getItem('fa_rl')||0;sessionStorage.setItem('fa_rl',Date.now())}catch{}if(Date.now()-last>15000)location.reload()}}).catch(()=>{});return build(rows)}catch{}}
+  try{const n=await get();put(JSON.stringify(n));return build(n)}catch{return build({})}},
  async rpc(n,a={}){if(demo)return demoRpc(n,a);await refresh();const r=await fetch(`${URL_}/rest/v1/rpc/${n}`,{method:'POST',headers:hdr(),body:JSON.stringify(a)});const t=await r.text(),j=t?JSON.parse(t):null;if(!r.ok)throw new Error(j?.message||'Something went wrong');return j},
  async posts(){if(demo)return demoDb().posts.filter(p=>p.status==='published');const r=await fetch(`${URL_}/rest/v1/blog_posts?select=*&order=published_at.desc`,{headers:{apikey:KEY}});return r.json()},
  async login(e,p){if(demo){ws(SES,{demo:1});return}const r=await fetch(`${URL_}/auth/v1/token?grant_type=password`,{method:'POST',headers:{apikey:KEY,'content-type':'application/json'},body:JSON.stringify({email:e,password:p})});const j=await r.json();if(!r.ok)throw new Error('Wrong email or password');ws(SES,{...j,exp:Date.now()+j.expires_in*1e3})},
@@ -67,7 +74,7 @@ const FA=window.FA={demo,D,merge,
   const {W,H,uri}=FA.meshTile(e);
   m=document.createElement('div');m.id='fa-mesh';m.setAttribute('aria-hidden','true');
   const sp=e.meshSpeed||90,mv=e.meshMotion!==false;
-  if(e.meshLayout==='full')m.innerHTML=`<i style="inset:0;-webkit-mask:none;mask:none;opacity:${e.meshOpacity};background-image:url('${uri}');--mx:${W}px;--my:${H.toFixed(1)}px;${mv?`animation:meshdrift ${sp}s linear infinite`:''}"></i>`;else m.innerHTML=[['-6%','2%','40vw',1],['68%','16%','34vw',.7],['12%','38%','30vw',.55],['62%','58%','38vw',.8],['-4%','78%','32vw',.5]].map(([l,t,w,o],i)=>`<b style="left:${l};top:${t};width:${w};height:${w};min-width:260px;min-height:260px;${mv?`animation:meshfloat ${sp*.6}s ease-in-out ${-i*7}s infinite alternate`:''}"><i style="opacity:${o*e.meshOpacity};background-image:url('${uri}');--mx:${W}px;--my:${H.toFixed(1)}px;${mv?`animation:meshdrift ${sp}s linear ${-i*11}s infinite ${i%2?'reverse':''}`:''}"></i></b>`).join('');
+  if(e.meshLayout==='full')m.innerHTML=`<i style="inset:0;-webkit-mask:none;mask:none;opacity:${e.meshOpacity}"><s style="inset:-${H.toFixed(1)}px 0 0 -${W}px;background-image:url('${uri}');--mx:${W}px;--my:${H.toFixed(1)}px;${mv?`animation:meshdrift ${sp}s linear infinite`:''}"></s></i>`;else m.innerHTML=[['-6%','2%','40vw',1],['68%','16%','34vw',.7],['12%','38%','30vw',.55],['62%','58%','38vw',.8],['-4%','78%','32vw',.5]].map(([l,t,w,o],i)=>`<b style="left:${l};top:${t};width:${w};height:${w};min-width:260px;min-height:260px;${mv?`animation:meshfloat ${sp*.6}s ease-in-out ${-i*7}s infinite alternate`:''}"><i style="opacity:${o*e.meshOpacity}"><s style="inset:-${H.toFixed(1)}px 0 0 -${W}px;background-image:url('${uri}');--mx:${W}px;--my:${H.toFixed(1)}px;${mv?`animation:meshdrift ${sp}s linear ${-i*11}s infinite ${i%2?'reverse':''}`:''}"></s></i></b>`).join('');
   document.body.prepend(m);
   /* Rings start below the home section; pages without one use the whole page. */
   const place=()=>{const h=e.meshBehindHero?null:document.querySelector('.hero');m.style.top=(h?h.getBoundingClientRect().bottom+scrollY:0)+'px'};place();

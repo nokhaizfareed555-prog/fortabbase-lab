@@ -28,7 +28,7 @@ footer{background:var(--base);color:#fff;padding:30px 0 90px;font-size:.87rem;po
 .fa-ripple{position:fixed;z-index:9999;pointer-events:none;margin:0;transform:translate(-50%,-50%);border-radius:50%}
 .fa-ripple .lens{position:absolute;inset:0;border-radius:50%;-webkit-backdrop-filter:blur(var(--blur));backdrop-filter:blur(var(--blur));-webkit-mask:radial-gradient(closest-side,transparent 55%,#000 75%,transparent);mask:radial-gradient(closest-side,transparent 55%,#000 75%,transparent);animation:rl var(--d) cubic-bezier(.2,.7,.2,1) forwards}
 .fa-ripple u{position:absolute;inset:0;border-radius:50%;border:2px solid;mix-blend-mode:multiply;filter:blur(1px);transform:scale(.05);animation:rp var(--d) cubic-bezier(.2,.7,.2,1) both}
-@keyframes meshdrift{to{background-position:var(--mx) var(--my)}}@keyframes meshfloat{from{transform:translate(-3%,-4%)}to{transform:translate(4%,5%)}}
+#fa-mesh i{overflow:hidden}#fa-mesh s{position:absolute;display:block;will-change:transform}@keyframes meshdrift{to{transform:translate(var(--mx),var(--my))}}@keyframes meshfloat{from{transform:translate(-3%,-4%)}to{transform:translate(4%,5%)}}
 @keyframes rp{to{transform:scale(1);opacity:0}}@keyframes rl{from{transform:scale(.05)}to{transform:scale(1);opacity:0}}
 @media(max-width:860px){.links,.nav .btn{display:none}.hero-g,.tl{grid-template-columns:1fr}.hero-g.left .hero-img{order:0}.hero-img img{max-height:38vh}.cart{position:relative}.dock{display:flex;gap:8px;position:fixed;left:12px;right:12px;bottom:12px;z-index:60}.dock .btn{flex:1}section{padding:36px 0}.ti{padding:12px}.card img.top{max-height:26vh}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
@@ -76,3 +76,6 @@ body[data-page]{display:flex;flex-direction:column;min-height:100vh;min-height:1
 html.has-herobg:not(.glass-btn) .hero .btn.ghost{color:var(--hero-ink);border-color:currentColor}
 .glass-btn .btn[data-ink=light],.glass-btn .chip[data-ink=light],.glass-btn .lang[data-ink=light]{background:linear-gradient(180deg,rgba(255,255,255,.18),rgba(20,28,44,.34))}
 html.no-glass.glass-btn .btn[data-ink=light],html.lite.glass-btn .btn[data-ink=light]{background:#e7e7ea}
+
+/* Long test list: draw only what is on screen, and no blur per row or per button */
+.ti{content-visibility:auto;contain-intrinsic-size:auto 86px}.ti.glass{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(255,255,255,.86)}.ti.glass::after{display:none}.glass-btn .ti .btn{-webkit-backdrop-filter:none;backdrop-filter:none}

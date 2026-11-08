@@ -1,10 +1,11 @@
 (async function(){
-const C=await FA.content(),e=FA.esc,$=(s,r=document)=>r.querySelector(s);
+const C=await FA.contentFast(),e=FA.esc,$=(s,r=document)=>r.querySelector(s);
 let lang='';try{lang=localStorage.getItem('fa_lang')||''}catch{}lang=lang||C.i18n.defaultLang;
 if(lang==='ur'){await new Promise(ok=>{const x=document.createElement('script');x.src='/assets/ur.js';x.onload=ok;x.onerror=()=>{lang='en';ok()};document.head.appendChild(x)})}
 if(lang==='ur'){document.documentElement.lang='ur';document.documentElement.dir='rtl'}
 const LZ=C.optimize.lazy?'loading="lazy"':'';
 if(C.optimize.liteOnSlow){const n=navigator.connection;if(n?.saveData||/2g|3g/.test(n?.effectiveType||'')||(navigator.hardwareConcurrency||8)<=2){document.documentElement.classList.add('lite');C.effects.meshOn=false}}
+if(!C.optimize.motionPhones&&matchMedia('(max-width:860px)').matches){C.effects.meshMotion=false;C.hero.waveMotion=false}
 document.documentElement.classList.toggle('glass-btn',!!C.effects.glassButtons);
 FA.setIcon(C.brand.favicon);FA.applyTheme(C);FA.ripple(()=>C.effects);
 const tr=lang==='ur'?FA_UR.start(C):s=>s;
