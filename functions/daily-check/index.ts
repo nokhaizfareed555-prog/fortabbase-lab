@@ -87,7 +87,7 @@ Deno.serve(async (req) => {
   const who = await fetch(`${URL_}/auth/v1/user`, { headers: { apikey: KEY, authorization: req.headers.get("authorization") ?? "" } });
   if (!who.ok) return out({ error: "Not signed in" }, 401);
   const [me] = await rows(`profiles?id=eq.${(await who.json()).id}&active=eq.true&select=role,perms`);
-  if (!me || !(me.role === "owner" || me.perms?.optimize === true)) return out({ error: "Not allowed" }, 403);
+  if (!me || !(me.role === "owner" || me.perms?.daily === true)) return out({ error: "Not allowed" }, 403);
   if (b.action !== "test") return out({ error: "Unknown action" }, 400);
   const set = await rpc("_health_settings");
   if (!set.email) return out({ error: "Save the alert email first" }, 400);

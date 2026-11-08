@@ -105,3 +105,11 @@ body{background:var(--cv)}
 .bkt1{min-height:30px;padding:0 10px;border:0;border-radius:99px;background:color-mix(in srgb,var(--base) 6%,#fff);color:var(--ink);font:500 .78rem var(--fb);cursor:pointer}.bkt1 b{margin-inline-start:2px;font-weight:700;opacity:.65}.bkt1:hover{background:color-mix(in srgb,var(--base) 12%,#fff)}.bkt1.warn{background:#fdecea;color:#a3211a}.bkt1.on{background:var(--base);color:#fff}.bkt1.on b{opacity:1}.bkt1:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
 .bkr{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:7px}.bkr input,.bkr select{min-height:38px;border:1px solid var(--bd);border-radius:9px;padding:0 9px;font:inherit;font-size:.86rem;background:#fff;color:var(--ink)}.bkr input[type=search]{flex:1 1 300px;min-width:0}.bkr label{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;color:var(--muted)}.bkr .btn{margin-inline-start:auto}.bkn{margin:9px 0 0}
 @media(max-width:860px){.bkr select,.bkr label,.bkr label input{flex:1 1 130px;min-width:0}.bkr .btn{width:100%}}
+
+/* Daily check page */
+.dcw{margin:0 0 12px;padding:10px 14px;border-radius:12px;background:#fff3dc;color:#8a5a00;font-size:.9rem}
+.dct{display:grid;grid-template-columns:1fr 1fr;gap:10px}.dct div{padding:12px;border-radius:12px;background:color-mix(in srgb,var(--base) 5%,#fff)}.dct b{display:block;font:800 1.1rem var(--fh);color:var(--base)}.dct span{font-size:.84rem;color:var(--muted)}
+.dci{padding:12px 0;border-top:1px solid var(--bd)}.dci:first-of-type{border-top:0}
+.dcr{display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:8px;padding:8px 0;border-top:1px dashed var(--bd)}.dcr small{color:var(--muted);overflow-wrap:anywhere}
+.dca{display:flex;flex-wrap:wrap;gap:6px;align-items:center}.dca input[type=date]{min-height:34px;border:1px solid var(--bd);border-radius:9px;padding:0 8px;font:inherit;font-size:.82rem}
+@media(max-width:860px){.dct{grid-template-columns:1fr}.dca,.dca .btn{width:100%}.dca input[type=date]{width:100%}}
