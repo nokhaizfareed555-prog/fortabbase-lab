@@ -8,6 +8,8 @@ if(C.optimize.liteOnSlow){const n=navigator.connection;if(n?.saveData||/2g|3g/.t
 if(!C.optimize.motionPhones&&matchMedia('(max-width:860px)').matches){C.effects.meshMotion=false;C.hero.waveMotion=false}
 document.documentElement.classList.toggle('glass-btn',!!C.effects.glassButtons);
 FA.setIcon(C.brand.favicon);FA.applyTheme(C);FA.ripple(()=>C.effects);
+/* The admin preview can show real forms; nothing typed there may be submitted. */
+if(new URLSearchParams(location.search).has('fa_preview'))document.addEventListener('submit',ev=>{ev.preventDefault();ev.stopImmediatePropagation()},true);
 /* Per-section button settings from admin; anything left at default adds no CSS. */
 {const b=C.buttons,P='body[data-page]',R={nav:`.nav .btn,.dock .btn`,hero:`.hero .btn`,panels:`#panels .btn`,tests:`${P} #main .btn`,reports:`${P} #main .btn`,form:`${P} #main .f .btn,${P} #qp .f .btn,${P} #main .rp-f .btn`,dialog:`.dlg .btn,.popd .btn`},pg=document.body.dataset.page;let css='';
  for(const k in R){if((k==='tests'&&pg!=='tests')||(k==='reports'&&pg!=='reports')||(+b[k+'Radius']>=32))continue;css+=`${R[k]}{border-radius:${+b[k+'Radius']}px}`}
