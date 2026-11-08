@@ -1,8 +1,8 @@
 /* Labs: sample vial scroll section. Everything is scoped to .vx so it can move to another page later. */
-.vx{--vx-ink:#14305c;--vx-muted:#51627f;--vx-red:#d81f26;--vx-glass:rgba(255,255,255,.72);--vx-edge:rgba(255,255,255,.9);position:relative;height:760vh;color:var(--vx-ink);background:#dfe4ee;font-family:"Inter",system-ui,sans-serif}
+.vx{--vx-ink:#14305c;--vx-muted:#51627f;--vx-red:#d81f26;--vx-glass:rgba(255,255,255,.72);--vx-edge:rgba(255,255,255,.9);position:relative;height:460vh;color:var(--vx-ink);background:transparent;font-family:"Inter",system-ui,sans-serif}
 .vx *{box-sizing:border-box}
 .vx-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
-.vx-cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.vx-cv{position:absolute;inset:0;width:100%;height:100%;display:block;-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 89%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 11%,#000 89%,transparent 100%)}
 .vx-panel,.vx-end,.vx-toast{background:var(--vx-glass);border:1px solid var(--vx-edge);-webkit-backdrop-filter:blur(14px) saturate(140%);backdrop-filter:blur(14px) saturate(140%);box-shadow:0 18px 44px -22px rgba(20,48,92,.55)}
 .vx-copy{position:absolute;left:max(24px,calc(50vw - 560px));top:50%;width:min(390px,38vw);transform:translateY(-50%);min-height:190px}
 .vx-step{position:absolute;inset:auto 0 50%;transform:translateY(calc(50% + 14px));opacity:0;visibility:hidden;transition:opacity .35s,transform .45s cubic-bezier(.2,.8,.2,1),visibility .35s}
@@ -26,6 +26,8 @@
 .vx-title{display:none}
 .vx-hint{position:absolute;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(430px,calc(100% - 32px));padding:11px 18px 12px;border-radius:14px;background:rgba(255,255,255,.62);border:1px solid var(--vx-edge);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);box-shadow:0 14px 34px -20px rgba(20,48,92,.6);text-align:center}
 .vx-hint-t{display:block;font:600 .9rem/1.3 "Inter",system-ui,sans-serif;color:var(--vx-ink)}
+.vx-hint-t::after{content:"↓";display:inline-block;margin-left:7px;color:var(--vx-red);font-weight:800;animation:vx-down 1.3s ease-in-out infinite}.vx-hint.done .vx-hint-t::after{content:none}
+@keyframes vx-down{50%{transform:translateY(3px)}}
 .vx-line{display:block;position:relative;height:2px;margin-top:9px;border-radius:2px;background:rgba(20,48,92,.15);overflow:hidden}
 .vx-line i{position:absolute;inset:0;background:var(--vx-red);transform:scaleX(0);transform-origin:left}
 /* Reduced motion or no 3D: one still screen instead of the long scroll */
@@ -33,11 +35,11 @@
 .vx.nogl .vx-cv{display:none}.vx.nogl .vx-toast{display:none}
 /* Phone upright: the animation is a card taking about half the screen, held in the middle while scrolling */
 @media (max-width:860px) and (orientation:portrait){
-.vx{--vx-h:max(54vh,360px);--vx-h:max(54svh,360px);height:540vh;padding:66px 12px 76px;background:transparent}
+.vx{--vx-h:max(54vh,360px);--vx-h:max(54svh,360px);height:360vh;padding:66px 12px 76px}
 .vx-stage{height:var(--vx-h);top:calc((100vh - var(--vx-h))/2 + 6px);top:calc((100svh - var(--vx-h))/2 + 6px);overflow:visible}
-.vx-cv{border-radius:18px;box-shadow:0 18px 40px -26px rgba(20,48,92,.7)}
+.vx-cv{-webkit-mask-image:linear-gradient(to bottom,transparent 0,#000 7%,#000 93%,transparent 100%);mask-image:linear-gradient(to bottom,transparent 0,#000 7%,#000 93%,transparent 100%)}
 .vx-title{display:block;position:absolute;left:0;right:0;bottom:calc(100% + 12px);margin:0;text-align:center;font:800 1.22rem/1.2 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.02em}
-.vx-hint{top:calc(100% + 10px);bottom:auto;width:100%;padding:9px 14px 10px}.vx-hint-t{font-size:.84rem}.vx-line{margin-top:7px}
+.vx-hint{top:calc(100% + 10px);bottom:auto;width:100%;padding:9px 14px 10px}.vx-hint-t{font-size:.8rem}.vx-line{margin-top:7px}
 .vx-copy{left:10px;width:calc(50% - 10px);min-height:150px}
 .vx-panel{padding:13px 14px;border-radius:14px}.vx-n{margin-bottom:6px;font-size:.7rem}
 .vx-step h3{font-size:1.02rem;margin-bottom:4px}.vx-step p{font-size:.82rem;line-height:1.38}
@@ -46,5 +48,5 @@
 .vx-end h2{font-size:1.18rem;margin-bottom:6px}.vx-end p{font-size:.84rem;line-height:1.4}
 .vx-toast{left:10px;right:10px;width:auto;top:10px;padding:10px 12px;border-radius:14px}.vx-dot{width:32px;height:32px}.vx-toast b{font-size:.92rem}
 }
-@media (max-width:860px) and (orientation:landscape){.vx{height:680vh}.vx-copy,.vx-end{width:42vw}.vx-toast{top:14px}}
-@media (prefers-reduced-motion:reduce){.vx *{transition:none!important}}
+@media (max-width:860px) and (orientation:landscape){.vx{height:460vh}.vx-copy,.vx-end{width:42vw}.vx-toast{top:14px}}
+@media (prefers-reduced-motion:reduce){.vx *{transition:none!important}.vx-hint-t::after{animation:none}}

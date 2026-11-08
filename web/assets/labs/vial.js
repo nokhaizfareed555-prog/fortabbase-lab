@@ -7,7 +7,7 @@
   const T = { arrive: [0, .12], label: [.12, .23], capNear: [.24, .34], needle: [.34, .38], fill: [.38, .52], needleOut: [.52, .55], twist: [.56, .66], rock: [.67, .78], lay: [.78, .85], print: [.84, .89], end: .92 };
   const STEPS = [[0, .12], [.12, .24], [.24, .34], [.34, .55], [.55, .67], [.67, .79], [.79, .92]];
 
-  const HINT = "Scroll to see how we care for every sample", HINT_DONE = "Complete. Keep scrolling to continue";
+  const HINT = "Scroll down to see how we care for every sample", HINT_DONE = "Complete. Keep scrolling down to continue";
   const WORDS = [["A new tube and its cap", "Every test begins with its own clean collection tube."], ["The label goes on first", "The tube is ready to be identified before anything goes in it."], ["The cap moves into place", "Tube and cap stay together from the first step."], ["The sample is collected", "Drawn straight into the tube, with nothing in between."], ["Sealed tight", "The cap is turned until the tube is fully closed."], ["Moved with care", "A gentle motion keeps the sample evenly mixed."], ["Named and coded", "The tube carries the patient's name and a code used for this one test."]];
   const markup = () => `<div class="vx-stage"><h2 class="vx-title">How we care for every sample</h2><canvas class="vx-cv" aria-hidden="true"></canvas><div class="vx-copy">${WORDS.map(([h, t], i) => `<div class="vx-step vx-panel"><span class="vx-n">0${i + 1}</span><h3>${h}</h3><p>${t}</p></div>`).join("")}</div><div class="vx-toast" role="status"><span class="vx-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg></span><div><small>New test received · <span data-vx="test"></span></small><b data-vx="name"></b><code data-vx="code"></code></div></div><div class="vx-end"><h2>Every test is treated with the utmost care.</h2><p>Each sample is followed under its own code and checked against its quality parameters, so results meet expectations and, sometimes, exceed them.</p></div><div class="vx-hint"><span class="vx-hint-t">${HINT}</span><span class="vx-line" aria-hidden="true"><i></i></span></div></div>`;
 
@@ -275,7 +275,7 @@
       v.fill = filled; v.pour = filled > 0 && filled < 1 ? 1 : 0; v.filledP = filled;
       /* Cap flies in from the other side, parks beside the tube, then lines up above it */
       const seat = 1.76, hover = seat + 1.5, drop = ease(twist), capL = mix(hover, seat, drop);
-      const parkX = portrait ? .42 : 1.75, parkY = portrait ? 3.1 : 1.5;
+      const parkX = portrait ? .42 : 1.75, parkY = portrait ? 2.6 : 1.5;
       v.capDetachX = mix(mix(hw + 4, parkX, arrive), 0, near); v.capDetachY = mix(parkY, capL, near); v.capDetachZ = mix(mix(-3, .4, arrive), 0, near);
       v.capTilt = mix(mix(-1.3, -.55, arrive), 0, near); v.capSpin = mix(3.2, 0, arrive) + twist * Math.PI * 3.5;
       v.needle = needle * (1 - nOut); v.labelIn = labelIn; v.print = print; v.lay = lay; v.click = twist >= .995;
@@ -286,7 +286,7 @@
       steps.forEach((el, i) => el.classList.toggle("on", p < T.end && p >= STEPS[i][0] && p < STEPS[i][1]));
       const tOn = p >= .835; toast.classList.toggle("on", tOn); endEl.classList.toggle("on", p >= T.end);
       if (bar) bar.style.transform = `scaleX(${p})`;
-      const done = p >= .985; if (done !== wasDone) { hint.textContent = done ? HINT_DONE : HINT; wasDone = done; }
+      const done = p >= .985; if (done !== wasDone) { hint.textContent = done ? HINT_DONE : HINT; hint.parentNode.classList.toggle("done", done); wasDone = done; }
       if (tOn && !wasToast) ring(); wasToast = tOn;
     }
 
