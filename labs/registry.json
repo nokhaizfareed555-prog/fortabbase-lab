@@ -1,3 +1,4 @@
 [
-  {"id":"sample-vial","group":"Sections","title":"Sample vial","status":"On the home page","text":"A scroll story: tube, cap, label, sample, sealing and a new-test notification, on a live wall of moving cubes."}
+  {"id":"sample-vial","group":"Sections","title":"Sample vial","status":"On the home page","text":"A scroll story: tube, cap, label, sample, sealing and a new-test notification, on a live wall of moving cubes."},
+  {"id":"report-grain","group":"Sections","title":"Report on your phone","status":"Labs only","text":"A tilted lab report that forms out of falling dots as you scroll, with a warm orange-to-navy grain shadow. Blank sample report, no patient details."}
 ]
