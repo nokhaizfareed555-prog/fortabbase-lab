@@ -1,0 +1,24 @@
+/* Report on your phone: home page scroll section. Everything is scoped to .rg. */
+.rg{--base:#14396f;--accent:#0c8f8b;--muted:#5a6a85;position:relative;height:290vh;padding:0;background:transparent}
+.rg *{box-sizing:border-box}
+.rg-stage{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden}
+.rg canvas{position:absolute;inset:0;width:100%;height:100%;display:block}
+.rg-wrap{position:relative;z-index:1;width:min(1160px,100%);height:100%;margin:auto;padding:0 clamp(16px,4vw,32px);display:flex;align-items:center;pointer-events:none}
+.rg-copy{width:min(41%,430px);pointer-events:auto}
+.rg-eyebrow{color:var(--accent);font-weight:600;font-size:.9rem;margin:0 0 .8em}
+.rg h2{font:800 clamp(2rem,1.3rem + 2.6vw,3.4rem)/1.08 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.025em;margin:0 0 .45em;color:var(--base);text-wrap:balance}
+.rg-copy>p:not(.rg-eyebrow){color:var(--muted);margin:0 0 1.5em;max-width:38ch}
+.rg-btn{display:inline-flex;align-items:center;justify-content:center;min-height:46px;padding:0 22px;border-radius:999px;background:var(--base);color:#fff;font:600 .95rem "Inter",system-ui,sans-serif;text-decoration:none;transition:transform .25s}
+.rg-btn:focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+@media(hover:hover){.rg-btn:hover{transform:translateY(-1px)}}
+.rg.still{height:auto}
+.rg.still .rg-stage{position:relative}
+
+@media(max-width:760px),(orientation:portrait) and (max-width:900px){
+  .rg{height:240vh}
+  .rg-wrap{align-items:flex-start;padding-top:max(84px,11svh)}
+  .rg-copy{width:100%;text-align:center}
+  .rg h2{font-size:clamp(1.75rem,7.6vw,2.5rem);margin-bottom:.35em}
+  .rg-copy>p:not(.rg-eyebrow){margin:0 auto 1em;font-size:.95rem}
+  .rg-eyebrow{margin-bottom:.4em}
+}
