@@ -89,7 +89,7 @@ html.no-glass.glass-btn .btn[data-ink=light],html.lite.glass-btn .btn[data-ink=l
 /* Popup */
 .popw{z-index:110}.popd{position:relative;padding:0;overflow:hidden;width:min(460px,100%)}.popd>img{width:100%;max-height:52vh;object-fit:contain;background:#f3f4f7}.popd .in{padding:18px 20px 20px;display:flex;flex-direction:column}.popd .in .btn{align-self:flex-end}.popd>.x{background:rgba(255,255,255,.85);border-radius:50%;width:34px;height:34px;min-width:34px}
 /* One button length across the site, widget buttons in the corner */
-body[data-page] .btn{min-width:172px}.dock .btn,body[data-page] .dock .btn{min-width:0}body[data-page] .ti .btn{min-width:92px}.card .in{flex:1;display:flex;flex-direction:column}.card .in>.btn{margin-top:auto!important;align-self:flex-end}.card .in>p:has(+.btn){margin-bottom:12px}
+body[data-page] .btn{min-width:172px}.dock .btn,body[data-page] .dock .btn{min-width:0}body[data-page] .ti .btn{min-width:92px}.card .in{flex:1;display:flex;flex-direction:column}.card .in>.btn{margin-top:auto!important;align-self:center}.card .in>p:has(+.btn){margin-bottom:12px}
 /* Glass button: pushed back on hover, text lifts, color split */
 .glass-btn .btn,.glass-btn .lang{-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);box-shadow:0 0 22px 3px color-mix(in srgb,var(--base) 16%,transparent),0 16px 26px -14px rgba(20,30,50,.42),0 3px 8px -3px rgba(20,30,50,.16),inset 0 1px 0 rgba(255,255,255,.45);transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,padding .28s,text-shadow .28s,color .3s}
 .glass-btn .btn:hover,.glass-btn .lang:hover{transform:perspective(320px) translateZ(-16px);padding-bottom:4px;text-shadow:-1.2px 0 rgba(255,0,70,.55),1.2px 0 rgba(0,190,255,.6);box-shadow:-1.5px 0 0 rgba(255,0,70,.28),1.5px 0 0 rgba(0,190,255,.3),0 0 16px 2px color-mix(in srgb,var(--base) 12%,transparent),0 8px 14px -10px rgba(20,30,50,.4),inset 0 2px 5px rgba(20,30,50,.14)}
@@ -106,3 +106,5 @@ body[data-page] .btn{min-width:172px}.dock .btn,body[data-page] .dock .btn{min-w
 
 /* Booking for someone else */
 .who{display:grid;gap:7px}.who>span{font-size:.82rem;font-weight:600}.who-x{display:none;gap:9px}.who:has(input[value=other]:checked) .who-x{display:grid}.rel-o{display:none}.who-x:has(select option[value=Other]:checked) .rel-o{display:block}.who-x select{min-height:46px;padding:10px 14px;border:1px solid var(--line);border-radius:12px;font:inherit;background:#fff;width:100%}
+.sec-head{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:center;column-gap:16px}.sec-head .lead{grid-column:1/-1}
+@media(max-width:860px){body[data-page] .sec-head .btn{min-width:0;min-height:44px;padding:0 15px;font-size:.87rem}}
