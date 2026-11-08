@@ -254,5 +254,9 @@ html:not(.no-glass):not(.lite) .glass:not(.trust-i):not(.gl-i){background:linear
 .person.lead-doc .p-desc{margin-top:4px;line-height:1.4}
 .person.lead-doc .p-role{flex:none;align-self:auto;padding:8px 0 0;border-inline-start:0;border-top:1px solid var(--line)}
 }
-/* Hero buttons: red to book, green for WhatsApp, always white text. Dark enough to keep white text readable. */
-html .hero .cta .btn.acc,html .hero .cta .btn.ghost{color:#fff!important;border-color:transparent!important;text-shadow:none}html .hero .cta .btn.acc{background:#d81f26!important}html .hero .cta .btn.ghost{background:#15803d!important}html .hero .cta .btn::before{opacity:.4}html .hero .cta .btn svg{fill:#fff}
+/* Hero buttons: keep the glass effect, tinted red to book and green for WhatsApp, with white text. */
+html .hero .cta .btn.acc,html .hero .cta .btn.ghost{color:#fff!important;border-color:transparent}
+html .hero .cta .btn.acc{background:linear-gradient(180deg,rgba(226,48,54,.74),rgba(176,20,28,.9))!important}
+html .hero .cta .btn.ghost{background:linear-gradient(180deg,rgba(30,146,74,.74),rgba(15,104,48,.9))!important}
+html:not(.glass-btn) .hero .cta .btn.acc,html.lite .hero .cta .btn.acc,html.no-glass .hero .cta .btn.acc{background:#d81f26!important}
+html:not(.glass-btn) .hero .cta .btn.ghost,html.lite .hero .cta .btn.ghost,html.no-glass .hero .cta .btn.ghost{background:#15803d!important}
