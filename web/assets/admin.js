@@ -340,7 +340,7 @@ function wire(){const app=document;
   if(d.dice){ev.preventDefault();ev.stopPropagation();const p=JSON.parse(d.dice),f=S[cur].f.find(x=>x.k===p[0]);draft[cur][f.k]=randValue(f,cur);keep();paint();return}
   if(d.vt){vTab=d.vt;open_={};paint();return}
   if(d.vcopy!==undefined){const from=vTab==='desktop'?'mobile':'desktop';draft.views[vTab]=clone(draft.views[from]);keep();paint();return}
-  if(d.vrand!==undefined){const c=draft.views[vTab];Object.keys(TPL).forEach(k=>c.template[k]=pick(TPL[k])[0]);if(vTab==='mobile'&&!['1','2'].includes(c.template.columns))c.template.columns=pick(['auto','1','2']);const L=c.sections,mid=L.filter(x=>!['hero','visit'].includes(x.id)).sort(()=>Math.random()-.5);c.sections=[...L.filter(x=>x.id==='hero'),...mid,...L.filter(x=>x.id==='visit')];keep();paint();return}
+  if(d.vrand!==undefined){const c=draft.views[vTab];Object.keys(TPL).forEach(k=>c.template[k]=pick(TPL[k])[0]);if(vTab==='mobile'&&!['1','2'].includes(c.template.columns))c.template.columns=pick(['auto','1','2']);const L=c.sections,mid=L.filter(x=>!['hero','visit','blog'].includes(x.id)).sort(()=>Math.random()-.5);c.sections=[...L.filter(x=>x.id==='hero'),...mid,...L.filter(x=>x.id==='visit'),...L.filter(x=>x.id==='blog')];keep();paint();return}
   if(d.img){imageEditor(d.img);return}
   if(d.urm!==undefined){urMissing=!urMissing;paint();return}
   if(d.urd){delete draft.i18n.overrides[decodeURIComponent(d.urd)];keep();paint();return}

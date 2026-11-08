@@ -67,3 +67,14 @@ html.lite .gc-back,html.lite .gc-bb{-webkit-backdrop-filter:none!important;backd
 .gc-b-t{padding-inline-end:30px}
 @media(max-width:760px){.gc-turn{top:9px;inset-inline-end:9px;width:21px;height:21px}.gc-b-t{padding-inline-end:24px}}
 @media(prefers-reduced-motion:reduce){.gc-turn{animation:none}}
+
+/* Newest blog articles above the footer. */
+.gc-blh h2{margin:0}.gc-blh .lead{margin:6px 0 0}
+.gc-bl{position:relative;display:flex;flex-direction:column;height:430px;border-radius:28px;overflow:hidden;color:var(--ink);text-decoration:none;background:linear-gradient(150deg,rgba(255,255,255,.72),rgba(255,255,255,.36));-webkit-backdrop-filter:blur(20px) saturate(170%);backdrop-filter:blur(20px) saturate(170%);box-shadow:inset 0 0 0 1.5px rgba(255,255,255,.85),-1px 0 1px -.5px rgba(255,0,80,.35),1px 0 1px -.5px rgba(0,190,255,.45),0 28px 44px -28px rgba(15,30,70,.6);transition:transform .25s cubic-bezier(.2,.8,.2,1)}
+.gc-bl:focus-visible{outline:2px solid var(--accent);outline-offset:3px}
+.gc-bl-i{flex:0 0 42%;display:block;background:linear-gradient(150deg,color-mix(in srgb,var(--base) 70%,#fff),var(--base));overflow:hidden}.gc-bl-i img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .4s cubic-bezier(.2,.8,.2,1)}
+.gc-bl-t{flex:1;min-height:0;display:flex;flex-direction:column;gap:6px;padding:14px 18px 16px}.gc-bl-t time{font-size:.76rem;font-weight:600;color:var(--muted)}.gc-bl-t b{font:800 1.04rem/1.22 var(--fh);letter-spacing:-.01em;color:var(--ink);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}.gc-bl-x{font-size:.84rem;line-height:1.4;color:var(--muted);display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden}
+.gc-bl .gc-pill{margin-top:auto;color:var(--base);border-color:color-mix(in srgb,var(--base) 45%,transparent);background:rgba(255,255,255,.5)}
+@media(hover:hover){.gc-bl:hover{transform:translateY(-4px)}.gc-bl:hover .gc-bl-i img{transform:scale(1.05)}}
+@media(max-width:760px){.gc-bl{height:352px;border-radius:22px}.gc-bl-t{padding:10px 11px 11px;gap:4px}.gc-bl-t b{font-size:.84rem}.gc-bl-t time{font-size:.68rem}.gc-bl-x{-webkit-line-clamp:2;font-size:.72rem}}
+html.lite .gc-bl{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
