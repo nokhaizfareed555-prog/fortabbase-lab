@@ -3,12 +3,14 @@
 (function () {
   const TAU = Math.PI * 2, clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), mix = (a, b, t) => a + (b - a) * t;
   const PAIR = { A: "T", T: "A", G: "C", C: "G" }, BASES = "ATGC";
-  const HOT = ["#ff9a3c", "#ffb45e", "#ffd7a1"], RED = "#ff3a22", COOL = ["#38a3ff", "#79cdff", "#c2e8ff"];
+  /* The frosted glass background is light, so the helix uses deeper colors and normal blending there. */
+  const DARK = { HOT: ["#ff9a3c", "#ffb45e", "#ffd7a1"], RED: "#ff3a22", COOL: ["#38a3ff", "#79cdff", "#c2e8ff"], strand: "#5cb8ff", halo: "#1677ff", blend: "lighter" };
+  const LIGHT = { HOT: ["#d9480f", "#e8590c", "#f76707"], RED: "#d81f26", COOL: ["#0a4fa3", "#0b63c5", "#1677ff"], strand: "#0b63c5", halo: "#1677ff", blend: "source-over" };
   const rnd = (k, j) => { const x = Math.sin(k * 127.1 + j * 311.7) * 43758.5453; return x - Math.floor(x); };
   let unmount = null;
 
   /* Tiles are drawn once to small images, so each frame only copies them */
-  function sprites() {
+  function sprites({ HOT, RED, COOL }) {
     const S = 72, out = { tile: {}, soft: {} }, make = () => { const c = document.createElement("canvas"); c.width = c.height = S; return [c, c.getContext("2d")]; };
     [...HOT, RED, ...COOL].forEach((col) => {
       [..."ATGC", "#"].forEach((ch) => {
@@ -30,7 +32,8 @@
     if (unmount) unmount();
     const sec = document.getElementById("dna"), cv = sec && sec.querySelector(".dna-cv");
     if (!cv) return;
-    const ctx = cv.getContext("2d"), SP = sprites(), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
+    const glass = sec.classList.contains("dna-glass"), PAL = glass ? LIGHT : DARK, { HOT, RED, COOL } = PAL;
+    const ctx = cv.getContext("2d"), SP = sprites(PAL), still = matchMedia("(prefers-reduced-motion: reduce)").matches;
     const lite = document.documentElement.classList.contains("lite"), steps = [...sec.querySelectorAll(".dna-steps li")], rtl = document.documentElement.dir === "rtl";
     const dust = Array.from({ length: 80 }, (_, i) => ({ x: rnd(i, 1), y: rnd(i, 2), d: .3 + rnd(i, 3) * .7 }));
     let W = 0, H = 0, cur = still ? .45 : 0, target = cur, raf = 0, shown = -1;
@@ -51,11 +54,14 @@
       const reach = Math.min(lite || tall ? 28 : 40, Math.ceil(Math.hypot(W, H) / dy / 2) + 3), first = Math.floor(offset) - reach, last = Math.floor(offset) + reach;
       const paths = [], items = [], perRung = tall || lite ? 7 : 9, fade = (a) => clamp(1.15 - Math.abs(a) / (Math.hypot(W, H) * .62));
 
+      if (glass) ctx.clearRect(0, 0, W, H);
+      else {
       const bg = ctx.createRadialGradient(cx, cy, 0, cx, cy, Math.max(W, H) * .8);
       bg.addColorStop(0, "#0b1a4a"); bg.addColorStop(.55, "#070c2c"); bg.addColorStop(1, "#04051a");
       ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = 1; ctx.fillStyle = bg; ctx.fillRect(0, 0, W, H);
       ctx.fillStyle = "#bcd9ff";
       dust.forEach((d) => { const y = ((d.y - p * d.d * .6) % 1 + 1) % 1; ctx.globalAlpha = .12 + d.d * .4; const s = d.d * 1.8; ctx.fillRect(d.x * W, y * H, s, s); });
+      }
 
       const place = (a, off, z) => { const s = F / (F + z), x = cx + (ax * a + ux * off) * s, y = cy + (ay * a + uy * off) * s; return [x, y, s]; };
 
@@ -87,7 +93,7 @@
       }
 
       /* soft glow along each strand, as one continuous line */
-      ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = "#1677ff";
+      ctx.globalCompositeOperation = PAL.blend; ctx.lineCap = "round"; ctx.lineJoin = "round"; ctx.strokeStyle = PAL.halo;
       for (const [w, al] of [[.24, .07], [.13, .12]]) {
         ctx.lineWidth = R * w; ctx.globalAlpha = al;
         paths.forEach((pts) => { ctx.beginPath(); pts.forEach((q, i) => i ? ctx.lineTo(q[0], q[1]) : ctx.moveTo(q[0], q[1])); ctx.stroke(); });
@@ -98,8 +104,8 @@
         const depth = clamp((it.z + R) / (2 * R));   // 0 = nearest, 1 = farthest
         if (it.line) {
           const l = it.line;
-          ctx.globalCompositeOperation = "lighter"; ctx.lineCap = "butt";
-          ctx.strokeStyle = "#5cb8ff"; ctx.globalAlpha = (.95 - depth * .6) * it.a; ctx.lineWidth = R * .042 * it.s;
+          ctx.globalCompositeOperation = PAL.blend; ctx.lineCap = "butt";
+          ctx.strokeStyle = PAL.strand; ctx.globalAlpha = (.95 - depth * .6) * it.a; ctx.lineWidth = R * .042 * it.s;
           ctx.beginPath(); ctx.moveTo(l[0], l[1]); ctx.lineTo(l[2], l[3]); ctx.stroke();
           continue;
         }
@@ -107,7 +113,7 @@
         if (x < -60 || x > W + 60 || y < -60 || y > H + 60 || it.a <= 0) continue;
         const sz = R * (1.55 / perRung) * s, focus = Math.abs(it.z) / R * .75 + Math.abs(a) / (R * 3.4);
         if (focus > .82) {
-          ctx.globalCompositeOperation = "lighter"; ctx.globalAlpha = clamp(.72 - depth * .4) * it.a;
+          ctx.globalCompositeOperation = PAL.blend; ctx.globalAlpha = clamp(.72 - depth * .4) * it.a;
           const b = sz * 1.15; ctx.drawImage(SP.soft[col], x - b / 2, y - b / 2, b, b);
         } else {
           ctx.globalCompositeOperation = "source-over"; ctx.globalAlpha = clamp(1 - depth * .55) * it.a;

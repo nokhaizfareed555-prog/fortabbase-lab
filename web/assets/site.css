@@ -260,3 +260,15 @@ html .hero .cta .btn.acc{background:linear-gradient(180deg,rgba(226,48,54,.74),r
 html .hero .cta .btn.ghost{background:linear-gradient(180deg,rgba(30,146,74,.74),rgba(15,104,48,.9))!important}
 html:not(.glass-btn) .hero .cta .btn.acc,html.lite .hero .cta .btn.acc,html.no-glass .hero .cta .btn.acc{background:#d81f26!important}
 html:not(.glass-btn) .hero .cta .btn.ghost,html.lite .hero .cta .btn.ghost,html.no-glass .hero .cta .btn.ghost{background:#15803d!important}
+/* Frosted glass band after the hero (drawn in site.js). Top and bottom edges fade out for real, so the sections above and below show through. */
+#fa-fglass{--fg:clamp(110px,16vw,200px);position:absolute;left:0;width:100%;z-index:0;display:block;pointer-events:none;-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.08) calc(var(--fg)*.22),rgba(0,0,0,.34) calc(var(--fg)*.48),rgba(0,0,0,.74) calc(var(--fg)*.74),#000 var(--fg),#000 calc(100% - var(--fg)),rgba(0,0,0,.74) calc(100% - var(--fg)*.74),rgba(0,0,0,.34) calc(100% - var(--fg)*.48),rgba(0,0,0,.08) calc(100% - var(--fg)*.22),transparent 100%);mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.08) calc(var(--fg)*.22),rgba(0,0,0,.34) calc(var(--fg)*.48),rgba(0,0,0,.74) calc(var(--fg)*.74),#000 var(--fg),#000 calc(100% - var(--fg)),rgba(0,0,0,.74) calc(100% - var(--fg)*.74),rgba(0,0,0,.34) calc(100% - var(--fg)*.48),rgba(0,0,0,.08) calc(100% - var(--fg)*.22),transparent 100%)}
+/* Room for the fades, so cards stay on the solid part of the band. */
+.has-fglass .fg-first{padding-top:clamp(90px,13vw,170px)}.has-fglass .fg-last{padding-bottom:clamp(90px,13vw,170px)}
+.has-fglass .fg-first::before,.has-fglass .fg-last::before{display:none}
+/* DNA section on the frosted glass background. Choose it or the dark blue in admin, under DNA animation. */
+#dna.dna-glass{background:#ececec;color:var(--ink)}#dna.dna-glass .dna-stick{background:#ececec}
+.dna-fg{position:absolute;inset:0;width:100%;height:100%;display:block}
+#dna.dna-glass .dna-scrim{background:linear-gradient(90deg,rgba(246,247,248,.92) 0,rgba(246,247,248,.74) 36%,transparent 60%)}
+#dna.dna-glass h2{color:var(--base)}#dna.dna-glass .dna-eye{color:#b8460b}#dna.dna-glass .dna-lead,#dna.dna-glass .dna-steps span{color:var(--ink)}#dna.dna-glass .dna-steps b{color:#0b63c5}#dna.dna-glass .dna-bar{background:rgba(20,57,111,.16)}#dna.dna-glass .dna-bar i{background:linear-gradient(90deg,#0b63c5,#e8590c)}
+#dna.dna-glass .dna-stick::after{background:linear-gradient(180deg,rgba(236,236,236,0),#ececec)}
+@media(max-width:860px){#dna.dna-glass .dna-scrim{background:linear-gradient(0deg,rgba(246,247,248,.95) 0,rgba(246,247,248,.86) 42%,transparent 66%)}}
