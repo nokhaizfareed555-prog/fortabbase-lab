@@ -271,5 +271,16 @@ html:not(.glass-btn) .hero .cta .btn.ghost,html.lite .hero .cta .btn.ghost,html.
 #dna.dna-glass h2{color:var(--base)}#dna.dna-glass .dna-eye{color:#b8460b}#dna.dna-glass .dna-lead,#dna.dna-glass .dna-steps span{color:var(--ink)}#dna.dna-glass .dna-steps b{color:#0b63c5}#dna.dna-glass .dna-bar{background:rgba(20,57,111,.16)}#dna.dna-glass .dna-bar i{background:linear-gradient(90deg,#0b63c5,#e8590c)}
 #dna.dna-glass .dna-stick::after{display:none}
 @media(max-width:860px){#dna.dna-glass:not(.dna-still){height:160vh}#dna.dna-glass .dna-cv,[dir=rtl] #dna.dna-glass .dna-cv{-webkit-mask-image:linear-gradient(0deg,transparent 36%,#000 60%);mask-image:linear-gradient(0deg,transparent 36%,#000 60%)}}
-/* Footer melts into the page above it instead of starting on a hard line. */
-footer{padding-top:120px;-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.34) 48px,rgba(0,0,0,.74) 84px,#000 112px);mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.34) 48px,rgba(0,0,0,.74) 84px,#000 112px)}
+/* Footer: skyline on top, columns spread evenly across the page. */
+footer,body[data-page] footer{background:none;padding:0;color:#fff}
+.ft{--ft-bg:var(--base);--ft-ink:#fff;--ft-link:#fff}
+.ft-sky{display:block;width:100%;height:auto;color:var(--ft-bg);margin-bottom:-1px}.ft-sky-p{display:none}
+.ft-b{background:var(--ft-bg);color:var(--ft-ink);padding:26px 0 30px}
+.ft-g{display:grid;grid-template-columns:repeat(var(--ft-n),minmax(0,1fr));gap:28px clamp(20px,4vw,48px);align-items:start}
+.ft-c{min-width:0}.ft-c p{opacity:.85;margin:.35em 0;font-size:.9rem;line-height:1.55}.ft-name{display:block;font:800 1.08rem/1.3 var(--fh);margin-bottom:6px}
+.ft-c h2{font:700 .8rem/1.3 var(--fh);letter-spacing:.09em;text-transform:uppercase;color:inherit;opacity:.72;margin:0 0 10px}
+.ft a{color:var(--ft-link);text-decoration:none}.ft a:hover{text-decoration:underline}
+.ft .foot-l{display:flex;flex-direction:column;gap:2px;margin:0}.ft .foot-l a{min-height:32px;display:inline-flex;align-items:center}
+.ft-center .ft-c{text-align:center}.ft-center .foot-l{align-items:center}.ft-left .foot-l{align-items:flex-start}
+.ft-end{margin-top:26px;padding-top:18px;border-top:1px solid color-mix(in srgb,var(--ft-ink) 22%,transparent);text-align:center;font-size:.84rem}.ft-end p{opacity:.78;margin:.25em 0}
+@media(max-width:860px){.ft-sky-d{display:none}.ft-sky-p{display:block}.ft-b,body[data-page] .ft-b{padding-bottom:90px}.ft-g{grid-template-columns:repeat(2,minmax(0,1fr))}.ft-brand{grid-column:1/-1}.ft-g>.ft-c:last-child:nth-child(even){grid-column:1/-1}}

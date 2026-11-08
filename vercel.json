@@ -7,7 +7,7 @@
 "includeFiles":"{labs/**,web/assets/config.js}"
 },
 "api/page.js":{
-"includeFiles":"web/assets/{defaults,config}.js"
+"includeFiles":"web/assets/{defaults,config,footer}.js"
 },
 "api/blog.js":{
 "includeFiles":"web/assets/{defaults.js,guides/blog-md.js,guides/blog-fonts.js}"
