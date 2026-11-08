@@ -100,7 +100,7 @@
   void main(){ vec2 p=vec2(gl_VertexID==1?3.:-1.,gl_VertexID==2?3.:-1.); gl_Position=vec4(p,.999,1.); }`;
   const FS_FROST = `#version 300 es
   precision highp float;
-  uniform vec2 uRes,uA,uB; uniform float uT,uTile,uPulse,uPulseR,uFill;
+  uniform vec2 uRes,uA,uB; uniform vec3 uC1,uC2; uniform float uT,uTile,uPulse,uPulseR,uFill,uGrain;
   out vec4 o;
   const vec3 BG=vec3(.953,.957,.957);
   float cap(vec2 p){vec2 d=uB-uA;float t=clamp(dot(p-uA,d)/max(dot(d,d),.0001),0.,1.);return length(p-uA-d*t);}
@@ -108,10 +108,10 @@
   vec3 glow(vec2 p){
     vec2 c=(uA+uB)*.5, drift=vec2(sin(uT*.31),cos(uT*.23))*.035;
     float g=exp(-pow(cap(p+drift)/.38,2.))*mix(.84,1.,uFill);
-    vec3 col=mix(vec3(.2,.53,.15),vec3(.3,.76,.03),smoothstep(.24,-.14,p.y-c.y));
+    vec3 col=mix(uC1*.68,uC1,smoothstep(.24,-.14,p.y-c.y));
     vec2 l=p-c-vec2(.12+sin(uT*.27)*.04,-.13+cos(uT*.36)*.03);
-    col=mix(col,vec3(.8,.9,.05),exp(-dot(l,l)/.03));
-    return mix(BG,col,clamp(g,0.,1.));
+    col=mix(col,uC2,exp(-dot(l,l)/.03));
+    return mix(BG,col,clamp(g+.07,0.,1.));
   }
   float box(vec2 p,float b,float r){vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}
   void main(){
@@ -127,14 +127,18 @@
       vec3 t=(glow(cen+f*uTile*.3+off)*.5+glow(cen-f*uTile*.75-off*.6)*.5);
       float edge=smoothstep(.1,.5,max(abs(f.x),abs(f.y)));
       float patch1=exp(-dot(f-vec2(cos(a),sin(a))*.36,f-vec2(cos(a),sin(a))*.36)/.09);
-      t=mix(t,vec3(1.),.03+edge*.07+patch1*.13);
+      t=mix(t,vec3(1.),.08+edge*.09+patch1*.15);
+      /* Frost: fine grain and a soft sheen, on every tile however far it is from the glow */
+      t+=(hash(floor(gl_FragCoord.xy/uGrain)+id)-.5)*.03;
+      t*=1.-smoothstep(-.1,-.5,f.y)*.035;
+      t=mix(t,vec3(1.),smoothstep(.12,.5,f.y-f.x*.4)*.1);
       float l=length(cen-(uA+uB)*.5);
       t+=uPulse*.2*exp(-pow(l-uPulseR*.1,2.)*22.);
-      c=mix(c,t,inside);
+      c=mix(c*.95,t,inside);
     }
     /* Thin bright outline with a slightly brighter top-left */
     float line=smoothstep(1.3*px,.3*px,abs(d+px)), near=exp(-pow(cap(p)/.5,2.));
-    c=mix(c,vec3(1.),line*mix(.3,.85,near)*(.75+.25*smoothstep(-.5,.5,f.y-f.x)));
+    c=mix(c,vec3(1.),line*mix(.6,.9,near)*(.75+.25*smoothstep(-.5,.5,f.y-f.x)));
     c+=(hash(gl_FragCoord.xy)-.5)/170.;
     o=vec4(c,1.);
   }`;
@@ -229,6 +233,7 @@
     o=vec4(c,1.);
   }`;
 
+  const tint = (h, d) => /^#[0-9a-f]{6}$/i.test(h || "") ? [1, 3, 5].map((i) => parseInt(h.slice(i, i + 2), 16) / 255) : d;
   function code() { const d = new Date(), y = String(d.getFullYear()).slice(2), m = String(d.getMonth() + 1).padStart(2, "0"), a = "23456789ABCDEFGHJKLMNPQRSTUVWXYZ", b = new Uint8Array(5); crypto.getRandomValues(b); return `FAP-${y}${m}-${[...b].map((x) => a[x % a.length]).join("")}`; }
 
   /* The printed side of the label. Text runs along the tube, as on a real sample tube. */
@@ -375,7 +380,7 @@
       if (frost) {
         const u = pFrost.u, sy = 22 * Math.tan(fov / 2);
         gl.disable(gl.DEPTH_TEST); gl.useProgram(pFrost.p); gl.uniform2f(u.uRes, W, H); gl.uniform1f(u.uT, clock); gl.uniform1f(u.uTile, portrait ? .2 : .19);
-        gl.uniform2f(u.uA, tA[0] / sy, tA[1] / sy); gl.uniform2f(u.uB, tB[0] / sy, tB[1] / sy); gl.uniform1f(u.uPulse, pulse); gl.uniform1f(u.uPulseR, pulseR); gl.uniform1f(u.uFill, clamp(v.fill));
+        gl.uniform2f(u.uA, tA[0] / sy, tA[1] / sy); gl.uniform2f(u.uB, tB[0] / sy, tB[1] / sy); gl.uniform1f(u.uPulse, pulse); gl.uniform1f(u.uPulseR, pulseR); gl.uniform1f(u.uFill, clamp(v.fill)); gl.uniform1f(u.uGrain, Math.max(1, W / stage.getBoundingClientRect().width)); gl.uniform3fv(u.uC1, tint(sec.dataset.c1, [.302, .761, .031])); gl.uniform3fv(u.uC2, tint(sec.dataset.c2, [.8, .902, .051]));
         gl.bindVertexArray(noVerts); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.enable(gl.DEPTH_TEST);
       } else {
       gl.useProgram(pCube.p); gl.uniformMatrix4fv(pCube.u.uVP, false, VP);
