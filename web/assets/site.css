@@ -287,5 +287,5 @@ footer,body[data-page] footer{background:none;padding:0;color:#fff}
 /* Footer melts into the page above it instead of starting on a hard line. */
 footer{padding-top:120px;-webkit-mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.34) 48px,rgba(0,0,0,.74) 84px,#000 112px);mask-image:linear-gradient(180deg,transparent 0,rgba(0,0,0,.34) 48px,rgba(0,0,0,.74) 84px,#000 112px)}
 /* Doctor cards: same height everywhere, divider lines level, room for a three-line designation. */
-.person:not(.lead-doc) .p-head{min-height:116px}.person:not(.lead-doc) .p-role{min-height:84px;align-items:flex-start}.p-role i{align-self:center}.person.lead-doc .p-role i{align-self:auto}
-@media(max-width:860px){.person:not(.lead-doc) .p-head{min-height:148px}.person:not(.lead-doc) .p-role{min-height:78px}}
+.person:not(.lead-doc) .p-head{min-height:108px}.person:not(.lead-doc) .p-role{min-height:68px;align-items:center}.p-role i{align-self:center}.person.lead-doc .p-role i{align-self:auto}
+@media(max-width:860px){.person:not(.lead-doc) .p-head{min-height:144px}.person:not(.lead-doc) .p-role{min-height:62px}}
