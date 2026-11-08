@@ -410,7 +410,7 @@ export async function imager(ctx: Ctx): Promise<Out> {
   }
   if (!cover && (mode === "openverse" || mode === "products_then_openverse")) {
     // a cover must be about the article and never a graphic medical picture; otherwise a calm general photo
-    const BAD = /histolog|micrograph|patholog|autopsy|surgery|surgical|wound|tumou?r|lesion|biopsy|cadaver|disease|x-?ray of|stain/i;
+    const BAD = /mortality|death|chart|graph|hazard|study|figure|diagram|histolog|micrograph|patholog|autopsy|surgery|surgical|wound|tumou?r|lesion|biopsy|cadaver|disease|x-?ray of|stain/i;
     const want = new Set(words(`${art.focus_query} ${(art.tags || []).join(" ")}`).filter((w) => w.length > 3 && !STOP.has(w) && !["test", "tests", "health", "level", "levels", "normal", "range"].includes(w)));
     const fits = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`) && words(x.alt).some((w) => want.has(w));
     const safe = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`);
