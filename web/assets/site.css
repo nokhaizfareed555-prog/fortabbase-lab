@@ -210,3 +210,7 @@ html:not(.no-glass):not(.lite) .glass:not(.trust-i):not(.gl-i){background:linear
 .glass-btn .glass .btn,.glass-btn .chip,.glass-btn .sec-head .btn,.glass-btn .dlg .btn{-webkit-backdrop-filter:none;backdrop-filter:none}
 #fa-mesh s{will-change:auto}
 }
+
+/* Added or selected items use the green of the admin toggles. */
+.btn.added,.chip.on,.seg label:has(input:checked){background:#5bd13c!important;color:#fff!important;border-color:transparent;font-weight:700;text-shadow:none}
+.btn.added,.chip.on{--gb-ink:#fff;-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
