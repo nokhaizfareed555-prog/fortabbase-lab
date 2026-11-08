@@ -78,3 +78,6 @@ html.lite .gc-back,html.lite .gc-bb{-webkit-backdrop-filter:none!important;backd
 @media(hover:hover){.gc-bl:hover{transform:translateY(-4px)}.gc-bl:hover .gc-bl-i img{transform:scale(1.05)}}
 @media(max-width:760px){.gc-bl{height:352px;border-radius:22px}.gc-bl-t{padding:10px 11px 11px;gap:4px}.gc-bl-t b{font-size:.84rem}.gc-bl-t time{font-size:.68rem}.gc-bl-x{-webkit-line-clamp:2;font-size:.72rem}}
 html.lite .gc-bl{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+
+/* View all folder inside the older card grids. */
+.grid>.gc-fo,.gal>.gc-fo{height:auto;min-height:300px}.gal.strip>.gc-fo{flex:0 0 min(78vw,340px)}.gc-solo{width:min(100%,280px);margin-top:14px}.gc-solo .gc-fo{height:320px}
