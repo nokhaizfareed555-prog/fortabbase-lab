@@ -44,3 +44,12 @@ body{background:var(--cv)}
 .li>header b{min-width:0;overflow-wrap:anywhere}.li>header b::first-letter{text-transform:uppercase}.li>header .tg{zoom:.72}
 @media(max-width:860px){.pnl,.pnl.glass{padding:14px}.li>header{gap:2px;padding:6px 6px 6px 10px}.ic{min-width:26px}.ad,.col,.mainp{max-width:100vw}}
 @media(max-width:860px){.ic{min-width:22px;padding:0}.li>header{gap:0;padding-left:8px}}
+
+.pnl.glass::after,.login form::after{display:none}.rs.dice{display:inline-flex;vertical-align:middle}.btn svg{flex:none}
+.pv{height:440px;border:1px solid var(--bd);border-radius:14px;overflow:hidden;margin-bottom:16px;background:#fff}.pv iframe{border:0;display:block}.pv.desktop iframe{width:1240px;transform-origin:0 0}.pv.mobile{display:flex;justify-content:center;background:var(--cv);height:620px}.pv.mobile iframe{width:390px;height:100%;background:#fff;border-inline:1px solid var(--bd)}
+.vtabs{display:flex;gap:7px;align-items:center;flex-wrap:wrap;margin-bottom:13px}.vtabs>button:not(.btn){border:1px solid var(--bd);background:#fff;border-radius:10px;padding:8px 16px;font:600 .85rem var(--fb);cursor:pointer}.vtabs>button.on{background:var(--base);color:#fff;border-color:var(--base)}
+.vcols{display:grid;grid-template-columns:1fr 1fr;gap:20px}.imgs{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px}.imgc{position:relative;padding:6px;border:1px solid var(--bd);border-radius:12px;background:#fff;cursor:pointer;font:500 .76rem var(--fb);text-align:left}.imgc:hover{border-color:var(--accent)}.imgc img{width:100%;aspect-ratio:4/3;object-fit:cover;border-radius:8px;margin-bottom:4px}.imgc span{display:block;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}.imgc i{position:absolute;top:10px;left:10px;font:600 .68rem var(--fb);background:var(--accent);color:#fff;padding:2px 7px;border-radius:99px}
+.dlg.ie{width:min(520px,100%)}.iep{width:100%;max-height:300px;overflow:hidden;background:var(--cv);margin:0 auto 14px}.iep img{width:100%;height:100%}.dlg .fld{margin-bottom:9px}
+.urr{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--bd)}.urr small{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}.urr input{font-family:"Noto Nastaliq Urdu",system-ui;line-height:2}
+@media(max-width:860px){.vcols,.urr{grid-template-columns:1fr}.pv.mobile{height:540px}}
+.dlg.ie .iep{position:sticky;top:-24px;z-index:3;box-shadow:0 10px 18px -14px rgba(14,24,44,.5)}
