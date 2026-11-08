@@ -1,8 +1,28 @@
 /* Admin > Messages: compose, templates, contacts, sent log and email setup. */
 window.FAMessages=async function(p,{e,toast,confirm2,close}){
  let tab='compose',M=await FA.rpc('msg_get'),sel=new Set(),tplKey='general',edit=null;
- const brand={clinic:FA.D.brand.name,phone:FA.D.visit.phone};
- const AUTO=['name','email','clinic','phone'];
+ const live=await FA.content().catch(()=>FA.D),ED=window.FA_EMAIL,brand={clinic:live.brand?.name||FA.D.brand.name,phone:live.visit?.phone||FA.D.visit.phone,address:live.visit?.address||FA.D.visit.address};
+ const AUTO=['name','email','clinic','phone','address'];
+ const clinicLook=()=>({primary:live.theme?.base||ED.DEF.primary,accent:live.theme?.highlight||ED.DEF.accent,bg:ED.DEF.bg});
+ const look=d=>ED.clean({...ED.DEF,...clinicLook(),...(d||{})});
+ const DICE='<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="4"/><path d="M8 8h.01M16 8h.01M12 12h.01M8 16h.01M16 16h.01"/></svg>';
+ /* Design controls and live preview, used in Compose and in the template editor. */
+ function designer(host,start,ctx,extra=''){
+  let d=look(start),note='';
+  const opts=(o,v)=>Object.entries(o).map(([k,l])=>`<option value="${k}"${k===v?' selected':''}>${e(Array.isArray(l)?l[0]:l)}</option>`).join('');
+  const col=(k,l)=>`<label class="edz-col"><input type="color" data-k="${k}" value="${d[k]}"><span>${l}</span></label>`;
+  host.innerHTML=`<div class="edz"><div class="edz-c"><div class="edz-a"><button type="button" class="btn acc sm" data-z="r">${DICE} Surprise me</button><button type="button" class="btn ghost sm" data-z="c">Clinic colours</button></div><p class="psub edz-n" aria-live="polite"></p><div class="edz-cols">${col('primary','Main')}${col('accent','Accent')}${col('bg','Background')}</div><div class="fld"><label>Layout</label><select data-k="layout">${opts(ED.LAYOUTS,d.layout)}</select></div><div class="fld"><label>Font</label><select data-k="font">${opts(ED.FONTS,d.font)}</select></div><label class="chk edz-l"><input type="checkbox" data-k="logo"${d.logo?' checked':''}> Show the clinic logo</label><div class="fld"><label>Small label (optional)</label><input type="text" data-k="badge" maxlength="40" value="${e(d.badge)}" placeholder="Report ready"></div><div class="fld"><label>Button text (optional)</label><input type="text" data-k="btn" maxlength="40" value="${e(d.btn)}" placeholder="View your report"></div><div class="fld"><label>Button link</label><input type="url" data-k="url" maxlength="300" value="${e(d.url)}" placeholder="https://fortabbaspolyclinic.com/reports"></div>${extra}</div><div class="edz-p"><div class="edz-v"><button type="button" class="on" data-w="">Computer</button><button type="button" data-w="375">Phone</button></div><div class="edz-f"><iframe title="Email preview" sandbox="allow-same-origin"></iframe></div></div></div>`;
+  const q=s=>host.querySelector(s),fr=q('iframe'),all=[...host.querySelectorAll('[data-k]')];
+  const fit=()=>{try{fr.style.height=fr.contentDocument.documentElement.scrollHeight+'px'}catch{}};fr.onload=fit;
+  const paint=()=>{const c=ctx();fr.srcdoc=ED.render({...c,design:{...d,badge:c.fill(d.badge),btn:c.fill(d.btn)}});q('.edz-n').textContent=note};
+  const sync=()=>all.forEach(i=>{if(i.type==='checkbox')i.checked=d[i.dataset.k];else i.value=d[i.dataset.k]});
+  all.forEach(i=>i.oninput=()=>{d[i.dataset.k]=i.type==='checkbox'?i.checked:i.value;note='';paint()});
+  q('[data-z=r]').onclick=()=>{const s=ED.surprise(d);note='Surprise: '+s.name;d=ED.clean(s);sync();paint()};
+  q('[data-z=c]').onclick=()=>{Object.assign(d,clinicLook());note='Clinic colours';sync();paint()};
+  host.querySelectorAll('[data-w]').forEach(b=>b.onclick=()=>{host.querySelectorAll('[data-w]').forEach(x=>x.classList.toggle('on',x===b));fr.style.width=b.dataset.w?b.dataset.w+'px':'100%';setTimeout(fit,30)});
+  paint();
+  return{paint,value:()=>ED.clean(d)};
+ }
  const varsIn=t=>[...new Set([...(t||'').matchAll(/\{\{\s*([a-z_]+)\s*\}\}/gi)].map(m=>m[1].toLowerCase()))];
  const parse=s=>s.split(/[\s,;]+/).map(x=>x.trim().toLowerCase()).filter(Boolean);
  const valid=x=>/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(x);
@@ -21,13 +41,16 @@ window.FAMessages=async function(p,{e,toast,confirm2,close}){
   ${M.contacts.length?`<div class="fld"><label>Or pick saved contacts</label><div class="mc">${M.contacts.map(c=>`<label class="chk"><input type="checkbox" data-c="${c.id}"${sel.has(c.id)?' checked':''}> ${e(c.name||c.email)}</label>`).join('')}</div></div>`:''}
   <div class="fld"><label for="ms">Subject</label><input type="text" id="ms" maxlength="200" value="${e(t.subject)}"></div>
   <div class="fld"><label for="mbd">Message</label><textarea id="mbd" rows="10">${e(t.body)}</textarea></div>
-  <div id="mv"></div><div class="fld"><label>Preview (first recipient)</label><div class="mprev" id="mpv"></div></div>
+  <div id="mv"></div><h3 class="edz-h">Email design</h3><div id="mdz"></div>
   <button class="btn acc sm" id="msend">Send</button><p class="err" id="mer"></p></div>`;
   const $=s=>b.querySelector(s),vals={};
   const custom=()=>varsIn($('#ms').value+' '+$('#mbd').value).filter(k=>!AUTO.includes(k));
   const fill=(s,v)=>s.replace(/\{\{\s*([a-z_]+)\s*\}\}/gi,(_,k)=>v[k.toLowerCase()]??'');
   const list=()=>[...parse($('#mto').value).map(email=>({email,name:M.contacts.find(c=>c.email===email)?.name||''})),...M.contacts.filter(c=>sel.has(c.id)).map(c=>({email:c.email,name:c.name}))].filter((r,i,a)=>a.findIndex(x=>x.email===r.email)===i);
-  const pv=()=>{const r=list()[0]||{},v={...brand,...vals,name:r.name||'Patient',email:r.email||''};$('#mpv').innerHTML=`<b>${e(fill($('#ms').value,v))}</b><br><br>${e(fill($('#mbd').value,v)).replace(/\n/g,'<br>')}`};
+  const ctx=()=>{const r=list()[0]||{},v={...brand,...vals,name:r.name||'Patient',email:r.email||''};return{subject:fill($('#ms').value,v),body:fill($('#mbd').value,v),clinic:v.clinic,phone:v.phone,address:v.address,fill:s=>fill(s,v)}};
+  const dz=designer($('#mdz'),t.design,ctx,'<div class="edz-s"><button type="button" class="btn ghost sm" id="dzt">Save look to this template</button><button type="button" class="btn ghost sm" id="dza">Use look on all templates</button></div><p class="err" id="dze"></p>');const pv=()=>dz.paint();
+  $('#dzt').onclick=async()=>{$('#dze').textContent='';try{const d=dz.value();await FA.rpc('msg_save_template',{p:{key:t.key,name:t.name,subject:t.subject,body:t.body,design:d}});t.design=d;toast('Look saved to '+t.name)}catch(er){$('#dze').textContent=er.message}};
+  $('#dza').onclick=()=>confirm2('Use this look on all templates?','Layout, colours, font and logo change on every template. Their words, labels and buttons stay.','Use on all',async()=>{close();try{const d=dz.value(),{layout,primary,accent,bg,font,logo}=d,l={layout,primary,accent,bg,font,logo};await FA.rpc('msg_apply_design',{d:l});M.templates.forEach(x=>x.design={...(x.design||{}),...l});toast('Look applied to all templates')}catch(er){$('#dze').textContent=er.message}});
   const fields=()=>{$('#mv').innerHTML=custom().map(k=>`<div class="fld"><label>Fill in: ${e(k)}</label><input type="text" data-v="${e(k)}" value="${e(vals[k]||'')}"></div>`).join('');b.querySelectorAll('[data-v]').forEach(i=>i.oninput=()=>{vals[i.dataset.v]=i.value;pv()});pv()};
   $('#mt').onchange=ev=>{tplKey=ev.target.value;compose(b)};
   $('#ms').oninput=$('#mbd').oninput=fields;$('#mto').oninput=pv;
@@ -38,13 +61,14 @@ window.FAMessages=async function(p,{e,toast,confirm2,close}){
    if(!to.length){$('#mer').textContent='Add at least one email address.';return}
    const miss=custom().filter(k=>!vals[k]);if(miss.length){$('#mer').textContent='Fill in: '+miss.join(', ');return}
    confirm2('Send this email?',`It will go to ${to.length} ${to.length===1?'person':'people'} and cannot be taken back.`,'Send',async()=>{close();const btn=$('#msend');btn.disabled=true;btn.textContent='Sending…';
-    try{const r=await FA.sendEmail({template:t.key,to,subject:$('#ms').value,body:$('#mbd').value,vars:{...brand,...vals}});toast(r.failed?`${r.sent} sent, ${r.failed} failed: ${r.error}`:`Sent to ${r.sent}`);tab='sent';await reload()}catch(er){btn.disabled=false;btn.textContent='Send';$('#mer').textContent=er.message}})};
+    try{const r=await FA.sendEmail({template:t.key,to,subject:$('#ms').value,body:$('#mbd').value,design:dz.value(),vars:{...brand,...vals}});toast(r.failed?`${r.sent} sent, ${r.failed} failed: ${r.error}`:`Sent to ${r.sent}`);tab='sent';await reload()}catch(er){btn.disabled=false;btn.textContent='Send';$('#mer').textContent=er.message}})};
  }
  function templates(b){
-  if(edit){b.innerHTML=`<div class="pnl glass"><div class="fld"><label for="tn">Template name</label><input type="text" id="tn" maxlength="120" value="${e(edit.name||'')}"></div><div class="fld"><label for="ts">Subject</label><input type="text" id="ts" maxlength="200" value="${e(edit.subject||'')}"></div><div class="fld"><label for="tb">Message</label><textarea id="tb" rows="12">${e(edit.body||'')}</textarea></div><p class="psub">Fill-in words: {{name}}, {{clinic}}, {{phone}} fill by themselves. Any other word in double curly brackets, like {{ref}} or {{date}}, is asked for when you send.</p><button class="btn acc sm" id="tsv">Save template</button> <button class="btn ghost sm" id="tcn">Cancel</button><p class="err" id="ter"></p></div>`;
+  if(edit){b.innerHTML=`<div class="pnl glass"><div class="fld"><label for="tn">Template name</label><input type="text" id="tn" maxlength="120" value="${e(edit.name||'')}"></div><div class="fld"><label for="ts">Subject</label><input type="text" id="ts" maxlength="200" value="${e(edit.subject||'')}"></div><div class="fld"><label for="tb">Message</label><textarea id="tb" rows="12">${e(edit.body||'')}</textarea></div><p class="psub">Fill-in words: {{name}}, {{clinic}}, {{phone}} fill by themselves. Any other word in double curly brackets, like {{ref}} or {{date}}, is asked for when you send.</p><h3 class="edz-h">Email design</h3><div id="tdz"></div><button class="btn acc sm" id="tsv">Save template</button> <button class="btn ghost sm" id="tcn">Cancel</button><p class="err" id="ter"></p></div>`;
+   const v0={...brand,name:'Patient',ref:'FA-1024',date:'Monday, 10 am',test:'CBC'},fill0=s=>String(s||'').replace(/\{\{\s*([a-z_]+)\s*\}\}/gi,(_,k)=>v0[k.toLowerCase()]??'');const tz=designer(b.querySelector('#tdz'),edit.design,()=>({subject:fill0(b.querySelector('#ts').value),body:fill0(b.querySelector('#tb').value),clinic:v0.clinic,phone:v0.phone,address:v0.address,fill:fill0}));b.querySelector('#ts').oninput=b.querySelector('#tb').oninput=()=>tz.paint();
    b.querySelector('#tcn').onclick=()=>{edit=null;draw()};
-   b.querySelector('#tsv').onclick=async()=>{const name=b.querySelector('#tn').value.trim();if(!name){b.querySelector('#ter').textContent='Give the template a name.';return}try{await FA.rpc('msg_save_template',{p:{key:edit.key||'',name,subject:b.querySelector('#ts').value,body:b.querySelector('#tb').value}});edit=null;toast('Template saved');await reload()}catch(er){b.querySelector('#ter').textContent=er.message}};return}
-  b.innerHTML=`<div class="pnl glass"><button class="btn acc sm" id="tnew">New template</button><table class="tb" style="margin-top:12px"><tr><th>Name</th><th>Subject</th><th></th></tr>${M.templates.map(t=>`<tr><td><b>${e(t.name)}</b></td><td>${e(t.subject)}</td><td style="white-space:nowrap"><button class="btn ghost sm" data-te="${e(t.key)}">Edit</button>${t.builtin?'':` <button class="btn ghost sm" data-td="${e(t.key)}">Delete</button>`}</td></tr>`).join('')}</table></div>`;
+   b.querySelector('#tsv').onclick=async()=>{const name=b.querySelector('#tn').value.trim();if(!name){b.querySelector('#ter').textContent='Give the template a name.';return}try{await FA.rpc('msg_save_template',{p:{key:edit.key||'',name,subject:b.querySelector('#ts').value,body:b.querySelector('#tb').value,design:tz.value()}});edit=null;toast('Template saved');await reload()}catch(er){b.querySelector('#ter').textContent=er.message}};return}
+  b.innerHTML=`<div class="pnl glass"><button class="btn acc sm" id="tnew">New template</button><table class="tb" style="margin-top:12px"><tr><th>Name</th><th>Subject</th><th></th></tr>${M.templates.map(t=>{const d=look(t.design);return`<tr><td><span class="edz-dots"><i style="background:${d.primary}"></i><i style="background:${d.accent}"></i></span><b>${e(t.name)}</b></td><td>${e(t.subject)}</td><td style="white-space:nowrap"><button class="btn ghost sm" data-te="${e(t.key)}">Edit</button>${t.builtin?'':` <button class="btn ghost sm" data-td="${e(t.key)}">Delete</button>`}</td></tr>`}).join('')}</table></div>`;
   b.querySelector('#tnew').onclick=()=>{edit={};draw()};
   b.querySelectorAll('[data-te]').forEach(x=>x.onclick=()=>{edit=M.templates.find(t=>t.key===x.dataset.te);draw()});
   b.querySelectorAll('[data-td]').forEach(x=>x.onclick=()=>confirm2('Delete this template?','This cannot be undone.','Delete',async()=>{close();await FA.rpc('msg_delete_template',{k:x.dataset.td});await reload()},1));

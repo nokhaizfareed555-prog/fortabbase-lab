@@ -1,14 +1,14 @@
 // send-email: sends staff-written emails through the Hostinger mailbox or Resend, one per recipient, and logs each result.
 import { buildMessage, Smtp, SmtpError } from "./smtp.ts";
+import "./email-design.js";
+const ED = (globalThis as any).FA_EMAIL;
 const URL_ = Deno.env.get("SUPABASE_URL")!, KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 const cors = { "Access-Control-Allow-Origin": "*", "Access-Control-Allow-Headers": "authorization, content-type, apikey" };
 const out = (b: unknown, s = 200) => new Response(JSON.stringify(b), { status: s, headers: { ...cors, "content-type": "application/json" } });
 const svc = { apikey: KEY, authorization: `Bearer ${KEY}`, "content-type": "application/json" };
 const get = async (q: string) => (await (await fetch(`${URL_}/rest/v1/${q}`, { headers: svc })).json())[0];
-const esc = (s: string) => s.replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]!));
 const fill = (t: string, v: Record<string, string>) => t.replace(/\{\{\s*([a-z_]+)\s*\}\}/gi, (_, k) => v[k.toLowerCase()] ?? "");
 const EMAIL = /^[^@\s]+@[^@\s]+\.[^@\s]+$/;
-const html = (body: string, clinic: string) => `<div style="font-family:Arial,sans-serif;font-size:15px;line-height:1.6;color:#1b2a41;max-width:560px;margin:auto;padding:24px"><div style="font-weight:700;font-size:17px;color:#14396f;margin-bottom:18px">${esc(clinic)}</div><div>${esc(body).replace(/\n/g, "<br>")}</div></div>`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
@@ -43,7 +43,9 @@ Deno.serve(async (req) => {
     const subject = fill(String(b.subject), v).replace(/[\r\n]+/g, " ").slice(0, 200);
     let status = "sent", error: string | null = null, provider_id: string | null = null;
     try {
-      const text = fill(String(b.body), v), page = html(text, v.clinic || "Fort Abbas Poly Clinic");
+      const design = ED.clean(b.design); design.badge = fill(design.badge, v); design.btn = fill(design.btn, v);
+      const body = fill(String(b.body), v), text = body + (design.btn && design.url ? `\n\n${design.btn}: ${design.url}` : "");
+      const page = ED.render({ subject, body, clinic: v.clinic, phone: v.phone, address: v.address, design });
       if (useSmtp) {
         if (dead) throw new SmtpError(dead);
         if (!smtp) smtp = await Smtp.open(set.smtp_user, sec.smtp_password);
