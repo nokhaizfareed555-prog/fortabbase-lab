@@ -132,7 +132,7 @@
         FA.content()
       ]);
       const products = (site.tests.items || []).filter((t) => t.active !== false).map((t) => ({ id: t.id, name: t.name, variant_name: "", category: t.category, subcategory: "", images: [], image_url: "", stock: 1 }));
-      B.s = s; B.cats = cats; B.products = products; B.U = { product: (p) => "/tests.html?book=" + encodeURIComponent(p.id), cat: () => "/tests.html", sub: () => "/tests.html" };
+      B.s = s; B.cats = cats; B.products = products; B.U = { product: (p) => "/lab-tests?book=" + encodeURIComponent(p.id), cat: () => "/lab-tests", sub: () => "/lab-tests" };
       await Promise.all([loadSecrets(), loadPosts(), loadTopics(), loadJobs(), loadOverview()]);
       fillCatSelects(); fillSettings(); renderCats();
     } catch (e) { fail(e); }
@@ -512,7 +512,7 @@
 
   // pages an article may link to (the public page drops any other internal link)
   function validPaths() {
-    const set = new Set(["/", "/blog", "/blog/editorial-standards", "/tests.html", "/reports.html"]);
+    const set = new Set(["/", "/blog", "/blog/editorial-standards", "/lab-tests", "/reports"]);
     B.products.forEach((p) => { set.add(B.U.product(p)); if (p.category) { set.add(B.U.cat(p.category)); if (p.subcategory) set.add(B.U.sub(p.category, p.subcategory)); } });
     B.cats.forEach((c) => set.add("/blog/category/" + c.slug));
     B.posts.filter((p) => p.status === "published").forEach((p) => set.add((p.lang === "ur" ? "/ur/blog/" : "/blog/") + p.slug));
@@ -558,7 +558,7 @@
     const k = b.dataset.md;
     if (k === "h2") linePrefix("## "); else if (k === "h3") linePrefix("### "); else if (k === "b") wrapSel("**", "**", "bold text"); else if (k === "i") wrapSel("*", "*", "italic text");
     else if (k === "ul") linePrefix("- "); else if (k === "ol") linePrefix("1. "); else if (k === "quote") linePrefix("> ");
-    else if (k === "link") { const u = prompt("Link address (a page on this site like /tests.html, or https://… for a source)"); if (u) { if (!MD.cleanHref(u)) return toast("That isn't a valid link.", "error"); wrapSel("[", `](${u.trim()})`, "link text"); } }
+    else if (k === "link") { const u = prompt("Link address (a page on this site like /lab-tests, or https://… for a source)"); if (u) { if (!MD.cleanHref(u)) return toast("That isn't a valid link.", "error"); wrapSel("[", `](${u.trim()})`, "link text"); } }
     else if (k === "table") wrapSel("\n| Option | Good for | Watch out for |\n|---|---|---|\n| | | |\n| | | |\n", "", "");
     else if (k === "product") openProducts();
     else if (k === "image") insertPicture();

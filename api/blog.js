@@ -36,11 +36,11 @@ async function build() {
     tests()
   ]);
   const products = (t.items || []).filter((x) => x.active !== false);
-  const productPath = (p) => `/tests.html?book=${encodeURIComponent(p.id)}`;
+  const productPath = (p) => `/lab-tests?book=${encodeURIComponent(p.id)}`;
   const priceText = (p) => (t.showPrices && p.price !== "" && p.price != null ? `Rs ${p.price}` : "Book this test");
   const card = (p) => `<a class="blog-test-card" href="${esc(productPath(p))}"><span><small>Lab test</small><b>${esc(p.name)}</b></span><span class="go">${esc(priceText(p))} →</span></a>`;
   const out = new Map(), write = (k, v) => out.set(k, v);
-  const r = renderBlog({ SITE, STORE, esc, write, shopPage, headTags, crumbsHtml, crumbsLd, ld, short, isoDay, products, productPath, S: { safeUrl, productImages: () => [] }, priceText, ORG_ID, MD, BF, validPaths: new Set(["/", "/tests.html", "/reports.html"]), blog: { posts, categories, settings }, card });
+  const r = renderBlog({ SITE, STORE, esc, write, shopPage, headTags, crumbsHtml, crumbsLd, ld, short, isoDay, products, productPath, S: { safeUrl, productImages: () => [] }, priceText, ORG_ID, MD, BF, validPaths: new Set(["/", "/lab-tests", "/test-panels", "/services", "/doctors", "/contact", "/reports", "/faq", "/about", "/gallery"]), blog: { posts, categories, settings }, card });
   cache = { at: Date.now(), out, r, products };
   return cache;
 }
@@ -51,7 +51,7 @@ export default async function handler(req, res) {
     if (q.catalog) { const t = await tests(); res.setHeader("content-type", "application/json"); return res.status(200).send(JSON.stringify((t.items || []).filter((x) => x.active !== false).map((x) => ({ id: x.id, name: x.name, category: x.category, isPanel: !!x.isPanel })))); }
     const b = await build();
     if (q.sitemap) {
-      const base = ["/", "/tests.html"].map((u) => ({ loc: SITE + u }));
+      const base = ["/", "/about", "/services", "/doctors", "/lab-tests", "/test-panels", "/gallery", "/faq", "/contact"].map((u) => ({ loc: SITE + u }));
       res.setHeader("content-type", "application/xml");
       return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...base, ...b.r.urls].map((u) => `<url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ""}</url>`).join("")}</urlset>`);
     }

@@ -39,10 +39,10 @@ async function shop(ctx: Ctx) {
   // the clinic's live test list (active tests and panels), served by the site itself
   let items: any[] = [];
   try { const r = await fetch(`${ctx.site}/api/blog?catalog=1`, { headers: { "User-Agent": web.UA }, signal: AbortSignal.timeout(15_000) }); if (r.ok) items = await r.json(); } catch { /* no test cards this time */ }
-  const products = (Array.isArray(items) ? items : []).map((t: any) => ({ id: String(t.id), name: String(t.name || ""), variant_name: "", category: String(t.category || ""), subcategory: "", images: [], image_url: "", path: `/tests.html?book=${encodeURIComponent(t.id)}` }));
+  const products = (Array.isArray(items) ? items : []).map((t: any) => ({ id: String(t.id), name: String(t.name || ""), variant_name: "", category: String(t.category || ""), subcategory: "", images: [], image_url: "", path: `/lab-tests?book=${encodeURIComponent(t.id)}` }));
   const live = await web.livePaths(ctx.site);
-  ["/tests.html", "/reports.html"].forEach((p) => live.add(p));
-  const catPaths: [string, string][] = [["Book a lab test", "/tests.html"]];
+  ["/lab-tests", "/reports"].forEach((p) => live.add(p));
+  const catPaths: [string, string][] = [["Book a lab test", "/lab-tests"]];
   return { products, catPaths, live };
 }
 async function blogState(ctx: Ctx) {
