@@ -151,3 +151,21 @@ body[data-page] .f .btn,body[data-page] .rp-f .btn,.ok .btn,.popd .btn{width:100
 #dna.dna-still{height:auto}#dna.dna-still .dna-stick{position:relative;height:auto;min-height:100vh;padding:96px 0 110px}#dna.dna-still .dna-steps{gap:16px}#dna.dna-still .dna-steps li{grid-area:auto;opacity:1;transform:none}#dna.dna-still .dna-bar{display:none}
 /* The menu bar stays frosted even in the light mode used for slow connections */
 .lite .nav{background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(16px) saturate(150%)!important;backdrop-filter:blur(16px) saturate(150%)!important}
+
+/* Registrations and At a glance: frosted panes over soft colour, logos never cropped. */
+#trust,#glance{position:relative;isolation:isolate}
+#trust::before,#glance::before{content:"";position:absolute;inset:-30px 0;z-index:-1;pointer-events:none;background:radial-gradient(38% 60% at 16% 40%,color-mix(in srgb,var(--base) 30%,transparent),transparent 72%),radial-gradient(34% 55% at 84% 62%,color-mix(in srgb,var(--hi) 20%,transparent),transparent 72%),radial-gradient(28% 50% at 52% 80%,color-mix(in srgb,var(--accent) 20%,transparent),transparent 72%)}
+.trust-g{justify-content:center;gap:18px}
+.trust-i{flex:1 1 340px;max-width:560px;gap:20px;padding:16px 24px 16px 16px}
+.trust-i img{width:112px;height:112px;flex:none;object-fit:contain;object-position:center;padding:8px;background:rgba(255,255,255,.72);border-radius:14px}
+.trust-i b{font-size:1.04rem;line-height:1.3}
+.gl{display:flex;flex-wrap:wrap;justify-content:center;gap:18px}
+.gl-i{flex:0 1 calc((100% - (var(--gc) - 1)*18px)/var(--gc));min-width:0;justify-content:center;border-top:0}
+.trust-i.glass,.gl-i.glass{-webkit-backdrop-filter:blur(calc(var(--glass-blur) + 8px)) saturate(165%);backdrop-filter:blur(calc(var(--glass-blur) + 8px)) saturate(165%);background:linear-gradient(118deg,rgba(255,255,255,.58),rgba(255,255,255,.1) 34%,rgba(255,255,255,.36) 54%,rgba(255,255,255,.08) 76%,rgba(255,255,255,.34)),color-mix(in srgb,var(--base) 7%,transparent);box-shadow:0 24px 44px -26px color-mix(in srgb,var(--base) 60%,transparent),inset 0 1px 1px rgba(255,255,255,.9),inset 0 -1px 1px rgba(255,255,255,.45)}
+.trust-i.glass::before,.gl-i.glass::before{padding:1.6px;background:linear-gradient(140deg,#fff 0,rgba(255,255,255,.35) 24%,color-mix(in srgb,var(--gla,var(--base)) 48%,transparent) 52%,rgba(255,255,255,.3) 76%,#fff 100%)}
+.gl-i.glass::after,.trust-i.glass::after{opacity:.1}
+@media(max-width:860px){.gl-i{flex-basis:calc(50% - 9px)}}
+@media(max-width:560px){.trust-i{flex-basis:100%;padding:12px 16px 12px 12px;gap:14px}.trust-i img{width:88px;height:88px}}
+.no-glass .trust-i.glass,.no-glass .gl-i.glass{background:#fff}.lite .trust-i.glass,.lite .gl-i.glass{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(255,255,255,.9)}
+.trust-i img{background:#fff}
+#trust::before,#glance::before{inset:0;-webkit-mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent);mask-image:linear-gradient(transparent,#000 22%,#000 78%,transparent)}

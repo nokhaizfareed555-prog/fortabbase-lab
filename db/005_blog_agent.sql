@@ -922,3 +922,5 @@ update public.blog_settings b set articles_per_week = coalesce(nullif(d.data->>'
   agents_enabled = coalesce((d.data->>'enabled')::boolean, false), model = coalesce(nullif(d.data->>'model',''), b.model),
   writing_style = left(concat_ws(E'\n', d.data->>'rules', 'Audience: ' || (d.data->>'audience')), 4000)
   from public.site_sections d where d.key = 'blog_agent' and b.id = 1;
+
+grant execute on function public._can(text) to authenticated; -- used by the blog_settings update policy
