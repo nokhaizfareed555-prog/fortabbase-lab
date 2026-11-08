@@ -3,6 +3,9 @@
 "cleanUrls":false,
 "trailingSlash":false,
 "functions":{
+"api/labs.js":{
+"includeFiles":"{labs/**,web/assets/config.js}"
+},
 "api/page.js":{
 "includeFiles":"web/assets/{defaults,config}.js"
 },
@@ -11,6 +14,16 @@
 }
 },
 "redirects":[
+{
+"source":"/labs",
+"destination":"/admin#labs",
+"permanent":false
+},
+{
+"source":"/labs/:path*",
+"destination":"/admin#labs",
+"permanent":false
+},
 {
 "source":"/index.html",
 "destination":"/",
@@ -28,14 +41,6 @@
 }
 ],
 "rewrites":[
-{
-"source":"/labs",
-"destination":"/labs/index.html"
-},
-{
-"source":"/labs/sample-vial",
-"destination":"/labs/sample-vial.html"
-},
 {
 "source":"/",
 "destination":"/api/page?p=home"
@@ -110,15 +115,6 @@
 }
 ],
 "headers":[
-{
-"source":"/labs(.*)",
-"headers":[
-{
-"key":"X-Robots-Tag",
-"value":"noindex, nofollow"
-}
-]
-},
 {
 "source":"/assets/(.*)",
 "headers":[

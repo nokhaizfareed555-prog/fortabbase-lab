@@ -42,6 +42,7 @@ const FA=window.FA={demo,D,merge,
   const put=t=>{try{localStorage.setItem('fa_rows',t)}catch{}};
   if(old){try{const rows=JSON.parse(old);get().then(n=>{const t=JSON.stringify(n);if(t!==old){put(t);let last=0;try{last=+sessionStorage.getItem('fa_rl')||0;sessionStorage.setItem('fa_rl',Date.now())}catch{}if(Date.now()-last>15000)location.reload()}}).catch(()=>{});return build(rows)}catch{}}
   try{const n=await get();put(JSON.stringify(n));return build(n)}catch{return build({})}},
+ async token(){if(demo)return"";await refresh();return session()?.access_token||""},
  async rpc(n,a={}){if(demo)return demoRpc(n,a);await refresh();const r=await fetch(`${URL_}/rest/v1/rpc/${n}`,{method:'POST',headers:hdr(),body:JSON.stringify(a)});const t=await r.text(),j=t?JSON.parse(t):null;if(!r.ok)throw new Error(j?.message||'Something went wrong');return j},
  async posts(){if(demo)return demoDb().posts.filter(p=>p.status==='published');const r=await fetch(`${URL_}/rest/v1/blog_posts?select=*&order=published_at.desc`,{headers:{apikey:KEY}});return r.json()},
  async login(e,p){if(demo){ws(SES,{demo:1});return}const r=await fetch(`${URL_}/auth/v1/token?grant_type=password`,{method:'POST',headers:{apikey:KEY,'content-type':'application/json'},body:JSON.stringify({email:e,password:p})});const j=await r.json();if(!r.ok)throw new Error('Wrong email or password');ws(SES,{...j,exp:Date.now()+j.expires_in*1e3})},
