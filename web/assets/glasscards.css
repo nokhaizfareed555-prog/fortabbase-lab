@@ -61,3 +61,9 @@ html.lite .gc-c,html.lite .gc-cap,html.lite .gc-fr{-webkit-backdrop-filter:none!
 .gc-fx{overflow:hidden;opacity:var(--ge,0)}.gc-fx i{position:absolute;inset:-20% 0;width:62%;transform:translateX(var(--gs,-130%)) skewX(-16deg);background:linear-gradient(90deg,transparent,rgba(255,255,255,.55) 42%,rgba(255,235,245,.2) 58%,transparent)}
 html.lite .gc-back,html.lite .gc-bb{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 @media(max-width:760px){.gc-flip{height:352px;border-radius:22px}.gc-back{padding:13px;gap:6px}.gc-b-t h3{font-size:calc(1.02rem*var(--ns,1))}.gc-b-q{font-size:.72rem}.gc-b-m{font-size:.76rem}.gc-b-r{font-size:.82rem}.gc-b-s{font-size:.68rem}.gc-b-w{flex-direction:column;gap:1px;font-size:.72rem}.gc-b-w b{text-align:start}.gc-b-a{grid-template-columns:1fr;gap:5px}.gc-bb{min-height:36px;font-size:.76rem}}
+
+/* Corner arrow on the back: click again to turn the card over. */
+.gc-turn{position:absolute;top:13px;inset-inline-end:13px;width:27px;height:27px;fill:#fff;filter:drop-shadow(0 3px 5px rgba(0,0,0,.35));animation:gc-turn 1.6s ease-in-out infinite}@keyframes gc-turn{50%{transform:translate(3px,-3px)}}
+.gc-b-t{padding-inline-end:30px}
+@media(max-width:760px){.gc-turn{top:9px;inset-inline-end:9px;width:21px;height:21px}.gc-b-t{padding-inline-end:24px}}
+@media(prefers-reduced-motion:reduce){.gc-turn{animation:none}}
