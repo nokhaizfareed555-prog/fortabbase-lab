@@ -294,3 +294,28 @@ footer{padding-top:120px;-webkit-mask-image:linear-gradient(180deg,transparent 0
 .av-long{font-weight:600}.av-long.on{color:#0a6a3b}.av-long.off{color:#8a4310}
 @media(max-width:760px){.av-b{font-size:.64rem;padding:2px 7px;gap:4px}.av-b i{width:7px;height:7px}}
 .visit-side{display:contents}@media(min-width:861px){.visit{grid-template-columns:repeat(2,minmax(0,1fr));gap:clamp(24px,5vw,72px)}.visit-side{display:grid;gap:18px;align-content:start}}
+
+/* Lab tests: the selected-tests panel scrolls by itself, and chosen tests show one Added tag in the card corner. */
+.cart{padding:0}.cart>#cart{padding:18px}
+@media(min-width:861px){.cart>#cart{max-height:calc(100vh - 104px);max-height:calc(100dvh - 104px);overflow-y:auto;scrollbar-width:thin}}
+.ti.in-cart{position:relative}.ti.in-cart h3{padding-inline-end:72px}
+.ti-added{position:absolute;top:12px;inset-inline-end:12px;z-index:2;min-height:30px;padding:0 12px;border:0;border-radius:999px;background:#5bd13c;color:#fff;font:700 .78rem/1 var(--fb,inherit);cursor:pointer}.ti-added:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+@media(max-width:860px){.ti-added{top:8px;inset-inline-end:8px;min-height:26px;padding:0 9px;font-size:.7rem}.ti.in-cart h3{padding-inline-end:58px}}
+
+/* Checkout: the same list and form as the side panel, with more room. */
+.cart-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.cart-h a{font-size:.85rem;font-weight:600;white-space:nowrap}
+.co-g{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}.co-p{padding:22px}.co-p h3{margin-top:0}.co-more{margin-top:16px;width:100%}
+@media(max-width:860px){.co-g{grid-template-columns:minmax(0,1fr);gap:14px}.co-p{padding:16px}}
+
+/* Lab tests: use the full screen width with narrow margins; as many cards per row as fit. */
+body[data-page=tests] #main .wrap{max-width:none;width:auto;margin-inline:0;padding-inline:clamp(10px,1.4vw,24px)}
+@media(min-width:600px){body[data-page=tests] #list{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}}
+@media(min-width:861px){body[data-page=tests] .tl{grid-template-columns:minmax(0,1fr) clamp(320px,24vw,420px)}}
+
+/* Lab tests on desktop: the test list and the selected tests scroll separately inside the screen. Height is set by tlSize in site.js. */
+@media(min-width:861px){
+body[data-page=tests] .tl{height:var(--tl-h,calc(100dvh - 120px));align-items:stretch;overflow:hidden}
+body[data-page=tests] #list{height:100%;min-height:0;overflow-y:auto;align-content:start;padding:4px 10px 16px 4px;scrollbar-width:thin}
+body[data-page=tests] .cart{position:relative;top:auto;height:100%;min-height:0;overflow:hidden}
+body[data-page=tests] .cart>#cart{height:100%;max-height:none;overflow-y:auto}
+}

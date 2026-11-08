@@ -83,6 +83,10 @@
 "destination":"/api/page?p=reports"
 },
 {
+"source":"/checkout",
+"destination":"/api/page?p=checkout"
+},
+{
 "source":"/llms.txt",
 "destination":"/api/page?p=llms"
 },
