@@ -319,3 +319,4 @@ body[data-page=tests] #list{height:100%;min-height:0;overflow-y:auto;align-conte
 body[data-page=tests] .cart{position:relative;top:auto;height:100%;min-height:0;overflow:hidden}
 body[data-page=tests] .cart>#cart{height:100%;max-height:none;overflow-y:auto}
 }
+.rp-loy{display:flex;flex-wrap:wrap;align-items:center;gap:14px 34px;padding:16px 20px;margin:14px 0}.rp-loy small{display:block;color:var(--muted)}.rp-loy b{font:800 1.5rem var(--fh);color:var(--base)}.rp-aw{display:flex;flex-wrap:wrap;gap:8px;margin-inline-start:auto}.rp-aw span{padding:5px 11px;border-radius:99px;background:#fff;box-shadow:inset 0 0 0 1px var(--line);font-size:.84rem;font-weight:700;color:var(--base)}@media(max-width:600px){.rp-aw{margin-inline-start:0}}

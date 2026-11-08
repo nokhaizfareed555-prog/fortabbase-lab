@@ -4,7 +4,7 @@
 (function(){
 const DICT={
 'Checkout':'چیک آؤٹ','Full view':'پورا صفحہ','Add more tests':'مزید ٹیسٹ شامل کریں','Your details':'آپ کی تفصیلات','Review your tests and enter your details to book.':'اپنے ٹیسٹ دیکھیں اور بکنگ کے لیے اپنی تفصیلات درج کریں۔',
-'Lead':'لیڈ',
+'Lead':'لیڈ','Your loyalty points':'آپ کے لائلٹی پوائنٹس','Completed visits':'مکمل وزٹ',
 "Reliable diagnostics":"قابل اعتماد تشخیص","Precision in every detail":"ہر تفصیل میں درستگی","From your sample to your report, every step is handled with care.":"آپ کے نمونے سے رپورٹ تک، ہر مرحلہ احتیاط سے مکمل کیا جاتا ہے۔","Your sample":"آپ کا نمونہ","Given at our laboratory, or collected from your home.":"ہماری لیبارٹری میں دیں، یا گھر سے نمونہ لینے کی سہولت حاصل کریں۔","Careful testing":"احتیاط سے ٹیسٹنگ","Tested in our diagnostic laboratory, open 24 hours a day.":"ہماری تشخیصی لیبارٹری میں ٹیسٹ، جو 24 گھنٹے کھلی ہے۔","Your report":"آپ کی رپورٹ","A clear report you can go through with your doctor.":"واضح رپورٹ جو آپ اپنے ڈاکٹر کے ساتھ دیکھ سکتے ہیں۔",
 "Services":"خدمات","Doctors":"ڈاکٹرز","Lab tests":"لیب ٹیسٹ","Health blog":"صحت بلاگ","Visit":"تشریف لائیں","Book a test":"ٹیسٹ بک کریں","Call":"کال کریں","WhatsApp":"واٹس ایپ","Book":"بک کریں","Add":"شامل کریں","Added":"شامل ہو گیا",
 "Fort Abbas Poly Clinic Laboratories":"فورٹ عباس پولی کلینک لیبارٹریز","Fort Abbas Poly Clinic":"فورٹ عباس پولی کلینک","Complete care. Reliable diagnostics. Close to home.":"مکمل علاج۔ قابلِ اعتماد تشخیص۔ آپ کے گھر کے قریب۔",
