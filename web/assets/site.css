@@ -126,3 +126,27 @@ body{background:radial-gradient(58vw 56vh at 4% 10%,color-mix(in srgb,var(--acce
 /* Button placement: paired actions share the row, main action on the end side and on top when they stack. */
 body[data-page] .acts{display:flex;flex-wrap:wrap-reverse;justify-content:stretch;gap:10px;margin-top:18px}body[data-page] .acts .btn{flex:1 1 auto;min-width:0}
 body[data-page] .f .btn,body[data-page] .rp-f .btn,.ok .btn,.popd .btn{width:100%;min-width:0}.ok .btn{margin-top:12px}
+
+/* Home page DNA section (web/assets/dna.js draws the helix) */
+#dna{padding:0;position:relative;height:300vh;background:#04051a;color:#fff}
+.dna-stick{position:sticky;top:0;height:100vh;height:100svh;overflow:hidden;display:flex;align-items:center;background:#04051a}
+.dna-cv{position:absolute;inset:0;width:100%;height:100%;display:block}
+.dna-scrim{position:absolute;inset:0;pointer-events:none;background:linear-gradient(90deg,rgba(4,5,26,.94) 0,rgba(4,5,26,.86) 36%,transparent 60%)}
+[dir=rtl] .dna-scrim{transform:scaleX(-1)}
+.dna-in{width:min(1160px,100%);padding-top:68px}
+.dna-copy{max-width:440px}
+.dna-eye{font:700 .78rem/1.3 var(--fh);letter-spacing:.14em;text-transform:uppercase;color:#ffb45e;margin-bottom:12px}
+#dna h2{color:#fff;font-size:clamp(1.9rem,1.3rem + 2.6vw,3.3rem);margin-bottom:.4em}
+.dna-lead{color:rgba(255,255,255,.82);margin-bottom:26px}
+.dna-steps{list-style:none;margin:0;padding:0;display:grid}
+.dna-steps li{grid-area:1/1;opacity:0;transform:translateY(14px);transition:opacity .4s,transform .4s;pointer-events:none}
+.dna-steps li.on{opacity:1;transform:none}
+.dna-steps b{display:block;font:700 1.2rem/1.3 var(--fh);color:#7fd0ff;margin-bottom:4px}
+.dna-steps span{color:rgba(255,255,255,.88)}
+.dna-bar{height:3px;margin-top:24px;background:rgba(255,255,255,.18);border-radius:3px;overflow:hidden}
+.dna-bar i{display:block;height:100%;background:linear-gradient(90deg,#38a3ff,#ff9a3c);transform-origin:0 50%;transform:scaleX(var(--dna-p,0))}
+[dir=rtl] .dna-bar i{transform-origin:100% 50%}
+@media(max-width:860px){#dna{height:260vh}.dna-stick{align-items:flex-end}.dna-scrim{background:linear-gradient(0deg,rgba(4,5,26,.97) 0,rgba(4,5,26,.92) 42%,transparent 66%)}[dir=rtl] .dna-scrim{transform:none}.dna-in{margin:auto auto 0;padding-top:0;padding-bottom:88px}.dna-copy{max-width:none}.dna-lead{margin-bottom:16px}.dna-bar{margin-top:16px}}
+#dna.dna-still{height:auto}#dna.dna-still .dna-stick{position:relative;height:auto;min-height:100vh;padding:96px 0 110px}#dna.dna-still .dna-steps{gap:16px}#dna.dna-still .dna-steps li{grid-area:auto;opacity:1;transform:none}#dna.dna-still .dna-bar{display:none}
+/* The menu bar stays frosted even in the light mode used for slow connections */
+.lite .nav{background:rgba(255,255,255,.72);-webkit-backdrop-filter:blur(16px) saturate(150%)!important;backdrop-filter:blur(16px) saturate(150%)!important}
