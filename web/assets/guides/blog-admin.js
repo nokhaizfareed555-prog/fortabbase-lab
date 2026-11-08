@@ -610,7 +610,7 @@
     const ok = F.slug.value.trim();
     if (!F.title.value.trim() || F.title.value.trim().length < 5) throw new Error("Give the article a title (5+ characters).");
     if (!/^[a-z0-9]+(-[a-z0-9]+)*$/.test(ok)) throw new Error("The address may only use lowercase letters, numbers and single dashes (SEO & details).");
-    const cover = S.safeUrl(F.cv_url.value) ? { url: F.cv_url.value.trim(), alt: F.cv_alt.value.trim(), credit: F.cv_credit.value.trim(), license: F.cv_license.value.trim(), license_url: S.safeUrl(F.cv_license_url.value) ? F.cv_license_url.value.trim() : "", source_url: S.safeUrl(F.cv_source_url.value) ? F.cv_source_url.value.trim() : "", kind: (B.edit.cover_image || {}).kind || "manual", ratio: F.cv_ratio.value || undefined, pos: F.cv_pos.value || undefined } : {};
+    const cover = S.safeUrl(F.cv_url.value) ? { url: F.cv_url.value.trim(), alt: F.cv_alt.value.trim(), credit: F.cv_credit.value.trim(), license: F.cv_license.value.trim(), license_url: S.safeUrl(F.cv_license_url.value) ? F.cv_license_url.value.trim() : "", source_url: S.safeUrl(F.cv_source_url.value) ? F.cv_source_url.value.trim() : "", kind: (B.edit.cover_image || {}).kind || "manual", sizes: (B.edit.cover_image || {}).url === F.cv_url.value.trim() ? (B.edit.cover_image || {}).sizes : undefined, ratio: F.cv_ratio.value || undefined, pos: F.cv_pos.value || undefined } : {};
     if (cover.url && !cover.alt) throw new Error("Describe the cover photo in the alt text (SEO & details).");
     const body = F.body_md.value;
     const ids = [...new Set([...body.matchAll(/^\[\[product:([A-Za-z0-9_.:-]{1,80})\]\]$/gm)].map((m) => m[1]))].filter((id) => B.products.some((p) => p.id === id));

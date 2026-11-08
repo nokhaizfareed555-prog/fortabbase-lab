@@ -403,7 +403,7 @@ async function storeImage(ctx: Ctx, url: string, name: string): Promise<string |
     const type = r.headers.get("content-type") || "";
     if (!r.ok || !/^image\/(jpeg|png|webp)/.test(type)) return null;
     const buf = new Uint8Array(await r.arrayBuffer());
-    if (buf.length > 4.5 * 1024 * 1024 || buf.length < 8000) return null;
+    if (buf.length > 15 * 1024 * 1024 || buf.length < 8000) return null;
     const ext = type.includes("png") ? "png" : type.includes("webp") ? "webp" : "jpg";
     const path = `covers/${name}-${Date.now().toString(36)}.${ext}`;
     const { error } = await ctx.db.storage.from("blog").upload(path, buf, { contentType: type, upsert: false, cacheControl: "31536000" });
@@ -411,10 +411,66 @@ async function storeImage(ctx: Ctx, url: string, name: string): Promise<string |
     return ctx.db.storage.from("blog").getPublicUrl(path).data.publicUrl;
   } catch { return null; }
 }
+/* Every place an article's photo appears has its own shape. wide: article cover and top story. card: article cards and the phone cover. square: small list rows. */
+const SHAPES = { wide: { w: 1920, h: 1080 }, card: { w: 1200, h: 900 }, square: { w: 800, h: 800 } } as const;
+type Shape = keyof typeof SHAPES;
+const NO_CREDIT_NEEDED = /^(CC0|Public Domain|Pexels)/;
+const latinOnly = (t: string) => /^[\u0000-ɏ‐-‧]*$/.test(t);
+/* The photo has enough pixels and is close enough to the shape that little is cut off. */
+const suits = (p: web.Photo, s: Shape) => { const t = SHAPES[s], want = t.w / t.h, have = p.width / p.height; return p.width >= t.w && p.height >= t.h && have / want < (s === "square" ? 1.12 : 1.3) && want / have < (s === "square" ? 1.12 : 1.15); };
+const sized = (url: string, s: Shape) => `${url}?auto=compress&cs=tinysrgb&fit=crop&w=${SHAPES[s].w}&h=${SHAPES[s].h}`;
+const credits = (p: web.Photo) => ({ credit: p.credit, license: p.license, license_url: p.license_url, source_url: p.source_url });
+
+async function stockCover(ctx: Ctx, art: any): Promise<Record<string, unknown> | null> {
+  const { data: others } = await ctx.db.from("blog_posts").select("id,cover_image").neq("id", art.id);
+  const used = new Set((others || []).flatMap((o: any) => [o.cover_image?.source_url, ...Object.values(o.cover_image?.sizes || {}).map((x: any) => x?.source_url)]).filter(Boolean));
+  const fresh = (p: web.Photo) => !used.has(p.source_url);
+  const safe = (p: web.Photo) => !COVER_BAD.test(`${p.alt} ${p.url}`) && latinOnly(p.alt);
+  const want = new Set(words(`${art.focus_query} ${(art.tags || []).join(" ")}`).filter((w) => w.length > 3 && !STOP.has(w) && !COVER_GENERIC.includes(w)));
+  const about = (p: web.Photo) => words(p.alt).some((w) => want.has(w));
+  const own = [art.focus_query, ...(art.tags || [])].filter(Boolean).slice(0, 3) as string[];
+  const general = ["medical laboratory scientist", "laboratory test tubes", "doctor talking to patient", "stethoscope on desk"];
+  const name = art.slug.slice(0, 34);
+  const alt = (p: web.Photo) => clip(photoAlt(p.alt) || "Medical laboratory photo", 160);
+  const shot = (p: web.Photo, url: string, s: Shape) => ({ url, w: SHAPES[s].w, h: SHAPES[s].h, ...credits(p) });
+
+  const { data: key } = await ctx.db.from("ai_keys").select("value").eq("provider", "pexels").maybeSingle();
+  if (key?.value) {
+    for (const [list, specific] of [[own, true], [general, false]] as const) for (const q of list) {
+      const hits = (await web.pexels(key.value, q)).filter((p) => safe(p) && fresh(p) && suits({ ...p, height: p.width / (16 / 9) }, "wide"));
+      const pool = specific ? hits.filter(about) : hits;
+      for (const p of pool.slice(0, 6)) {
+        const sizes: Record<string, unknown> = {};
+        for (const s of Object.keys(SHAPES) as Shape[]) { const u = await storeImage(ctx, sized(p.url, s), `${name}-${s}`); if (u) sizes[s] = shot(p, u, s); }
+        if (Object.keys(sizes).length === 3) return { url: (sizes.wide as any).url, alt: alt(p), ...credits(p), kind: "pexels", original_url: p.url, sizes };
+      }
+    }
+  }
+  // Openly licensed photos, each shape its own photo. A photo that needs a credit stays on the article page, where the credit is printed.
+  for (const list of [own, general]) for (const q of list) {
+    const specific = list === own;
+    const wide = (await web.openverse(q)).filter((p) => safe(p) && fresh(p) && suits(p, "wide") && (!specific || about(p)));
+    for (const p of wide.slice(0, 5)) {
+      const u = await storeImage(ctx, p.url, `${name}-wide`);
+      if (!u) continue;
+      const sizes: Record<string, unknown> = { wide: shot(p, u, "wide") };
+      sizes.wide = { ...(sizes.wide as object), w: p.width, h: p.height };
+      const square = await web.openverse(q, "square");
+      for (const s of ["card", "square"] as Shape[]) {
+        const extra = (s === "card" ? wide : square).find((x) => x.url !== p.url && safe(x) && fresh(x) && NO_CREDIT_NEEDED.test(x.license) && suits(x, s));
+        const su = extra && await storeImage(ctx, extra.url, `${name}-${s}`);
+        if (extra && su) sizes[s] = { ...shot(extra, su, s), w: extra.width, h: extra.height };
+      }
+      return { url: u, alt: alt(p), ...credits(p), kind: "openverse", original_url: p.url, sizes };
+    }
+  }
+  return null;
+}
+
 export async function imager(ctx: Ctx): Promise<Out> {
   const art = await post(ctx);
   const mode = ctx.s.image_source;
-  const nextStep: Next[] = [{ agent: "reviewer", payload: { post_id: art.id, source_text: ctx.job.payload?.source_text || [] }, post_id: art.id }];
+  const nextStep: Next[] = ctx.job.payload?.images_only ? [] : [{ agent: "reviewer", payload: { post_id: art.id, source_text: ctx.job.payload?.source_text || [] }, post_id: art.id }];
   if (mode === "none" || (art.cover_image && art.cover_image.url && !ctx.job.payload?.replace)) return { result: { skipped: mode === "none" ? "images off" : "already has a cover" }, next: nextStep };
   let cover: Record<string, unknown> | null = null;
   if (mode === "products" || mode === "products_then_openverse") {
@@ -428,22 +484,10 @@ export async function imager(ctx: Ctx): Promise<Out> {
       }
     }
   }
-  if (!cover && (mode === "openverse" || mode === "products_then_openverse")) {
-    // a cover must be about the article and never a graphic medical picture; otherwise a calm general photo
-    const BAD = COVER_BAD;
-    const want = new Set(words(`${art.focus_query} ${(art.tags || []).join(" ")}`).filter((w) => w.length > 3 && !STOP.has(w) && !COVER_GENERIC.includes(w)));
-    const fits = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`) && words(x.alt).some((w) => want.has(w));
-    const safe = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`);
-    let pick: web.Photo | undefined;
-    for (const q of [art.focus_query, ...(art.tags || [])].filter(Boolean).slice(0, 3)) { pick = (await web.openverse(q)).find(fits); if (pick) break; }
-    if (!pick) for (const q of ["medical laboratory test tubes", "blood sample laboratory", "doctor talking to patient", "stethoscope"]) { const list = (await web.openverse(q)).filter(safe); pick = list[Math.floor(Math.random() * Math.min(list.length, 6))]; if (pick) break; }
-    if (pick) {
-      const own = await storeImage(ctx, pick.url, art.slug.slice(0, 40));
-      cover = { url: own || pick.url, alt: clip(photoAlt(pick.alt) || "Medical laboratory photo", 160), credit: pick.credit, license: pick.license, license_url: pick.license_url, source_url: pick.source_url, kind: "openverse", original_url: pick.url };
-    }
-  }
+  if (!cover && (mode === "openverse" || mode === "products_then_openverse")) cover = await stockCover(ctx, art);
   if (cover) await save(ctx, art.id, { cover_image: cover });
-  await ctx.log(cover ? "info" : "warn", cover ? `Cover: ${cover.kind} (${cover.credit}${cover.license ? ", " + cover.license : ""})` : "No suitable licensed photo found — the article will show without a cover");
+  const n = cover?.sizes ? Object.keys(cover.sizes as object).length : 0;
+  await ctx.log(cover ? "info" : "warn", cover ? `Cover: ${cover.kind}, ${n} sizes (${cover.credit}${cover.license ? ", " + cover.license : ""})` : "No high-resolution photo found; the existing picture stays, or the article shows without a cover");
   return { result: { cover }, next: nextStep };
 }
 

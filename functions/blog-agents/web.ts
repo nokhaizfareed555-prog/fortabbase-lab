@@ -87,15 +87,25 @@ export async function linkAlive(url: string): Promise<boolean> {
 /* ---------------- photos (openly licensed) ---------------- */
 export type Photo = { url: string; alt: string; credit: string; license: string; license_url: string; source_url: string; width: number; height: number };
 const LICENSE_NAME: Record<string, string> = { cc0: "CC0", pdm: "Public Domain Mark", by: "CC BY", "by-sa": "CC BY-SA" };
-export async function openverse(q: string): Promise<Photo[]> {
+export async function openverse(q: string, shape: "wide" | "square" = "wide"): Promise<Photo[]> {
   try {
-    const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&license=cc0,pdm,by,by-sa&mature=false&aspect_ratio=wide&size=large&page_size=12`, { headers: { "User-Agent": UA }, signal: T(15_000) });
+    const r = await fetch(`https://api.openverse.org/v1/images/?q=${encodeURIComponent(q)}&license=cc0,pdm,by,by-sa&mature=false&category=photograph&aspect_ratio=${shape}&size=large&page_size=40`, { headers: { "User-Agent": UA }, signal: T(15_000) });
     if (!r.ok) return [];
     const j = await r.json();
-    return (j.results || []).filter((x: any) => x.url && /^https:/.test(x.url) && (x.width || 0) >= 900 && LICENSE_NAME[x.license])
+    return (j.results || []).filter((x: any) => x.url && /^https:/.test(x.url) && /\.jpe?g($|\?)/i.test(x.url) && (x.width || 0) >= 800 && LICENSE_NAME[x.license])
       .map((x: any) => ({ url: x.url, alt: String(x.title || "").slice(0, 120), credit: `${x.creator ? String(x.creator).slice(0, 80) : "Unknown"} via ${x.source || "Openverse"}`,
         license: `${LICENSE_NAME[x.license]}${x.license_version && !["cc0", "pdm"].includes(x.license) ? " " + x.license_version : ""}`,
         license_url: x.license_url || "", source_url: x.foreign_landing_url || "", width: x.width, height: x.height }));
+  } catch { return []; }
+}
+/* Pexels: professional stock photos (free key, no attribution required). Any size is cropped for us through the image link. */
+export async function pexels(key: string, q: string): Promise<Photo[]> {
+  try {
+    const r = await fetch(`https://api.pexels.com/v1/search?query=${encodeURIComponent(q)}&orientation=landscape&size=large&per_page=30`, { headers: { Authorization: key, "User-Agent": UA }, signal: T(15_000) });
+    if (!r.ok) return [];
+    const j = await r.json();
+    return (j.photos || []).filter((x: any) => x.src?.original && x.width >= 1920 && x.height >= 1080)
+      .map((x: any) => ({ url: x.src.original, alt: String(x.alt || "").slice(0, 120), credit: `${String(x.photographer || "Pexels").slice(0, 80)} via Pexels`, license: "Pexels License", license_url: "https://www.pexels.com/license/", source_url: x.url || "", width: x.width, height: x.height }));
   } catch { return []; }
 }
 
