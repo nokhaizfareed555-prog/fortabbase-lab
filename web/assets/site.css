@@ -234,3 +234,23 @@ html:not(.no-glass):not(.lite) .glass:not(.trust-i):not(.gl-i){background:linear
 .vc-arr{position:absolute;top:calc(38px + var(--ch)*.42);z-index:150;width:48px;height:48px;display:grid;place-items:center;padding:0;border:1px solid var(--line);border-radius:50%;background:rgba(255,255,255,.88);color:var(--ink);box-shadow:0 10px 24px -12px rgba(15,25,50,.6);cursor:pointer;transition:transform .25s,background .25s}.vc-arr svg{width:21px;height:21px;fill:none;stroke:currentColor;stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round}.vc-arr.prev{left:max(16px,calc(50vw - 590px))}.vc-arr.next{right:max(16px,calc(50vw - 590px))}.vc-arr:focus-visible{outline:2px solid var(--accent);outline-offset:2px}@media(hover:hover){.vc-arr:hover{transform:scale(1.08);background:#fff}}.vc-arr:active{transform:scale(.94)}
 @media(max-width:860px){.vc{--cw:clamp(170px,50vw,214px)}.vc-stage{height:calc(var(--ch) + 96px);-webkit-mask-image:none;mask-image:none}.vc-arr{width:40px;height:40px;background:#fff}.vc-arr.prev{left:8px}.vc-arr.next{right:8px}.vc-n{font-size:1.45rem;left:40px}.vc-v{left:13px;font-size:.56rem}.vc-info{padding:12px 12px 13px;max-height:72%}.vc-info h3{font-size:.9rem;margin-bottom:6px}.vc-info dd{font-size:.72rem}.vc-info dl{gap:4px}}
 @media(prefers-reduced-motion:reduce){.vc-in,.vc-info,.vc-tube{transition:none}}
+
+/* Doctors tagged Lead: one full-width card above the regular cards in their category. */
+.person.lead-doc{grid-column:1/-1;grid-row:auto;display:flex;align-items:center;gap:24px;padding:22px 26px}
+.person.lead-doc .p-head{flex:1 1 auto;min-width:0;flex-direction:row;align-items:center;text-align:start;gap:20px}
+.person.lead-doc .ava{width:92px;height:92px;font-size:1.6rem}
+.person.lead-doc h3{font-size:1.3rem;line-height:1.25}
+.person.lead-doc .q{font-size:.92rem}
+.person.lead-doc .p-desc{margin-top:6px;font-size:.92rem}
+.lead-b{display:inline-block;margin-bottom:6px;padding:3px 10px;border-radius:999px;background:var(--accent);color:#fff;font:700 .72rem/1.3 var(--fh);letter-spacing:.03em}
+[lang=ur] .lead-b{line-height:1.9;letter-spacing:0}
+.person.lead-doc .p-role{flex:0 1 32%;min-width:0;align-self:stretch;align-items:center;min-height:0;padding:0;padding-inline-start:24px;border-top:0;border-inline-start:1px solid var(--line)}
+@media(max-width:860px){
+.person.lead-doc{flex-direction:column;align-items:stretch;gap:10px;padding:14px}
+.person.lead-doc .p-head{gap:14px}
+.person.lead-doc .ava{width:68px;height:68px;font-size:1.25rem}
+.person.lead-doc h3{font-size:1.05rem}
+.person.lead-doc .q,.person.lead-doc .p-desc{font-size:.8rem}
+.person.lead-doc .p-desc{margin-top:4px;line-height:1.4}
+.person.lead-doc .p-role{flex:none;align-self:auto;padding:8px 0 0;border-inline-start:0;border-top:1px solid var(--line)}
+}
