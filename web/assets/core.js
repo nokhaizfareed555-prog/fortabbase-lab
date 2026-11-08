@@ -47,10 +47,14 @@ const FA=window.FA={demo,D,merge,
   const s=e.meshSize,h=s*Math.sqrt(3),a=s*.5,b=h/2,R=s*.5;
   const hex=(x,y)=>{const p=[...Array(6)].map((_,i)=>[x+s*Math.cos(i*Math.PI/3),y+s*Math.sin(i*Math.PI/3)]);return `<path d="M${p.map(q=>q.map(n=>n.toFixed(1)).join(' ')).join('L')}Z"/><circle cx="${x}" cy="${y}" r="${R.toFixed(1)}"/>`};
   const W=3*s,H=h,tile=hex(s,b)+hex(s+1.5*s,0)+hex(s+1.5*s,h)+hex(-.5*s,0)+hex(-.5*s,h);
-  const uri='data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H.toFixed(1)}" fill="none" stroke="#14396f" stroke-width="2.4">${tile}</svg>`);
+  const uri='data:image/svg+xml,'+encodeURIComponent(`<svg xmlns="http://www.w3.org/2000/svg" width="${W}" height="${H.toFixed(1)}" fill="none" stroke="#14396f" stroke-width="1.3">${tile}</svg>`);
   m=document.createElement('div');m.id='fa-mesh';m.setAttribute('aria-hidden','true');
-  m.innerHTML=[['-4%','6%','46vw',1],['66%','38%','42vw',.65],['8%','72%','36vw',.45]].map(([l,t,w,o])=>`<i style="left:${l};top:${t};width:${w};height:${w};min-width:300px;min-height:300px;opacity:${o*e.meshOpacity};background-image:url('${uri}')"></i>`).join('');
-  document.body.prepend(m)},
+  const sp=e.meshSpeed||90,mv=e.meshMotion!==false;
+  m.innerHTML=[['-6%','2%','40vw',1],['68%','16%','34vw',.7],['12%','38%','30vw',.55],['62%','58%','38vw',.8],['-4%','78%','32vw',.5]].map(([l,t,w,o],i)=>`<b style="left:${l};top:${t};width:${w};height:${w};min-width:260px;min-height:260px;${mv?`animation:meshfloat ${sp*.6}s ease-in-out ${-i*7}s infinite alternate`:''}"><i style="opacity:${o*e.meshOpacity};background-image:url('${uri}');--mx:${W}px;--my:${H.toFixed(1)}px;${mv?`animation:meshdrift ${sp}s linear ${-i*11}s infinite ${i%2?'reverse':''}`:''}"></i></b>`).join('');
+  document.body.prepend(m);
+  /* Rings start below the home section; pages without one use the whole page. */
+  const place=()=>{const h=document.querySelector('.hero');m.style.top=(h?h.getBoundingClientRect().bottom+scrollY:0)+'px'};place();
+  FA._mo?.disconnect();if(window.ResizeObserver){FA._mo=new ResizeObserver(place);FA._mo.observe(document.body)}},
  ripple(getE){if(FA._r)return;FA._r=1;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   document.addEventListener('pointerdown',ev=>{const e=getE();if(!e||!e.rippleOn)return;const R=e.rippleRadius,I=e.rippleIntensity,A=e.rippleAberration,D_=e.rippleDuration;
    const w=document.createElement('div');w.className='fa-ripple';w.style.cssText=`left:${ev.clientX}px;top:${ev.clientY}px;width:${R*2}px;height:${R*2}px;--d:${D_}ms;--blur:${e.rippleBlur}px`;

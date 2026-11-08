@@ -1,6 +1,6 @@
 (async function(){
 const C=await FA.content(),e=FA.esc,$=(s,r=document)=>r.querySelector(s);
-FA.applyTheme(C);FA.mesh(C.effects);FA.ripple(()=>C.effects);
+FA.applyTheme(C);FA.ripple(()=>C.effects);
 const v=C.visit,wa=(t='')=>`https://wa.me/${v.whatsapp}${t?'?text='+encodeURIComponent(t):''}`,tel='tel:+'+v.whatsapp;
 const svg='<svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15L2 22l5.1-1.3A10 10 0 1 0 12 2Z"/></svg>';
 document.title=document.body.dataset.title?`${document.body.dataset.title} | ${C.brand.name}`:C.brand.name;
@@ -61,4 +61,5 @@ if(page==='tests'){let cart=[],cat='All',q='',sent=null;
  document.addEventListener('submit',async ev=>{const fm=ev.target;if(fm.id!=='bk'&&fm.id!=='bq')return;ev.preventDefault();const f=Object.fromEntries(new FormData(fm)),er=fm.querySelector('#err,.berr'),b=fm.querySelector('button.btn');const bad=whenErr(f);if(bad){er.textContent=bad;return}b.disabled=true;
   try{const r=await FA.rpc('create_booking',{b:payload(f,fm.id==='bq'?[qItem]:cart)});if(fm.id==='bq'){$('#qp .dlg').innerHTML=`<h3>Booking received</h3><p>Your reference is <b>${e(r)}</b>. We will call you to confirm.</p><a class="btn acc sm" href="${wa('Hi, my booking reference is '+r)}">Message us on WhatsApp</a> <button class="btn ghost sm" id="qx">Close</button>`}else{sent=r;cart=[];all()}}catch(x){er.textContent=x.message;b.disabled=false}});
  all();const bk=new URLSearchParams(location.search).get('book');if(bk&&byId[bk])qOpen(bk,null)}
+FA.mesh(C.effects);
 })();
