@@ -16,26 +16,35 @@
 .vx-end.on{opacity:1;visibility:visible;transform:translateY(-50%)}
 .vx-end h2{font-size:clamp(1.65rem,1.2rem + 1.7vw,2.7rem);font-weight:800;line-height:1.1;margin-bottom:14px}
 .vx-end p{margin:0;color:var(--vx-muted);line-height:1.6;font-size:1.05rem}
-.vx-toast{position:absolute;right:max(20px,calc(50vw - 560px));top:clamp(18px,5vh,44px);width:min(350px,calc(100vw - 32px));display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.9);opacity:0;visibility:hidden;transform:translateY(-26px) scale(.95);transition:opacity .3s,transform .5s cubic-bezier(.2,1.5,.4,1),visibility .3s}
+.vx-toast{position:absolute;right:max(20px,calc(50vw - 560px));top:clamp(76px,11vh,96px);width:min(350px,calc(100vw - 32px));display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border-radius:16px;background:rgba(255,255,255,.9);opacity:0;visibility:hidden;transform:translateY(-26px) scale(.95);transition:opacity .3s,transform .5s cubic-bezier(.2,1.5,.4,1),visibility .3s}
 .vx-toast.on{opacity:1;visibility:visible;transform:none}
 .vx-dot{flex:none;width:38px;height:38px;border-radius:50%;background:var(--vx-red);display:grid;place-items:center}
 .vx-dot svg{width:20px;height:20px;fill:none;stroke:#fff;stroke-width:2;stroke-linecap:round;stroke-linejoin:round}
 .vx-toast small{display:block;font-size:.76rem;color:var(--vx-muted)}
 .vx-toast b{display:block;font:700 1rem/1.3 "Plus Jakarta Sans",system-ui,sans-serif}
 .vx-toast code{display:block;margin-top:2px;font:600 .84rem/1.3 ui-monospace,Menlo,Consolas,monospace;color:var(--vx-red)}
-.vx-rail{position:absolute;right:14px;top:50%;height:min(240px,34vh);width:3px;border-radius:3px;background:rgba(20,48,92,.16);transform:translateY(-50%)}
-.vx-rail i{position:absolute;inset:0;border-radius:3px;background:var(--vx-red);transform:scaleY(0);transform-origin:top}
+.vx-title{display:none}
+.vx-hint{position:absolute;left:50%;bottom:max(22px,env(safe-area-inset-bottom));transform:translateX(-50%);width:min(430px,calc(100% - 32px));padding:11px 18px 12px;border-radius:14px;background:rgba(255,255,255,.62);border:1px solid var(--vx-edge);-webkit-backdrop-filter:blur(16px) saturate(150%);backdrop-filter:blur(16px) saturate(150%);box-shadow:0 14px 34px -20px rgba(20,48,92,.6);text-align:center}
+.vx-hint-t{display:block;font:600 .9rem/1.3 "Inter",system-ui,sans-serif;color:var(--vx-ink)}
+.vx-line{display:block;position:relative;height:2px;margin-top:9px;border-radius:2px;background:rgba(20,48,92,.15);overflow:hidden}
+.vx-line i{position:absolute;inset:0;background:var(--vx-red);transform:scaleX(0);transform-origin:left}
 /* Reduced motion or no 3D: one still screen instead of the long scroll */
-.vx.still{height:auto}.vx.still .vx-stage{position:relative;min-height:100svh;height:auto}.vx.still .vx-rail,.vx.still .vx-copy{display:none}
+.vx.still{height:auto}.vx.still .vx-stage{position:relative;min-height:100svh;height:auto}.vx.still .vx-hint,.vx.still .vx-copy{display:none}
 .vx.nogl .vx-cv{display:none}.vx.nogl .vx-toast{display:none}
-@media (max-width:860px){
-.vx{height:680vh}
-.vx-copy{left:16px;right:16px;width:auto;top:auto;bottom:max(18px,env(safe-area-inset-bottom));transform:none;min-height:150px}
-.vx-step{inset:auto 0 0;transform:translateY(14px)}.vx-step.on{transform:none}
-.vx-panel{padding:16px 18px;border-radius:16px}.vx-step h3{font-size:1.25rem;margin-bottom:5px}.vx-step p{font-size:.94rem;line-height:1.45}.vx-n{margin-bottom:7px}
-.vx-end{left:16px;right:16px;width:auto;top:auto;bottom:max(18px,env(safe-area-inset-bottom));padding:20px;border-radius:18px;transform:translateY(22px)}.vx-end.on{transform:none}
-.vx-end h2{font-size:1.55rem;margin-bottom:8px}.vx-end p{font-size:.96rem;line-height:1.5}
-.vx-toast{right:16px;left:16px;width:auto;top:14px}
-.vx-rail{right:6px;top:30%;height:150px}
+/* Phone upright: the animation is a card taking about half the screen, held in the middle while scrolling */
+@media (max-width:860px) and (orientation:portrait){
+.vx{--vx-h:max(54vh,360px);--vx-h:max(54svh,360px);height:540vh;padding:66px 12px 76px;background:transparent}
+.vx-stage{height:var(--vx-h);top:calc((100vh - var(--vx-h))/2 + 6px);top:calc((100svh - var(--vx-h))/2 + 6px);overflow:visible}
+.vx-cv{border-radius:18px;box-shadow:0 18px 40px -26px rgba(20,48,92,.7)}
+.vx-title{display:block;position:absolute;left:0;right:0;bottom:calc(100% + 12px);margin:0;text-align:center;font:800 1.22rem/1.2 "Plus Jakarta Sans",system-ui,sans-serif;letter-spacing:-.02em}
+.vx-hint{top:calc(100% + 10px);bottom:auto;width:100%;padding:9px 14px 10px}.vx-hint-t{font-size:.84rem}.vx-line{margin-top:7px}
+.vx-copy{left:10px;width:calc(50% - 10px);min-height:150px}
+.vx-panel{padding:13px 14px;border-radius:14px}.vx-n{margin-bottom:6px;font-size:.7rem}
+.vx-step h3{font-size:1.02rem;margin-bottom:4px}.vx-step p{font-size:.82rem;line-height:1.38}
+.vx-step:last-child{display:none}
+.vx-end{left:10px;right:10px;width:auto;top:auto;bottom:10px;padding:15px 16px;border-radius:15px;transform:translateY(22px)}.vx-end.on{transform:none}
+.vx-end h2{font-size:1.18rem;margin-bottom:6px}.vx-end p{font-size:.84rem;line-height:1.4}
+.vx-toast{left:10px;right:10px;width:auto;top:10px;padding:10px 12px;border-radius:14px}.vx-dot{width:32px;height:32px}.vx-toast b{font-size:.92rem}
 }
+@media (max-width:860px) and (orientation:landscape){.vx{height:680vh}.vx-copy,.vx-end{width:42vw}.vx-toast{top:14px}}
 @media (prefers-reduced-motion:reduce){.vx *{transition:none!important}}

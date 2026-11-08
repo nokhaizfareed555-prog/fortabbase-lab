@@ -1,11 +1,15 @@
 /* Labs: sample vial scroll section. A real 3D scene in plain WebGL2 with no libraries.
    The scroll position drives the story; the cube wall and the liquid keep moving on their own while the section is on screen.
-   To reuse it, include vial.css and this file, and copy the <section class="vx"> markup from /labs/sample-vial. */
+   To reuse it, include vial.css and this file and put an empty <section class="vx"></section> on the page. The script fills in the words. */
 (function () {
   const PATIENT = "Ayesha Khan", TEST = "Complete Blood Count", CLINIC = "Fort Abbas Poly Clinic";
   /* Scroll marks, 0 to 1. Change these to speed up or slow down a stage. */
   const T = { arrive: [0, .12], label: [.12, .23], capNear: [.24, .34], needle: [.34, .38], fill: [.38, .52], needleOut: [.52, .55], twist: [.56, .66], rock: [.67, .78], lay: [.78, .85], print: [.84, .89], end: .92 };
   const STEPS = [[0, .12], [.12, .24], [.24, .34], [.34, .55], [.55, .67], [.67, .79], [.79, .92]];
+
+  const HINT = "Scroll to see how we care for every sample", HINT_DONE = "Complete. Keep scrolling to continue";
+  const WORDS = [["A new tube and its cap", "Every test begins with its own clean collection tube."], ["The label goes on first", "The tube is ready to be identified before anything goes in it."], ["The cap moves into place", "Tube and cap stay together from the first step."], ["The sample is collected", "Drawn straight into the tube, with nothing in between."], ["Sealed tight", "The cap is turned until the tube is fully closed."], ["Moved with care", "A gentle motion keeps the sample evenly mixed."], ["Named and coded", "The tube carries the patient's name and a code used for this one test."]];
+  const markup = () => `<div class="vx-stage"><h2 class="vx-title">How we care for every sample</h2><canvas class="vx-cv" aria-hidden="true"></canvas><div class="vx-copy">${WORDS.map(([h, t], i) => `<div class="vx-step vx-panel"><span class="vx-n">0${i + 1}</span><h3>${h}</h3><p>${t}</p></div>`).join("")}</div><div class="vx-toast" role="status"><span class="vx-dot"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M6 8a6 6 0 0 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10.3 20a2 2 0 0 0 3.4 0"/></svg></span><div><small>New test received · <span data-vx="test"></span></small><b data-vx="name"></b><code data-vx="code"></code></div></div><div class="vx-end"><h2>Every test is treated with the utmost care.</h2><p>Each sample is followed under its own code and checked against its quality parameters, so results meet expectations and, sometimes, exceed them.</p></div><div class="vx-hint"><span class="vx-hint-t">${HINT}</span><span class="vx-line" aria-hidden="true"><i></i></span></div></div>`;
 
   const clamp = (v, a = 0, b = 1) => Math.min(b, Math.max(a, v)), mix = (a, b, t) => a + (b - a) * t;
   const ease = (t) => t * t * (3 - 2 * t), out = (t) => 1 - Math.pow(1 - t, 3);
@@ -200,7 +204,9 @@
   }
 
   function mount(sec) {
-    const cv = sec.querySelector(".vx-cv"), steps = [...sec.querySelectorAll(".vx-step")], toast = sec.querySelector(".vx-toast"), endEl = sec.querySelector(".vx-end"), bar = sec.querySelector(".vx-rail i"), id = code();
+    if (sec.dataset.vxOn) return; sec.dataset.vxOn = "1"; sec.dir = "ltr"; if (!sec.querySelector(".vx-stage")) sec.innerHTML = markup();
+    const stage = sec.querySelector(".vx-stage"), hint = sec.querySelector(".vx-hint-t"), lite = document.documentElement.classList.contains("lite");
+    const cv = sec.querySelector(".vx-cv"), steps = [...sec.querySelectorAll(".vx-step")], toast = sec.querySelector(".vx-toast"), endEl = sec.querySelector(".vx-end"), bar = sec.querySelector(".vx-line i"), id = code();
     sec.querySelectorAll("[data-vx=code]").forEach((n) => (n.textContent = id));
     sec.querySelectorAll("[data-vx=name]").forEach((n) => (n.textContent = PATIENT));
     sec.querySelectorAll("[data-vx=test]").forEach((n) => (n.textContent = TEST));
@@ -239,11 +245,11 @@
     let px = 0, py = 0, pxs = 0, pys = 0;
     const cam = [0, 0, 11], fov = 32 * Math.PI / 180;
     const sl = { a: 0, va: 0, b: 0, vb: 0, tilt: 0, x: 0, vx: 0, ready: false };
-    let pulse = 0, pulseR = 0, wasClick = false, wasToast = false;
+    let pulse = 0, pulseR = 0, wasClick = false, wasToast = false, wasDone = false;
     const ring = () => { pulse = 1; pulseR = 0; };
 
     function size() {
-      const r = sec.querySelector(".vx-stage").getBoundingClientRect(), small = r.width < 700, dpr = Math.min(devicePixelRatio || 1, small ? 1.6 : 2), w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
+      const r = stage.getBoundingClientRect(), small = r.width < 700, dpr = lite ? 1 : Math.min(devicePixelRatio || 1, small ? 1.6 : 2), w = Math.round(r.width * dpr), h = Math.round(r.height * dpr);
       if (w === W && h === H) return;
       W = cv.width = w; H = cv.height = h; asp = r.width / r.height; portrait = asp < 1.02;
       VP = M.mul(M.persp(fov, asp, .5, 60), M.t(-cam[0], -cam[1], -cam[2]));
@@ -259,17 +265,17 @@
     function pose(p) {
       const s = ([a, b]) => clamp((p - a) / (b - a)), v = {};
       const arrive = out(s(T.arrive)), labelIn = ease(s(T.label)), near = ease(s(T.capNear)), needle = ease(s(T.needle)), filled = s(T.fill), nOut = ease(s(T.needleOut)), twist = s(T.twist), rock = s(T.rock), lay = ease(s(T.lay)), print = s(T.print), hh = 11 * Math.tan(fov / 2), hw = hh * asp;
-      const bx = portrait ? 0 : Math.min(hw * .42, 2.5), by = portrait ? hh * .24 : 0;
-      const up = portrait ? Math.min(.5, hw * .36) : .7, flat = portrait ? Math.min(.5, hw * 2 / 6.2) : .86, sc = mix(mix(up * .82, up, arrive), flat, lay);
-      const ease2 = Math.sin(rock * Math.PI * 3) * (1 - rock * .3) * .72 * (rock < 1 ? 1 : 0);
+      const bx = portrait ? mix(hw * .46, 0, lay) : Math.min(hw * .42, 2.5);
+      const up = portrait ? Math.min(.78, hw * .42) : .64, flat = portrait ? Math.min(.82, hw * 2 / 6.2) : .86, sc = mix(mix(up * .82, up, arrive), flat, lay);
+      const ease2 = Math.sin(rock * Math.PI * 3) * (1 - rock * .3) * (portrait ? .43 : .72) * (rock < 1 ? 1 : 0);
       const swayX = Math.sin(rock * Math.PI * 3 + .7) * .22 * Math.sin(rock * Math.PI);
-      v.x = mix(-hw - 3.5, bx, arrive) + swayX; v.y = by + mix(-.3 * sc, portrait ? -.35 : 0, lay) - (portrait ? 0 : .12) * (1 - lay); v.z = mix(-3, 0, arrive);
+      v.x = mix(-hw - 3.5, bx, arrive) + swayX; v.y = portrait ? mix(-.87 * sc, .5, lay) : mix(-.3 * sc, 0, lay) - .12 * (1 - lay); v.z = mix(-3, 0, arrive);
       v.s = sc; v.tilt = mix(.5, 0, arrive) + ease2 + mix(0, -Math.PI / 2 + .05, lay);
       const away = ease(clamp((p - .25) / .1)); v.spin = mix(-2.4, 0, arrive) + 2.75 * away * (1 - lay); /* Label turns aside so the sample stays in view, then comes back for its name */
       v.fill = filled; v.pour = filled > 0 && filled < 1 ? 1 : 0; v.filledP = filled;
       /* Cap flies in from the other side, parks beside the tube, then lines up above it */
       const seat = 1.76, hover = seat + 1.5, drop = ease(twist), capL = mix(hover, seat, drop);
-      const parkX = (portrait ? 1.35 : 1.75), parkY = 1.5;
+      const parkX = portrait ? .42 : 1.75, parkY = portrait ? 3.1 : 1.5;
       v.capDetachX = mix(mix(hw + 4, parkX, arrive), 0, near); v.capDetachY = mix(parkY, capL, near); v.capDetachZ = mix(mix(-3, .4, arrive), 0, near);
       v.capTilt = mix(mix(-1.3, -.55, arrive), 0, near); v.capSpin = mix(3.2, 0, arrive) + twist * Math.PI * 3.5;
       v.needle = needle * (1 - nOut); v.labelIn = labelIn; v.print = print; v.lay = lay; v.click = twist >= .995;
@@ -279,13 +285,14 @@
     function ui(p) {
       steps.forEach((el, i) => el.classList.toggle("on", p < T.end && p >= STEPS[i][0] && p < STEPS[i][1]));
       const tOn = p >= .835; toast.classList.toggle("on", tOn); endEl.classList.toggle("on", p >= T.end);
-      if (bar) bar.style.transform = `scaleY(${p})`;
+      if (bar) bar.style.transform = `scaleX(${p})`;
+      const done = p >= .985; if (done !== wasDone) { hint.textContent = done ? HINT_DONE : HINT; wasDone = done; }
       if (tOn && !wasToast) ring(); wasToast = tOn;
     }
 
     function frame(now) {
-      raf = 0; const dt = Math.min(.05, (now - last) / 1000 || .016); last = now; clock += dt;
-      if (!still) { const r = sec.getBoundingClientRect(), span = r.height - innerHeight; target = clamp(-r.top / (span || 1)); cur += (target - cur) * (1 - Math.exp(-dt * 8)); if (Math.abs(target - cur) < .00005) cur = target; }
+      raf = 0; if (!sec.isConnected) return; const dt = Math.min(.05, (now - last) / 1000 || .016); last = now; clock += dt;
+      if (!still) { const r = sec.getBoundingClientRect(), cs = getComputedStyle(sec), pt = parseFloat(cs.paddingTop) || 0, pb = parseFloat(cs.paddingBottom) || 0, top = parseFloat(getComputedStyle(stage).top) || 0; target = clamp((top - r.top - pt) / ((r.height - pt - pb - stage.offsetHeight) || 1)); cur += (target - cur) * (1 - Math.exp(-dt * 8)); if (Math.abs(target - cur) < .00005) cur = target; }
       draw(dt); ui(cur);
       if (!still && visible) raf = requestAnimationFrame(frame);
     }
@@ -363,5 +370,6 @@
     if (still) { endEl.classList.add("on"); clock = 2; } raf = requestAnimationFrame(frame);
   }
   const go = () => document.querySelectorAll(".vx").forEach(mount);
+  window.FA_VIAL = { mount: go };
   document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", go) : go();
 })();
