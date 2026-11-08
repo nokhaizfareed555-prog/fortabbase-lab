@@ -1,0 +1,55 @@
+/* Rewards on the patient reports page. Fixed night-and-gold palette so awards always look premium, whatever the site theme. */
+.ly{--n1:#071633;--n2:#102a5c;--g1:#ffe08a;--g2:#f2bd2c;--tx:#f4f7ff;--mu:#a9b9d6;display:grid;gap:16px;margin:18px 0 26px;color:var(--tx)}
+.ly-room,.ly-map{position:relative;overflow:hidden;border-radius:24px;background:radial-gradient(90% 130% at 18% 0,#1c4186 0,transparent 62%),linear-gradient(150deg,var(--n2),var(--n1) 70%);box-shadow:0 18px 44px -18px rgba(7,22,51,.75),inset 0 0 0 1px rgba(255,224,138,.28)}
+.ly-room{display:grid;grid-template-columns:minmax(260px,5fr) 7fr;align-items:center}
+.ly-stage{position:relative;display:flex;flex-direction:column;align-items:center;padding:30px 20px 26px;overflow:hidden;align-self:stretch;justify-content:center}
+.ly-rays{position:absolute;left:50%;top:38%;width:560px;height:560px;margin:-280px 0 0 -280px;border-radius:50%;background:repeating-conic-gradient(rgba(255,224,138,.17) 0 9deg,transparent 9deg 22deg);-webkit-mask:radial-gradient(closest-side,#000 18%,transparent);mask:radial-gradient(closest-side,#000 18%,transparent);animation:ly-spin 40s linear infinite}
+.ly-stage.empty .ly-rays{opacity:.3}
+.ly-big{position:relative;width:clamp(128px,15vw,172px);height:auto;filter:drop-shadow(0 12px 26px rgba(242,189,44,.55));animation:ly-float 4.5s ease-in-out infinite}
+.ly-stage.empty .ly-big{filter:none;opacity:.55;animation:none}
+.ly-plaque{position:relative;margin-top:12px;min-width:210px;max-width:100%;padding:9px 20px 11px;text-align:center;border-radius:12px;background:linear-gradient(180deg,rgba(255,255,255,.1),rgba(255,255,255,.03));box-shadow:inset 0 0 0 1px rgba(255,224,138,.5)}
+.ly-plaque small{display:block;font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--g1)}
+.ly-plaque strong{display:block;font:800 1.14rem var(--fh);color:#fff;overflow-wrap:anywhere}
+.ly-plaque em{font-style:normal;font-weight:700;color:var(--g1)}
+.ly-info{padding:28px clamp(18px,3vw,36px) 26px;min-width:0}
+.ly-kick{margin:0 0 8px;font:800 .8rem var(--fh);letter-spacing:.16em;text-transform:uppercase;color:var(--g1)}
+.ly-nums{display:flex;flex-wrap:wrap;gap:12px 44px}
+.ly-nums b{display:block;font:800 clamp(2.5rem,2rem + 2.4vw,3.7rem)/1 var(--fh);background:linear-gradient(180deg,#fff6cf,var(--g2));-webkit-background-clip:text;background-clip:text;color:transparent}
+.ly-nums div+div b{font-size:clamp(1.8rem,1.5rem + 1.4vw,2.5rem);line-height:1.4}
+.ly-nums small{color:var(--mu);font-size:.9rem}
+.ly-next{display:flex;flex-wrap:wrap;align-items:center;gap:6px 10px;margin:16px 0 0;padding:10px 14px;border-radius:12px;background:rgba(255,255,255,.07);color:var(--mu);font-size:.95rem}
+.ly-next strong{color:#fff}.ly-go{margin-inline-start:auto;color:var(--g1);font-weight:700}.ly-go b{font-size:1.1rem}
+.ly-shelf{display:flex;gap:6px;margin:16px 0 0;padding:0 0 6px;list-style:none;overflow-x:auto;border-bottom:3px solid rgba(255,224,138,.45)}
+.ly-award{flex:0 0 88px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.ly-mini{width:50px;height:auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,.45))}
+.ly-award b{margin-top:3px;font:700 .86rem var(--fh);color:#fff;overflow-wrap:anywhere}.ly-award small{font-size:.75rem;color:var(--mu)}
+.ly-award.wait{opacity:.6}.ly-award.wait .ly-mini{filter:none}
+button.ly-jump{margin-top:14px;min-height:44px;padding:0 18px;border:0;border-radius:99px;background:rgba(255,255,255,.1);box-shadow:inset 0 0 0 1px rgba(255,255,255,.26);color:#fff;font:700 .9rem var(--fh);cursor:pointer}
+button.ly-jump:hover{background:rgba(255,255,255,.18)}
+.ly-map{padding:22px clamp(10px,2vw,24px) 10px}
+.ly-map h2{margin:0 8px 2px;font:800 clamp(1.2rem,1rem + 1vw,1.6rem) var(--fh);color:#fff}
+.ly-svg{display:block;width:100%;height:auto}.ly-svg.v{display:none;max-width:360px;margin:auto}
+.ly-st{fill:#cfe0ff;opacity:.3;animation:ly-tw 3.5s ease-in-out infinite}
+.ly-road,.ly-trail,.ly-glow,.ly-gold{fill:none;stroke-linecap:round}
+.ly-road{stroke:rgba(255,255,255,.1);stroke-width:18}
+.ly-trail{stroke:rgba(201,214,234,.38);stroke-width:3;stroke-dasharray:2 12}
+.ly-glow{stroke:var(--g2);stroke-width:22;opacity:.3;filter:blur(7px);}
+.ly-gold{stroke:var(--g1);stroke-width:9;}
+.ly-disc{fill:#1b2f58;stroke:rgba(201,214,234,.32);stroke-width:2}
+.ly-stop.won .ly-disc{stroke:#fff6cf;stroke-width:3}
+.ly-in{fill:rgba(7,22,51,.5)}.ly-stop.won .ly-in{fill:rgba(255,255,255,.28)}
+.ly-ic{fill:#fff}.ly-stop.lock .ly-ic{opacity:.3;filter:grayscale(1)}
+.ly-halo{opacity:.3;filter:blur(9px);transform-box:fill-box;transform-origin:center}
+.ly-stop.now .ly-halo{animation:ly-breathe 2.4s ease-in-out infinite}
+.ly-lk{fill:#26406f;stroke:rgba(201,214,234,.5)}
+.ly-nm{font:800 19px var(--fh);fill:#fff}.ly-pt{font:600 15px var(--fb);fill:var(--g1)}
+.ly-stop.lock .ly-nm{fill:#8d9fbe}.ly-stop.lock .ly-pt{fill:#7186a8}
+.ly-svg.v .ly-nm{font-size:17px}.ly-svg.v .ly-pt{font-size:14px}
+.ly-pulse{fill:var(--g1);opacity:.5;transform-box:fill-box;transform-origin:center;animation:ly-ping 1.8s ease-out infinite}
+@keyframes ly-spin{to{transform:rotate(360deg)}}
+@keyframes ly-float{50%{transform:translateY(-7px)}}
+@keyframes ly-tw{50%{opacity:.75}}
+@keyframes ly-breathe{50%{opacity:.62}}
+@keyframes ly-ping{to{transform:scale(2.6);opacity:0}}
+@media(max-width:760px){.ly-room{grid-template-columns:1fr}.ly-stage{padding-bottom:6px}.ly-info{padding-top:18px}.ly-nums{justify-content:space-between}.ly-svg.h{display:none}.ly-svg.v{display:block}.ly-go{margin-inline-start:0}button.ly-jump{width:100%}}
+@media(prefers-reduced-motion:reduce){.ly *{animation:none!important}}

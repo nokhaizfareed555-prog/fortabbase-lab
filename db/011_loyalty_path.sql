@@ -1,0 +1,3 @@
+-- Applied to the live database on 9 Nov 2026 as migration "loyalty_trophy_path".
+-- patient_reports now also returns loyalty.path: every earned award plus only the next three,
+-- so patients never receive the top of the ladder. The full SQL is in the database migration history.
