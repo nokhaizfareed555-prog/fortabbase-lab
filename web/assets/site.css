@@ -31,3 +31,6 @@ footer{background:var(--base);color:#fff;padding:30px 0 90px;font-size:.87rem;po
 @keyframes rp{to{transform:scale(1);opacity:0}}@keyframes rl{from{transform:scale(.05)}to{transform:scale(1);opacity:0}}
 @media(max-width:860px){.links,.nav .btn{display:none}.hero-g,.tl{grid-template-columns:1fr}.hero-g.left .hero-img{order:0}.hero-img img{max-height:38vh}.cart{position:static}.dock{display:flex;gap:8px;position:fixed;left:12px;right:12px;bottom:12px;z-index:60}.dock .btn{flex:1}section{padding:36px 0}.ti{padding:12px}.card img.top{max-height:26vh}}
 @media(prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+
+.ov{position:fixed;inset:0;background:rgba(10,25,50,.45);display:grid;place-items:center;padding:16px;z-index:100}.dlg{background:#fff;border-radius:18px;padding:22px;width:min(420px,100%);max-height:85vh;overflow:auto}
+.ti>div:last-child{flex:none}.f label{display:block}.f label input[type=date],.f label input[type=time]{margin-top:3px}
