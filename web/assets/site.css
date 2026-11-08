@@ -126,3 +126,4 @@ body{background:radial-gradient(58vw 56vh at 4% 10%,color-mix(in srgb,var(--acce
 /* Button placement: paired actions share the row, main action on the end side and on top when they stack. */
 body[data-page] .acts{display:flex;flex-wrap:wrap-reverse;justify-content:stretch;gap:10px;margin-top:18px}body[data-page] .acts .btn{flex:1 1 auto;min-width:0}
 body[data-page] .f .btn,body[data-page] .rp-f .btn,.ok .btn,.popd .btn{width:100%;min-width:0}.ok .btn{margin-top:12px}
+.rd-pages{display:grid;gap:12px}.rd-page{display:block;width:100%;height:auto;background:#fff;border:1px solid var(--line,#d8dde6);border-radius:4px}
