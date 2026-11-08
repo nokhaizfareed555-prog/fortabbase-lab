@@ -284,3 +284,8 @@ html:not(.glass-btn) .hero .cta .btn.ghost,html.lite .hero .cta .btn.ghost,html.
 .cart-h{display:flex;justify-content:space-between;align-items:baseline;gap:10px}.cart-h a{font-size:.85rem;font-weight:600;white-space:nowrap}
 .co-g{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:22px;align-items:start}.co-p{padding:22px}.co-p h3{margin-top:0}.co-more{margin-top:16px;width:100%}
 @media(max-width:860px){.co-g{grid-template-columns:minmax(0,1fr);gap:14px}.co-p{padding:16px}}
+
+/* Lab tests: use the full screen width with narrow margins; as many cards per row as fit. */
+body[data-page=tests] #main .wrap{max-width:none;width:auto;margin-inline:0;padding-inline:clamp(10px,1.4vw,24px)}
+@media(min-width:600px){body[data-page=tests] #list{grid-template-columns:repeat(auto-fill,minmax(220px,1fr))}}
+@media(min-width:861px){body[data-page=tests] .tl{grid-template-columns:minmax(0,1fr) clamp(320px,24vw,420px)}}
