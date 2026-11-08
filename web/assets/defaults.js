@@ -74,7 +74,7 @@ team:{heading:'Our doctors and team',text:'Check who is in before you travel.',i
 {id:'m5',role:'doctors',name:'Dr. Aqsa Aleem Baryar',title:'Consultant Radiologist',qualifications:'MBBS, FCPS (Diagnostic Radiology)',description:'',years:'',schedule:'Saturday and Sunday',image:''},
 {id:'m6',role:'doctors',name:'Dr. Sania Shabbir',title:'Women Medical Officer',qualifications:'MBBS (Gold Medalist), RMP, WMO',description:'',years:'',schedule:'Saturday and Sunday',image:''},
 {id:'m7',role:'doctors',name:'Dr. M. A. Zafar',title:'Consultant Pathologist',qualifications:'MBBS, M.Phil (Microbiology)',description:'',years:'',schedule:'Monday to Saturday',image:''}]},
-tests:{heading:'Book a lab test',text:'Pick your tests, then choose a visit or home collection. We confirm by phone.',suggestPanels:true,panelsHeading:'Popular panels',panelsText:'Tests that doctors usually read together.',showPrices:false,priceFallback:'Ask for price',items:[
+tests:{heading:'Book a lab test',text:'Pick your tests, then choose a visit or home collection. We confirm by phone.',suggestPanels:true,panelsHeading:'Popular panels',panelsText:'Tests that doctors usually read together.',showPrices:false,homeCollection:false,priceFallback:'Ask for price',items:[
 t("cbc-complete-blood-count","CBC (Complete Blood Count)","Blood",{"price": 790}),
 t("creatinine","Creatinine","Kidney",{"price": 800}),
 t("serum-uric-acid","Serum Uric Acid","Kidney",{"price": 840}),
