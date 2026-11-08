@@ -1,0 +1,4 @@
+-- Applied to the live database on 9 Nov 2026 as migration "daily_check".
+-- Table health_checks (one row per day and run); settings in private_settings key health_alert.
+-- Functions: _health_issues, _health_settings, _health_kick, admin_health_get, admin_health_save (permission key "optimize").
+-- pg_cron jobs daily-check-8am (0 3 * * * UTC) and daily-check-9am (0 4 * * * UTC). The full SQL is in the database migration history.
