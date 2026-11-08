@@ -20,6 +20,8 @@ const STORE = `Fort Abbas Poly Clinic Laboratories is a clinic and diagnostic la
 const LENGTH: Record<string, [number, number]> = { short: [900, 1200], standard: [1400, 2000], long: [2200, 3000] };
 // anything that could change what a patient does about a medicine or treatment always goes to a person
 const SAFETY_RE = /(\b\d+(\.\d+)?\s?(mg|mcg|µg|iu|units?|ml)\b|\b(dos(e|es|age|ing)|prescri\w+|antibiotics?|insulin|steroids?|chemotherapy|overdose|side effects?|contraindicat\w+|interactions?|pregnan\w+|breastfeeding|infants?|newborns?|suicid\w*|self[- ]?harm|self[- ]?(medicat|treat)\w*|stop(ping)? (taking )?(your |the )?(medicine|medication|treatment|tablets?|insulin)|cures?|cured|normal range|reference range)\b)/i;
+// the part of the above that still needs a person in hands-off mode: medicines and treatment. Normal lab language ("normal range", "100 mg/dL") does not.
+const SENSITIVE_RE = /(\b\d+(\.\d+)?\s?(mg|mcg|µg|iu|units?|ml)\b(?!\s?\/)|\b(dos(e|es|age|ing)|prescrib\w+|antibiotics?|insulin|steroids?|chemotherapy|overdose|side effects?|contraindicat\w+|drug interactions?|suicid\w*|self[- ]?harm|self[- ]?(medicat|treat)\w*|stop(ping)? (taking )?(your |the )?(medicine|medication|treatment|tablets?|insulin)|cures?|cured)\b)/i;
 // sentences hands-off mode removes: exact doses and telling someone to stop treatment (mg/dL lab values are fine)
 const HARD_RE = /(\b\d+(\.\d+)?\s?(mg|mcg|µg|iu)\b(?!\s?\/)|\bself[- ]?medicat\w*|\boverdose\b|\bsuicid\w*|\bself[- ]?harm\b|\bstop(ping)? (taking )?(your |the )?(medicine|medication|treatment|tablets?|insulin)\b)/i;
 const STAT_RE = /(\d+(\.\d+)?\s?(%|percent)|\b(a|one|recent|new|the) (study|survey)\b|\bstudies (show|found|suggest)|\bresearch(ers)? (show|shows|found|suggests?)\b|\baccording to\b)/i;
@@ -33,6 +35,24 @@ const STOP = new Set("a an the and or of for to in on with how what which why is
 const jaccard = (a: string, b: string) => { const A = new Set(words(a).filter((w) => !STOP.has(w))), B = new Set(words(b).filter((w) => !STOP.has(w))); if (!A.size || !B.size) return 0; let n = 0; A.forEach((w) => B.has(w) && n++); return n / (A.size + B.size - n); };
 const clip = (s: string, n: number) => { s = String(s || "").replace(/\s+/g, " ").trim(); if (s.length <= n) return s; const c = s.slice(0, n); return c.slice(0, Math.max(c.lastIndexOf(" "), n * 0.6)).replace(/[\s,.;:–—-]+$/, "") + "…"; };
 const PK = 5 * 3600e3;
+
+/** Citation numbers always match the Sources list: every numbered link is renumbered to its place there, and plain "[1, 3]" markers are dropped. */
+export function fixCitations(body: string, sources: { title: string; url: string; publisher?: string }[]) {
+  const list = [...sources];
+  const num = (url: string) => { let i = list.findIndex((x) => x.url === url); if (i < 0) { let host = url; try { host = new URL(url).hostname.replace(/^www\./, ""); } catch { /* keep the address */ } list.push({ title: host, url, publisher: host }); i = list.length - 1; } return i + 1; };
+  const out = String(body || "").replace(/\[(\d{1,2})\]\((https?:\/\/[^)\s]+)\)/g, (_m, _n, url) => `[${num(url)}](${url})`).replace(BARE_CITE, "");
+  return { body: out, sources: list };
+}
+const BARE_CITE = /\s?\[\d{1,2}(?:\s*,\s*\d{1,2})*\](?!\()/g;
+export const stripCites = (t: string) => String(t || "").replace(BARE_CITE, "");
+/** A table separator with stray characters after it ("|---|---|>") makes the whole table show as raw text. */
+export const fixTables = (body: string) => String(body || "").replace(/^(\s*\|?\s*:?-{3,}:?\s*(?:\|\s*:?-{3,}:?\s*)*\|?)[^\s|:-]+\s*$/gm, "$1");
+/** A photo title fit for an alt description ("File:Some photo.jpg" -> "Some photo"). */
+export const photoAlt = (t: string) => String(t || "").replace(/^file:/i, "").replace(/\.(jpe?g|png|webp|gif|tiff?)$/i, "").replace(/[_]+/g, " ").trim();
+// covers: never a bodily sample, chart or graphic picture
+export const COVER_BAD = /mortality|death|chart|graph|hazard|study|figure|diagram|histolog|micrograph|patholog|autopsy|surgery|surgical|wound|tumou?r|lesion|biopsy|cadaver|disease|x-?ray of|stain|fa?ecal|feces|faeces|stool|occult|urine|vomit|sputum|pus\b|smear/i;
+// words too general to show that a photo is really about the article
+export const COVER_GENERIC = ["test", "tests", "testing", "health", "healthy", "level", "levels", "normal", "range", "ranges", "blood", "result", "results", "report", "reports", "explained", "guide", "medical", "meaning", "means", "positive", "negative", "score", "scores"];
 
 /* ---------------- shared context ---------------- */
 async function shop(ctx: Ctx) {
@@ -293,8 +313,8 @@ ${WRITER_SCHEMA}`, { maxTokens: 8192, temperature: 0.7 });
   const cat = cats.find((c: any) => c.slug === topic.category_slug) || cats.find((c: any) => c.slug === "lab-tests-explained") || cats[0];
   const pillar = !topic.is_pillar && topic.cluster ? (await ctx.db.from("blog_topics").select("post_id").eq("cluster", topic.cluster).eq("is_pillar", true).not("post_id", "is", null).limit(1)).data?.[0]?.post_id : null;
   const words_ = MD.plain(String(r.body_md)).split(/\s+/).length;
-  if (words_ < min * 0.6 && ctx.job.attempts < 2) throw new RetryLater(`The draft came back short (${words_} words) — writing it again`, 30);
-  const refs = (t: string) => String(t || "").replace(/\s?\[(\d{1,2})\](?!\()/g, (m, n) => { const x = sources[Number(n) - 1]; return x ? ` ([${n}](${x.url}))` : ""; });
+  if (words_ < min * 0.6 && ctx.job.attempts < 3) throw new RetryLater(`The draft came back short (${words_} words) — writing it again`, 30);
+  const refs = (t: string) => String(t || "").replace(/\s?\[(\d{1,2}(?:\s*,\s*\d{1,2})*)\](?!\()/g, (m, ns) => { const got = String(ns).split(",").map((n) => [n.trim(), sources[Number(n) - 1]] as const).filter(([, x]) => x); return got.length ? ` (${got.map(([n, x]) => `[${n}](${x!.url})`).join(", ")})` : ""; });
   r.body_md = refs(r.body_md); r.answer_summary = refs(r.answer_summary);
   const used = new Set((Array.isArray(r.sources_used) ? r.sources_used : []).map(Number));
   const cited = sources.filter((x, i) => used.has(i + 1) || String(r.body_md).includes(x.url));
@@ -410,8 +430,8 @@ export async function imager(ctx: Ctx): Promise<Out> {
   }
   if (!cover && (mode === "openverse" || mode === "products_then_openverse")) {
     // a cover must be about the article and never a graphic medical picture; otherwise a calm general photo
-    const BAD = /mortality|death|chart|graph|hazard|study|figure|diagram|histolog|micrograph|patholog|autopsy|surgery|surgical|wound|tumou?r|lesion|biopsy|cadaver|disease|x-?ray of|stain/i;
-    const want = new Set(words(`${art.focus_query} ${(art.tags || []).join(" ")}`).filter((w) => w.length > 3 && !STOP.has(w) && !["test", "tests", "health", "level", "levels", "normal", "range"].includes(w)));
+    const BAD = COVER_BAD;
+    const want = new Set(words(`${art.focus_query} ${(art.tags || []).join(" ")}`).filter((w) => w.length > 3 && !STOP.has(w) && !COVER_GENERIC.includes(w)));
     const fits = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`) && words(x.alt).some((w) => want.has(w));
     const safe = (x: web.Photo) => !BAD.test(`${x.alt} ${x.url}`);
     let pick: web.Photo | undefined;
@@ -419,7 +439,7 @@ export async function imager(ctx: Ctx): Promise<Out> {
     if (!pick) for (const q of ["medical laboratory test tubes", "blood sample laboratory", "doctor talking to patient", "stethoscope"]) { const list = (await web.openverse(q)).filter(safe); pick = list[Math.floor(Math.random() * Math.min(list.length, 6))]; if (pick) break; }
     if (pick) {
       const own = await storeImage(ctx, pick.url, art.slug.slice(0, 40));
-      cover = { url: own || pick.url, alt: clip(`Illustration for “${art.title}”`, 160), credit: pick.credit, license: pick.license, license_url: pick.license_url, source_url: pick.source_url, kind: "openverse", original_url: pick.url };
+      cover = { url: own || pick.url, alt: clip(photoAlt(pick.alt) || "Medical laboratory photo", 160), credit: pick.credit, license: pick.license, license_url: pick.license_url, source_url: pick.source_url, kind: "openverse", original_url: pick.url };
     }
   }
   if (cover) await save(ctx, art.id, { cover_image: cover });
@@ -436,6 +456,9 @@ export async function reviewer(ctx: Ctx): Promise<Out> {
   const note = (level: string, message: string) => notes.push({ level, agent: "reviewer", message });
   let body = String(art.body_md);
 
+  // 0. tables that would show as raw text
+  const tabled = fixTables(body);
+  if (tabled !== body) { body = tabled; note("fixed", "Repaired a table that would have shown as raw text."); }
   // 1. no raw HTML ever
   if (/<\/?[a-z][^>]*>/i.test(body)) { body = body.replace(/<\/?[a-z][^>]*>/gi, ""); note("fixed", "Removed raw HTML tags from the article."); }
   // 2. links: internal must exist, external must be a listed source or trusted domain and be reachable
@@ -466,9 +489,19 @@ export async function reviewer(ctx: Ctx): Promise<Out> {
   // 5. duplication with other articles
   const { data: sim } = await ctx.db.rpc("blog_similar", { p_text: art.title, p_min: 0.6 });
   (sim || []).filter((x: any) => x.kind === "post" && x.id !== art.id).forEach((x: any) => note("check", `Title is very close to another article: "${x.title}" (${x.status}).`));
-  // 6. safety: anything about medicines, treatment or sensitive care always goes to a person
-  const medical = SAFETY_RE.test(plain) || art.quality?.medical;
-  if (medical) note("check", "Contains medicine, dosing, treatment or other sensitive medical content: a qualified person must read it before publishing.");
+  // 6. safety: anything about medicines, treatment or sensitive care goes to a person; ordinary lab language is only recorded
+  const sensitive = SENSITIVE_RE.test(plain) || !!art.quality?.medical;
+  const medical = sensitive || SAFETY_RE.test(plain);
+  if (sensitive) note("check", "Contains medicine, dosing, treatment or other sensitive medical content: a qualified person must read it before publishing.");
+  else if (medical) note("info", "Explains lab results in general terms. Published without a doctor's reading, as the editorial standards page says.");
+  // a title that promises ranges must actually give some
+  if (/\b(normal|reference) ranges?\b/i.test(art.title) && !/\d\s?(%|percent|mg\/|g\/|mmol|million|thousand|x\s?10|×\s?10|\/\s?(mcl|µl|ul|l|dl)\b)/i.test(plain)) note("check", "Title promises normal ranges, but the article gives no actual figures.");
+  // every table must have rendered as a table
+  const lines_ = body.split("\n"), brokenTable = lines_.some((ln, i) => /^\s*\|.*\|\s*$/.test(ln) && !/^\s*\|?[\s:|-]+\|?\s*$/.test(ln) && !/^\s*\|?\s*:?-{3,}/.test(lines_[i + 1] || "") && !/^\s*\|/.test(lines_[i - 1] || ""));
+  if (brokenTable) note("warn", "A table has no separator line and will show as raw text.");
+  // sections of real content with no citation at all
+  const uncited = body.split(/^##\s/m).slice(1).filter((x) => MD.plain(x).length > 200 && !/\]\(https?:/.test(x)).length;
+  if (uncited) note("warn", `${uncited} section(s) have no source link.`);
   // 7. numbers and claims that look like statistics but aren't linked to a source
   const statLines = body.split("\n").filter((ln) => /(\d+(\.\d+)?\s?(%|percent)|\b(a|one|recent|new|the) (study|survey)\b|\bstudies (show|found|suggest)|\bresearch(ers)? (show|shows|found|suggests?)\b|\baccording to\b)/i.test(ln) && !/\]\(https?:/.test(ln));
   statLines.slice(0, 5).forEach((ln) => note("check", `Figure or claim without a source link: "${clip(MD.plain(ln), 200)}"`));
@@ -506,15 +539,19 @@ Return JSON: {"score":0-100,"unsupported":[{"claim":"exact words","why":"..."}],
     for (const c of claims) removed += drop((x) => !x.includes(c));
     removed += drop((x) => !(STAT_RE.test(x) && !/\]\(https?:|\[\d{1,2}\]/.test(x)));
     removed += drop((x) => !HARD_RE.test(x));
-    for (const n of notes) if (n.level === "check" && !/^(Safety:|Fact-check score|Title is very close|Possibly invented)/.test(n.message)) n.level = "fixed";
+    for (const n of notes) if (n.level === "check" && !/^(Safety:|Fact-check score|Title is very close|Possibly invented|Contains medicine|Title promises)/.test(n.message)) n.level = "fixed";
     if (removed) note("fixed", `Removed ${removed} sentence(s) that could not be verified or that gave medicine or dose instructions.`);
     if (HARD_RE.test(MD.plain(body))) note("check", "Still mentions self-harm or medicine instructions: a person must read it before publishing.");
   }
   const needs = notes.some((n) => n.level === "check");
-  await save(ctx, art.id, { body_md: body, review_notes: notes, needs_review: needs,
-    quality: { ...(art.quality || {}), score, words: wc, sections: h2, verdict: clip(fc.verdict || "", 300), checked_at: new Date().toISOString(), medical: !!medical } });
-  await ctx.log(needs ? "warn" : "info", `Quality ${score}/100 — ${needs ? notes.filter((n) => n.level === "check").length + " item(s) for a person to check" : "no blocking issues"}`);
-  return { result: { score, needs_review: needs, notes: notes.length }, next: [{ agent: "publisher", payload: { post_id: art.id }, post_id: art.id }] };
+  const cites = fixCitations(body, art.sources || []);
+  if (cites.body !== body) { body = cites.body; note("fixed", "Renumbered citations to match the Sources list."); }
+  // the score is the fact-check capped by what the checks found, so a short or patched article can't show 100
+  const finalScore = !score ? 0 : Math.max(0, score - (wc < min * 0.7 ? 20 : 0) - Math.min(20, uncited * 5) - (brokenTable ? 10 : 0) - Math.min(20, notes.filter((n) => /^(Figure or claim|Not supported|Removed \d+ sentence)/.test(n.message)).length * 5));
+  await save(ctx, art.id, { body_md: body, sources: cites.sources, answer_summary: fixCitations(art.answer_summary, cites.sources).body, faq: (art.faq || []).map((f: any) => ({ ...f, a: stripCites(f.a) })), review_notes: notes, needs_review: needs,
+    quality: { ...(art.quality || {}), score: finalScore, fact_check_score: score, words: wc, sections: h2, verdict: clip(fc.verdict || "", 300), checked_at: new Date().toISOString(), medical: !!medical } });
+  await ctx.log(needs ? "warn" : "info", `Quality ${finalScore}/100 — ${needs ? notes.filter((n) => n.level === "check").length + " item(s) for a person to check" : "no blocking issues"}`);
+  return { result: { score: finalScore, needs_review: needs, notes: notes.length }, next: [{ agent: "publisher", payload: { post_id: art.id }, post_id: art.id }] };
 }
 
 /* ======================= PUBLISHER ======================= */
