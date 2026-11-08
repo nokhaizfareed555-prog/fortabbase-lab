@@ -30,7 +30,30 @@ async function refresh(){const s=session();if(!s||Date.now()<s.exp-60000)return;
 const WGHT={'Lato':'400;700;900','Merriweather':'400;700;900','Noto Nastaliq Urdu':'400;700','Noto Naskh Arabic':'400;700','Amiri':'400;700','Scheherazade New':'400;700','Lateef':'400;700','Gulzar':'400'};
 const FA=window.FA={demo,D,merge,
  sections(c,view){const own=c.views?.[view]?.sections,base=own&&own.length?own:c.layout.sections,out=base.map(x=>({...x}));D.layout.sections.forEach((x,i)=>{if(!out.some(y=>y.id===x.id)){const b=i&&out.findIndex(y=>y.id===D.layout.sections[i-1].id);out.splice(b>=0&&i?b+1:Math.min(i,out.length),0,{...x})}});return out},
- setIcon(u){let l=document.querySelector('link[rel=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}l.href=u||'/favicon.png'},
+ setIcon(u){
+  let l=document.querySelector('link[rel=icon]');if(!l){l=document.createElement('link');l.rel='icon';document.head.appendChild(l)}
+  const src=u||'/favicon.png',FULL=128,GRID=256,memo=this._icons||(this._icons={});
+  if(this._iconFor===src)return;this._iconFor=src;if(memo[src]){l.href=memo[src];return}
+  const put=h=>{memo[src]=h;if(this._iconFor===src)l.href=h};
+  // Tabs draw every icon at the same tiny size, so empty margin in the picture makes the artwork look small. Zoom in to the artwork.
+  const im=new Image();im.crossOrigin='anonymous';
+  im.onerror=()=>put(src);
+  im.onload=()=>{try{
+    const w=im.naturalWidth,h=im.naturalHeight,sc=GRID/Math.max(w,h),gw=Math.max(1,Math.round(w*sc)),gh=Math.max(1,Math.round(h*sc));
+    const c=document.createElement('canvas');c.width=gw;c.height=gh;const g=c.getContext('2d',{willReadFrequently:true});g.drawImage(im,0,0,gw,gh);
+    const d=g.getImageData(0,0,gw,gh).data,at=(x,y)=>(y*gw+x)*4;
+    const cs=[at(0,0),at(gw-1,0),at(0,gh-1),at(gw-1,gh-1)],bg=cs[0],same=(i,j)=>Math.abs(d[i]-d[j])+Math.abs(d[i+1]-d[j+1])+Math.abs(d[i+2]-d[j+2])<48;
+    const solid=cs.every(i=>d[i+3]>200&&same(i,bg));
+    let x0=gw,y0=gh,x1=-1,y1=-1;
+    for(let y=0;y<gh;y++)for(let x=0;x<gw;x++){const i=at(x,y);if(d[i+3]>24&&!(solid&&same(i,bg))){if(x<x0)x0=x;if(x>x1)x1=x;if(y<y0)y0=y;if(y>y1)y1=y}}
+    if(x1<0||Math.max(x1-x0,y1-y0)<GRID*.08)return put(src);
+    const side=Math.min(Math.max(x1-x0+1,y1-y0+1)*1.04/sc,Math.max(w,h)),cx=(x0+x1+1)/2/sc,cy=(y0+y1+1)/2/sc;
+    const o=document.createElement('canvas');o.width=o.height=FULL;const q=o.getContext('2d');q.imageSmoothingQuality='high';
+    q.drawImage(im,cx-side/2,cy-side/2,side,side,0,0,FULL,FULL);
+    put(o.toDataURL('image/png'));
+  }catch(e){put(src)}};
+  im.src=src;
+},
  async shrink(f,o){if(!o?.compress||!/^image\/(jpeg|png|webp)$/.test(f.type))return f;try{const b=await createImageBitmap(f),k=Math.min(1,o.maxWidth/b.width),c=document.createElement('canvas');c.width=Math.round(b.width*k);c.height=Math.round(b.height*k);c.getContext('2d').drawImage(b,0,0,c.width,c.height);const out=await new Promise(ok=>c.toBlob(ok,'image/webp',o.quality));return out&&out.size<f.size?new File([out],f.name.replace(/\.[^.]+$/,'')+'.webp',{type:'image/webp'}):f}catch{return f}},
  async content(){let rows={};if(demo)rows=demoDb().sections;else{try{const r=await fetch(`${URL_}/rest/v1/site_sections?select=key,data`,{headers:{apikey:KEY,authorization:'Bearer '+KEY},cache:'no-store'});(await r.json()).forEach(x=>rows[x.key]=x.data)}catch{}}
   if(new URLSearchParams(location.search).has('fa_preview')){const p=rs('fa_preview');if(p)Object.assign(rows,p)}

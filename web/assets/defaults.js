@@ -71,7 +71,7 @@ services:{heading:'What we do',text:'Consultation, testing and imaging in one vi
 {"on": false, "group": "Health Packages", "title": "Allergy Screening", "text": "", "image": "/img/svc-lab.webp"},
 {"on": false, "group": "Covid-19", "title": "Covid-19 Testing", "text": "", "image": "/img/svc-lab.webp"},
 {"on": false, "group": "Covid-19", "title": "Covid-19 Spike2 Antibody Test", "text": "", "image": "/img/svc-lab.webp"}]},
-team:{heading:'Our doctors and team',text:'Check who is in before you travel.',imagesOn:true,roles:[{id:'doctors',name:'Doctors'},{id:'technologists',name:'Lab Technologists'},{id:'technicians',name:'Lab Technicians'}],members:[
+team:{heading:'Our doctors and team',text:'Check who is in before you travel.',imagesOn:true,photoShadow:true,photoShadowAmount:50,photoShape:'dome',showBadges:true,showQualifications:true,showTitle:true,profileBtn:'View profile',nameSize:100,roles:[{id:'doctors',name:'Doctors'},{id:'technologists',name:'Lab Technologists'},{id:'technicians',name:'Lab Technicians'}],members:[
 {id:'m1',role:'doctors',name:'Dr. Sufyan Shabbir',title:'Deputy Medical Superintendent, Fort Abbas Poly Clinic',qualifications:'MBBS, RMP, BSc',description:'GDMO Punjab Rangers. Ex PGR, Ganga Ram Hospital Lahore.',years:'',schedule:'',image:'/img/dr-sufyan.webp'},
 {id:'m2',role:'doctors',name:'Dr. Abdul Razzaq',title:'',qualifications:'MBBS, FCPS (Medicine)',description:'',years:'',schedule:'Saturday and Sunday',image:''},
 {id:'m3',role:'doctors',name:'Dr. Eman Fatima',title:'',qualifications:'MBBS',description:'Former in-charge, NCD Clinic, THQ Hospital Fort Abbas.',years:'',schedule:'Monday to Saturday',image:''},

@@ -419,7 +419,7 @@
 
     const onMove = (e) => { const r = cv.getBoundingClientRect(); px = (e.clientX - r.left) / r.width * 2 - 1; py = (e.clientY - r.top) / r.height * 2 - 1; };
     if (matchMedia("(hover:hover)").matches) sec.addEventListener("pointermove", onMove, { passive: true });
-    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf && !still) { last = performance.now(); raf = requestAnimationFrame(frame); } }, { rootMargin: "120px" }).observe(sec);
+    new IntersectionObserver(([e]) => { visible = e.isIntersecting; if (visible && !raf && !still) { last = performance.now(); raf = requestAnimationFrame(frame); } }, { rootMargin: "0px" }).observe(sec);
     addEventListener("resize", () => { W = 0; dirty(); }, { passive: true });
     cv.addEventListener("webglcontextlost", (e) => { e.preventDefault(); sec.classList.add("still", "nogl"); endEl.classList.add("on"); });
     if (still) { endEl.classList.add("on"); clock = 2; } raf = requestAnimationFrame(frame);

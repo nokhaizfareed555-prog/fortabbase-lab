@@ -1,4 +1,4 @@
-/* Report on your phone: a tilted blank report forms from falling dots as you scroll.
+/* Report on your phone: a tilted blank report forms from falling dots each time the section comes into view, and scatters away when it leaves.
    Rows are bars only: no patient and no result is ever shown. site.js renders the empty markup and calls mount(). */
 (function(){
 var ctl;
@@ -81,7 +81,8 @@ function mount(){
     return{canvas:c,data:d};
   }
 
-  var io,sheet,W=0,H=0,dpr=1,G,dots,shade,raf=0,q=still?1:0,target=still?1:0,visible=false;
+  var io,sheet,W=0,H=0,dpr=1,G,dots,shade,raf=0,q=still?1:0,target=still?1:0,visible=false,lastT=0,stride=1,slow=0;
+  var SHOW=.6,HIDE=.5,IN_MS=1500,OUT_MS=850;
 
   function bucketize(list){
     var map=new Map(),styles=[],order;
@@ -92,7 +93,7 @@ function mount(){
 
   function layout(){
     var r=stage.getBoundingClientRect();
-    W=r.width;H=r.height;dpr=Math.min(window.devicePixelRatio||1,2);
+    W=r.width;H=r.height;dpr=Math.min(window.devicePixelRatio||1,1.5);
     canvas.width=Math.round(W*dpr);canvas.height=Math.round(H*dpr);
 
     var cr=copy.getBoundingClientRect(),narrow=cr.width>W*.7,area;
@@ -115,7 +116,7 @@ function mount(){
       var ex=o.x+u.x*a+v.x*b,ey=o.y+u.y*a+v.y*b;
       var col=Math.round(ex/6)*6+(rnd()-.5)*.8,rise=k*1.36*(.42+Math.pow(rnd(),1.25)*1.25),sy=ey-rise;
       if(G.narrow&&sy<G.copyBottom)sy=G.copyBottom+rnd()*Math.max(10,ey-G.copyBottom)*.8;
-      var r8=Math.round(rr*.82/18)*18,g8=Math.round(gg*.82/18)*18,b8=Math.round(bl*.92/18)*18;
+      var r8=Math.round(rr*.82/32)*32,g8=Math.round(gg*.82/32)*32,b8=Math.round(bl*.92/32)*32;
       list.push({x:ex,y:ey,sx:col,sy:sy,d:(1-b)*.3+rnd()*.2,a:.5+rnd()*.5,c:'rgb('+r8+','+g8+','+b8+')'});
     }
     dots=bucketize(list);dots.size=size;
@@ -137,15 +138,6 @@ function mount(){
     shade=bucketize(pts);shade.size=W<760?1.15:1.25;
   }
 
-  function fillBatch(batch,xy){
-    var cur=-1,s=batch.size;
-    batch.list.forEach(function(p){
-      var at=xy(p);if(!at)return;
-      if(p.b!==cur){cur=p.b;ctx.fillStyle=batch.styles[cur]}
-      ctx.fillRect(at[0],at[1],s,s);
-    });
-  }
-
   function draw(){
     var o=G.o,u=G.u,v=G.v,k=G.k;
     ctx.setTransform(dpr,0,0,dpr,0,0);ctx.clearRect(0,0,W,H);
@@ -154,10 +146,14 @@ function mount(){
     if(glowA>0){
       var cx=o.x+u.x*.56,cy=o.y+u.y*.56,gl=ctx.createRadialGradient(cx,cy,0,cx,cy,k*.62);
       gl.addColorStop(0,'rgba(255,176,92,'+.55*glowA+')');gl.addColorStop(.5,'rgba(255,190,140,'+.2*glowA+')');gl.addColorStop(1,'rgba(255,200,170,0)');
-      ctx.fillStyle=gl;ctx.fillRect(0,0,W,H);
+      ctx.fillStyle=gl;ctx.fillRect(cx-k*.62,cy-k*.62,k*1.24,k*1.24);
     }
 
-    if(q>.2)fillBatch(shade,function(p){return q>=p.th?[p.x,p.y]:null});
+    var every=q===1||q===0?1:stride,i,p,cur,n,sz,st;
+    if(q>.2){
+      n=shade.list.length;sz=shade.size;st=shade.styles;cur=-1;
+      for(i=0;i<n;i+=every){p=shade.list[i];if(q<p.th)continue;if(p.b!==cur){cur=p.b;ctx.fillStyle=st[cur]}ctx.fillRect(p.x,p.y,sz,sz)}
+    }
 
     var crisp=smooth(.8,.98,q);
     if(crisp>0){
@@ -170,38 +166,58 @@ function mount(){
       ctx.restore();
     }
 
-    var dotA=1-smooth(.9,.995,q);
+    var dotA=(1-smooth(.9,.995,q))*smooth(0,.14,q);
     if(dotA>0){
       ctx.globalAlpha=dotA;
-      fillBatch(dots,function(p){
-        var t=clamp((q*.98-p.d)/.5,0,1),e2=easeOut(t);
-        return[p.sx+(p.x-p.sx)*e2,p.sy+(p.y-p.sy)*e2];
-      });
+      n=dots.list.length;sz=dots.size;st=dots.styles;cur=-1;
+      for(i=0;i<n;i+=every){
+        p=dots.list[i];
+        var t=(q*.98-p.d)/.5;t=t<0?0:t>1?1:t;t=1-t;t=1-t*t*t;
+        if(p.b!==cur){cur=p.b;ctx.fillStyle=st[cur]}
+        ctx.fillRect(p.sx+(p.x-p.sx)*t,p.sy+(p.y-p.sy)*t,sz,sz);
+      }
       ctx.globalAlpha=1;
     }
   }
 
+  // Share of the screen-sized section in view decides whether the report is there. The gap between SHOW and HIDE stops flicker at the edge.
   function readScroll(){
-    if(still)return;
-    var r=section.getBoundingClientRect(),run=r.height-stage.offsetHeight;
-    target=clamp((-r.top/run)/.86,0,1);
+    if(still||!visible)return;
+    var r=section.getBoundingClientRect(),vh=innerHeight,seen=(Math.min(r.bottom,vh)-Math.max(r.top,0))/Math.min(r.height,vh);
+    if(seen>=SHOW)target=1;else if(seen<HIDE)target=0;
     wake();
   }
-  function tick(){
+  function tick(now){
     raf=0;
-    var gap=target-q;
-    if(Math.abs(gap)<.0015)q=target;else q+=gap*.14;
+    var real=lastT?now-lastT:16,dt=Math.min(real,50);lastT=now;
+    // A device that cannot keep up draws fewer dots rather than stuttering.
+    if(real>24){if(++slow>=3&&stride<4){stride++;slow=0}}else slow=0;
+    var step=dt/(target>q?IN_MS:OUT_MS);
+    q=Math.abs(target-q)<=step?target:q+(target>q?step:-step);
     draw();
-    if(q!==target&&visible)wake();
+    if(q!==target&&visible)wake();else lastT=0;
   }
   function wake(){if(!raf&&visible)raf=requestAnimationFrame(tick)}
 
+  function idle(fn){if(window.requestIdleCallback)requestIdleCallback(fn,{timeout:300});else setTimeout(fn,30)}
   function start(){
-    sheet=paintSheet();layout();
-    if(still){draw();return}
-    readScroll();q=target;draw();
-    io=new IntersectionObserver(function(en){visible=en[0].isIntersecting;if(visible)readScroll()});io.observe(section);signal.addEventListener('abort',function(){io.disconnect();if(raf)cancelAnimationFrame(raf)});
-    addEventListener('scroll',readScroll,{passive:true,signal:signal});
+    // The heavy drawing is built only when the visitor gets near, in two slices so scrolling is not held up.
+    var near=new IntersectionObserver(function(en){
+      if(!en[0].isIntersecting)return;near.disconnect();
+      idle(function(){
+        if(signal.aborted)return;sheet=paintSheet();
+        idle(function(){
+          if(signal.aborted)return;layout();
+          var r=stage.getBoundingClientRect();lastW=r.width;lastH=r.height;
+          if(still){draw();return}
+          draw();
+          io=new IntersectionObserver(function(en){visible=en[0].isIntersecting;if(visible)readScroll();else{if(raf)cancelAnimationFrame(raf);raf=0;lastT=0;q=target=0;draw()}});io.observe(section);
+          signal.addEventListener('abort',function(){io.disconnect();if(raf)cancelAnimationFrame(raf)});
+          addEventListener('scroll',readScroll,{passive:true,signal:signal});
+        });
+      });
+    },{rootMargin:'120% 0px'});
+    near.observe(section);signal.addEventListener('abort',function(){near.disconnect()});
   }
 
   var lastW=0,lastH=0,rt;
@@ -215,7 +231,7 @@ function mount(){
   },{signal:signal});
 
   var began=false;
-  function go(){if(began||signal.aborted)return;began=true;var r=stage.getBoundingClientRect();lastW=r.width;lastH=r.height;start()}
+  function go(){if(began||signal.aborted)return;began=true;start()}
   if(document.fonts&&document.fonts.ready)document.fonts.ready.then(go);
   setTimeout(go,1400);
 }

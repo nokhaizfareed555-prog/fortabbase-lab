@@ -37,7 +37,9 @@ html.lite .gc-c,html.lite .gc-cap,html.lite .gc-fr{-webkit-backdrop-filter:none!
 /* People run past the bottom of the card, showing through the frosted panel, which casts a soft shadow on them. */
 .gc-ph{bottom:-14px;height:338px;width:auto;max-width:none;object-fit:initial}
 .gc-ph.f{bottom:-14px;height:322px}
-.gc-ph.real{display:block;top:106px;bottom:0;height:auto;width:206px;max-width:none;border-radius:103px 103px 0 0;background-repeat:no-repeat,no-repeat;background-size:100% auto,100% 100%;background-position:50% 0,50% 0;-webkit-mask:none;mask:none;box-shadow:0 -6px 22px -10px rgba(10,20,50,.4)}
+.gc-ph.real{display:block;top:106px;bottom:0;height:auto;width:206px;max-width:none;border-radius:103px 103px 0 0;background-repeat:no-repeat,no-repeat;background-size:100% auto,100% 100%;background-position:50% 0,50% 0;-webkit-mask:none;mask:none;box-shadow:inset 0 0 34px 6px rgba(10,20,50,.5),inset 0 0 8px 1px rgba(10,20,50,.4)}
 .gc-cap{box-shadow:inset 0 0 0 1px rgba(255,255,255,.42),0 -12px 26px -10px rgba(10,20,50,.5),0 10px 20px -12px rgba(10,20,50,.5)}
 .gc-fr{box-shadow:inset 0 0 0 1.3px rgba(255,255,255,.5),0 -12px 22px -10px rgba(0,0,0,.55),0 18px 26px -14px rgba(0,0,0,.6)}
 @media(max-width:760px){.gc-ph{bottom:-14px;height:272px;max-width:none}.gc-ph.f{bottom:-14px;height:256px}.gc-ph.real{top:92px;bottom:0;height:auto;width:164px;border-radius:82px 82px 0 0}.gc-cap{min-height:86px}}
+#team .gc-top h3{font-size:calc(1.34rem*var(--ns,1))}
+@media(max-width:760px){#team .gc-top h3{font-size:calc(1.02rem*var(--ns,1))}}
