@@ -1,0 +1,63 @@
+<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Glass widgets | Labs</title><meta name="robots" content="noindex,nofollow">
+<style>
+*{box-sizing:border-box}html,body{height:100%;margin:0}body{display:flex;flex-direction:column;background:#20242c;color:#14305c;font:500 14px/1.3 system-ui,sans-serif}
+.bar{display:flex;flex-wrap:wrap;gap:8px 14px;align-items:center;padding:8px 12px;background:#fff;border-bottom:1px solid #dfe5ee}
+.bar label{display:flex;align-items:center;gap:6px}.bar select{min-height:36px;border:1px solid #cfd8e4;border-radius:8px;background:#fff;font:inherit;padding:0 6px}.bar input[type=color]{width:42px;height:36px;padding:2px;border:1px solid #cfd8e4;border-radius:8px;background:#fff}
+.bar button{min-height:36px;border:0;border-radius:8px;background:#14305c;color:#fff;font:600 14px system-ui,sans-serif;padding:0 14px;cursor:pointer}#msg{color:#5a6a85;font-size:13px}
+.wrap{flex:1;min-height:0;display:flex;justify-content:center}iframe{width:100%;height:100%;border:0;background:#fff}.wrap.ph iframe{width:390px}
+</style></head><body>
+<div class="bar">
+ <label>Page <select id="pg"><option value="/">Home</option><option value="/services">Services</option><option value="/doctors">Doctors</option><option value="/test-panels">Test panels</option><option value="/lab-tests">Lab tests</option><option value="/gallery">Gallery</option><option value="/faq">Questions</option><option value="/contact">Contact</option><option value="/about">About</option></select></label>
+ <label>Background <select id="bg"><option value="site">Your site</option><option value="dark">Dark, like your example</option></select></label>
+ <label>Size <select id="sz"><option value="">Desktop</option><option value="ph">Phone</option></select></label>
+ <label>Floating button color <input type="color" id="col" value="#14305c"></label>
+ <button id="save">Save color</button><span id="msg" role="status">Preview only. The public site is not changed.</span>
+</div>
+<div class="wrap" id="wrap"><iframe id="f" title="Site preview with glass widgets"></iframe></div>
+<script>
+const $=s=>document.querySelector(s),F=$('#f'),P=window.parent,KEY='labs_glass';
+const GRAIN="url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .55 0'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)' opacity='.22'/%3E%3C/svg%3E\")";
+const CSS=`
+html{--lg-a:.42;--lg-b:.14;--lg-ring:rgba(255,255,255,.95);--lg-float:#14305c;--lg-ft:#fff}
+html.lg-dark{--lg-a:.16;--lg-b:.05;--ink:#f4f6fb!important;--muted:#c3c9d4!important;--accent:#eef27a!important;--base:#f4f6fb!important;--line:rgba(255,255,255,.2)!important}
+html.lg-dark .logo,html.lg-dark .logo span,html.lg-dark .links a{color:#f4f6fb!important;text-shadow:none!important}
+html.lg-dark body{background:#0b0c0f var(--lg-shards) center/cover fixed!important;color:var(--ink)}
+html.lg-dark #fa-herobg,html.lg-dark .mesh,html.lg-dark .bg-mesh{display:none!important}
+html.lg-dark .nav{background:rgba(14,15,19,.6)!important}
+html body .glass:not(.lg-c),html body .gl-i,html body .trust-i,html body details.glass,html body .visit{position:relative;background:${GRAIN},radial-gradient(120% 90% at 18% 0,rgba(255,255,255,calc(var(--lg-a) + .14)),transparent 62%),linear-gradient(140deg,rgba(255,255,255,var(--lg-a)),rgba(255,255,255,var(--lg-b)))!important;-webkit-backdrop-filter:blur(22px) saturate(165%)!important;backdrop-filter:blur(22px) saturate(165%)!important;border:0!important;border-radius:26px!important;box-shadow:-1px 0 1px -.5px rgba(255,0,80,.4),1px 0 1px -.5px rgba(0,190,255,.5),0 24px 40px -26px rgba(15,25,50,.5)!important}
+html body .glass:not(.lg-c)::before,html body .gl-i::before,html body .trust-i::before,html body .visit::before{content:"";position:absolute;inset:0;border-radius:inherit;padding:1.5px;pointer-events:none;background:linear-gradient(150deg,var(--lg-ring),rgba(255,255,255,.2) 42%,rgba(255,255,255,.12) 62%,var(--lg-ring));-webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;mask:linear-gradient(#000 0 0) content-box exclude,linear-gradient(#000 0 0)}
+html body .lg-c{position:relative!important;isolation:isolate;background:none!important;border:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;overflow:visible!important;border-radius:26px!important}
+html body .lg-c::before,html body .lg-c::after{content:none!important}
+.lg-bg,.lg-fbg{position:absolute;inset:0;z-index:-1;display:block;background:${GRAIN},radial-gradient(120% 90% at 18% 0,rgba(255,255,255,calc(var(--lg-a) + .14)),transparent 62%),linear-gradient(140deg,rgba(255,255,255,var(--lg-a)),rgba(255,255,255,var(--lg-b)));-webkit-backdrop-filter:blur(22px) saturate(165%);backdrop-filter:blur(22px) saturate(165%)}
+.lg-fbg{background:${GRAIN},linear-gradient(140deg,color-mix(in srgb,var(--lg-float) 86%,transparent),color-mix(in srgb,var(--lg-float) 62%,transparent))}
+.lg-e{position:absolute;inset:0;width:100%;height:100%;z-index:-1;overflow:visible;pointer-events:none;filter:drop-shadow(0 16px 18px rgba(15,25,50,.22))}
+.lg-e path{fill:none;vector-effect:non-scaling-stroke}
+html body .lg-c .in{position:static!important;padding-bottom:66px!important}
+html body .lg-c img.top{border-radius:26px 26px 0 0}
+html body .lg-f{position:absolute!important;right:0!important;bottom:0!important;left:auto!important;top:auto!important;isolation:isolate;margin:0!important;width:auto!important;min-width:0!important;min-height:46px;display:inline-flex!important;align-items:center;justify-content:center;gap:2px;padding:0 20px 0 34px!important;background:none!important;border:0!important;border-radius:0!important;box-shadow:none!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:var(--lg-ft)!important;text-shadow:none!important;font-style:normal;align-self:auto!important;transform:none!important;transition:transform .2s!important;z-index:2}
+html body .lg-f::before,html body .lg-f::after{content:none!important}
+@media(hover:hover){html body .lg-f:hover{transform:translateY(-2px)!important}}
+html body .lg-f .btn{min-width:0!important;min-height:38px;padding:0 10px!important;background:none!important;box-shadow:none!important;border:0!important;-webkit-backdrop-filter:none!important;backdrop-filter:none!important;color:var(--lg-ft)!important;text-shadow:none!important;width:auto!important}
+html body .lg-f .btn::before{content:none!important}
+html body .lg-c.person .p-role{padding-right:76px;min-height:104px;border-top-color:var(--line)}
+html.lg-dark .ava{color:#14305c!important}
+html body .lg-c.person{padding-bottom:30px}
+html body .lg-c.ti{padding-right:190px;min-height:92px}
+@media(max-width:860px){html body .lg-c.ti{padding-right:12px;padding-bottom:62px}html body .lg-c .in{padding-bottom:60px!important}html body .lg-c.person .p-role{padding-right:0;padding-bottom:44px}html body .lg-f{padding:0 14px 0 28px!important;min-height:42px;font-size:.84rem}}
+`;
+/* A shape with rounded corners from a list of corner points */
+function shape(pts,r){let d='';const n=pts.length;for(let i=0;i<n;i++){const p=pts[i],a=pts[(i+n-1)%n],b=pts[(i+1)%n],la=Math.hypot(a[0]-p[0],a[1]-p[1]),lb=Math.hypot(b[0]-p[0],b[1]-p[1]),k=Math.min(r,la/2,lb/2),s=[p[0]+(a[0]-p[0])/la*k,p[1]+(a[1]-p[1])/la*k],e=[p[0]+(b[0]-p[0])/lb*k,p[1]+(b[1]-p[1])/lb*k];d+=(i?'L':'M')+s.map(v=>v.toFixed(1)).join(' ')+'Q'+p.join(' ')+' '+e.map(v=>v.toFixed(1)).join(' ')}return d+'Z'}
+const NS='http://www.w3.org/2000/svg';let UID=0;
+function edge(doc,host){const id='lg'+(++UID),s=doc.createElementNS(NS,'svg');s.setAttribute('class','lg-e');s.innerHTML=`<defs><linearGradient id="${id}" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#fff"/><stop offset=".42" stop-color="#fff" stop-opacity=".28"/><stop offset=".66" stop-color="#fff" stop-opacity=".18"/><stop offset="1" stop-color="#fff"/></linearGradient></defs><path stroke="#ff0a5a" stroke-opacity=".5" stroke-width="1" transform="translate(-.8 0)"/><path stroke="#00c3ff" stroke-opacity=".6" stroke-width="1" transform="translate(.8 0)"/><path stroke="url(#${id})" stroke-width="1.6"/>`;host.prepend(s);return s}
+function lay(card,btn){const W=card.offsetWidth,H=card.offsetHeight,bw=btn.offsetWidth,bh=btn.offsetHeight;if(!W||!H)return;const s=Math.min(bh*.5,20),g=9,e=g*1.3,x1=W-bw+s-e+s/bh*g,x0=W-bw-e,d=shape([[0,0],[W,0],[W,H-bh-g],[x1,H-bh-g],[x0,H],[0,H]],Math.min(26,H/3)),b=shape([[s,0],[bw,0],[bw,bh],[0,bh]],13);card._lgB.style.clipPath=`path('${d}')`;card.querySelectorAll(':scope>.lg-e path').forEach(p=>p.setAttribute('d',d));card._lgS.setAttribute('viewBox',`0 0 ${W} ${H}`);btn._lgB.style.clipPath=`path('${b}')`;btn.querySelectorAll(':scope>.lg-e path').forEach(p=>p.setAttribute('d',b));btn._lgS.setAttribute('viewBox',`0 0 ${bw} ${bh}`)}
+const TARGETS=[['.card','.in>.btn'],['.person','.p-role>i'],['.ti','.ti-b']];
+function dress(doc,ro){for(const[c,b]of TARGETS)doc.querySelectorAll(c).forEach(card=>{if(card.classList.contains('lg-c'))return;const btn=card.querySelector(b);if(!btn)return;card.classList.add('lg-c');btn.classList.add('lg-f');card._lgS=edge(doc,card);card._lgB=doc.createElement('i');card._lgB.className='lg-bg';card.prepend(card._lgB);if(c==='.ti')card.appendChild(btn);else card.appendChild(btn);btn._lgS=edge(doc,btn);btn._lgB=doc.createElement('i');btn._lgB.className='lg-fbg';btn.prepend(btn._lgB);btn._lgCard=card;card._lgBtn=btn;lay(card,btn);ro.observe(card);ro.observe(btn)})}
+/* A dark faceted backdrop drawn once, like the example image */
+let shards='';function makeShards(){if(shards)return shards;const c=document.createElement('canvas');c.width=1600;c.height=1100;const g=c.getContext('2d');g.fillStyle='#08090b';g.fillRect(0,0,1600,1100);const R=a=>a+(Math.random()-.5)*150;for(let y=-60;y<1160;y+=120)for(let x=-60;x<1660;x+=130){const p=[[R(x),R(y)],[R(x+150),R(y)],[R(x+170),R(y+90)],[R(x+120),R(y+150)],[R(x),R(y+130)]],v=18+Math.random()*30,lg=g.createLinearGradient(p[0][0],p[0][1],p[2][0],p[2][1]);lg.addColorStop(0,`rgb(${v+14},${v+14},${v+18})`);lg.addColorStop(1,`rgb(${v-10},${v-10},${v-8})`);g.fillStyle=lg;g.beginPath();p.forEach((q,i)=>i?g.lineTo(q[0],q[1]):g.moveTo(q[0],q[1]));g.closePath();g.fill();g.strokeStyle=Math.random()<.12?'rgba(255,255,255,.55)':'rgba(0,0,0,.75)';g.lineWidth=Math.random()<.12?1.4:3;g.stroke()}return shards=c.toDataURL('image/jpeg',.72)}
+const lum=h=>{const n=parseInt(h.slice(1),16),f=v=>{v/=255;return v<=.03928?v/12.92:((v+.055)/1.055)**2.4};return .2126*f(n>>16)+.7152*f(n>>8&255)+.0722*f(n&255)};
+function theme(){const d=F.contentDocument;if(!d||!d.documentElement)return;const h=d.documentElement,c=$('#col').value;h.style.setProperty('--lg-float',c);h.style.setProperty('--lg-ft',lum(c)>.4?'#14305c':'#fff');const dark=$('#bg').value==='dark';h.classList.toggle('lg-dark',dark);if(dark)h.style.setProperty('--lg-shards',`url(${makeShards()})`)}
+F.addEventListener('load',()=>{const d=F.contentDocument;if(!d)return;const st=d.createElement('style');st.textContent=CSS;d.head.appendChild(st);theme();const ro=new F.contentWindow.ResizeObserver(es=>es.forEach(x=>{const t=x.target,c=t._lgBtn?t:t._lgCard,b=t._lgBtn||t;if(c&&b)lay(c,b)}));dress(d,ro);new F.contentWindow.MutationObserver(()=>dress(d,ro)).observe(d.body,{childList:true,subtree:true})});
+const go=()=>{F.src=$('#pg').value+'?fa_preview=1'};$('#pg').onchange=go;$('#bg').onchange=theme;$('#col').oninput=theme;$('#sz').onchange=e=>$('#wrap').classList.toggle('ph',!!e.target.value);
+$('#save').onclick=async()=>{const m=$('#msg');try{if(!P.FA||P===window)throw new Error('Open this from the admin panel to save.');await P.FA.rpc('save_section',{k:KEY,v:{float:$('#col').value}});m.textContent='Color saved.'}catch(er){m.textContent=er.message||'Could not save.'}};
+(async()=>{try{const c=P.FA_CONFIG;if(c&&c.url){const r=await fetch(`${c.url}/rest/v1/site_sections?select=data&key=eq.${KEY}`,{headers:{apikey:c.anon,authorization:'Bearer '+c.anon}}),a=await r.json();if(a[0]&&a[0].data.float)$('#col').value=a[0].data.float}}catch{}go()})();
+</script></body></html>
