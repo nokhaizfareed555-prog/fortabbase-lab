@@ -1,30 +1,71 @@
-// Builds blog pages on the server so search engines and AI answer engines get complete HTML.
-const U = process.env.SUPABASE_URL, K = process.env.SUPABASE_ANON_KEY, SITE = "https://fortabbaspolyclinic.com";
+// Builds the health blog on the server so search engines and AI answer engines get complete HTML.
+import { readFileSync } from "node:fs";
+import vm from "node:vm";
+import { renderBlog } from "../lib/blog.mjs";
+import "../web/assets/guides/blog-md.js";
+import "../web/assets/guides/blog-fonts.js";
+
+const U = process.env.SUPABASE_URL, K = process.env.SUPABASE_ANON_KEY, SITE = "https://fortabbaspolyclinic.com", STORE = "Fort Abbas Poly Clinic", ORG_ID = `${SITE}/#clinic`;
+const MD = globalThis.BlogMD, BF = globalThis.BlogFonts;
+const COLS = "id,slug,lang,translation_of,title,seo_title,meta_description,excerpt,answer_summary,body_md,faq,cover_image,category_id,tags,is_pillar,pillar_id,status,published_at,content_updated_at,author_name,sources,product_ids,featured,noindex,word_count,reading_minutes,ai_generated,reviewed_at,created_at,updated_at";
+const H = { apikey: K, authorization: `Bearer ${K}` };
 const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
-const get = async (q) => { if (!U) return []; const r = await fetch(`${U}/rest/v1/blog_posts?${q}`, { headers: { apikey: K } }); return r.ok ? r.json() : []; };
-const inline = (s) => esc(s).replace(/\*\*(.+?)\*\*/g, "<strong>$1</strong>").replace(/\[([^\]]+)\]\((https?:[^)\s]+)\)/g, '<a href="$2" rel="noopener">$1</a>');
-export const md = (t) => String(t || "").split(/\n{2,}/).map((b) => { b = b.trim();
-  if (b.startsWith("### ")) return `<h3>${inline(b.slice(4))}</h3>`; if (b.startsWith("## ")) return `<h2>${inline(b.slice(3))}</h2>`;
-  if (/^[-*] /.test(b)) return `<ul>${b.split("\n").map((l) => `<li>${inline(l.replace(/^[-*] /, ""))}</li>`).join("")}</ul>`;
-  return b ? `<p>${inline(b)}</p>` : ""; }).join("\n");
-const shell = (title, desc, canon, body, ld) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>${esc(title)}</title><meta name="description" content="${esc(desc)}"><link rel="canonical" href="${SITE}${canon}"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(desc)}"><link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/assets/site.css">${ld ? `<script type="application/ld+json">${JSON.stringify(ld).replace(/</g, "\\u003c")}</script>` : ""}</head><body data-page="blog"><header class="nav" id="nav"></header><main id="main0" style="position:relative;z-index:1"><section><div class="wrap">${body}</div></section></main><footer id="foot"></footer><div class="dock" id="dock"></div><div id="main" hidden></div><script src="/assets/config.js"></script><script src="/assets/defaults.js"></script><script src="/assets/core.js"></script><script src="/assets/site.js"></script></body></html>`;
+const short = (s, n) => { s = String(s || "").trim(); if (s.length <= n) return s; const c = s.slice(0, n); return c.slice(0, c.lastIndexOf(" ") > n * 0.6 ? c.lastIndexOf(" ") : n).replace(/[\s,.;:–—-]+$/, "") + "…"; };
+const ld = (o) => `<script type="application/ld+json">${JSON.stringify(o).replace(/</g, "\\u003c")}</script>`;
+const isoDay = (d) => { const t = new Date(d); return isNaN(t) ? null : t.toISOString().slice(0, 10); };
+const safeUrl = (u) => { try { const x = new URL(String(u), SITE + "/"); return /^https?:$/.test(x.protocol) ? x.href : ""; } catch { return ""; } };
+const get = async (path) => { const r = await fetch(`${U}/rest/v1/${path}`, { headers: H }); if (!r.ok) throw new Error(`${path}: ${r.status}`); return r.json(); };
+const merge = (d, v) => { if (v === undefined || v === null) return d; if (Array.isArray(v) || typeof v !== "object" || typeof d !== "object" || Array.isArray(d) || d === null) return v; const o = { ...d }; for (const k in v) o[k] = merge(d[k], v[k]); return o; };
+const defaults = (() => { const w = {}; vm.runInNewContext(readFileSync(new URL("../web/assets/defaults.js", import.meta.url), "utf8"), { window: w }); return w.FA_DEFAULTS; })();
+async function tests() {
+  const rows = await get("site_sections?select=key,data&key=eq.tests").catch(() => []);
+  return merge(defaults.tests, rows[0]?.data);
+}
+const headTags = ({ title, description, url, image, type = "website", extra = "", index = true }) => `<title>${esc(title)}</title><meta name="description" content="${esc(description)}"><link rel="canonical" href="${esc(url)}"><meta name="robots" content="${index ? "index,follow,max-image-preview:large" : "noindex,follow"}"><meta property="og:type" content="${type}"><meta property="og:site_name" content="${STORE}"><meta property="og:locale" content="en_PK"><meta property="og:title" content="${esc(title)}"><meta property="og:description" content="${esc(description)}"><meta property="og:url" content="${esc(url)}"><meta property="og:image" content="${esc(image || `${SITE}/img/clinic.webp`)}"><meta name="twitter:card" content="summary_large_image">${extra}`;
+const shopPage = ({ head, bodyClass, ssr }) => `<!doctype html><html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">${head}<link rel="icon" href="/favicon.png"><link rel="stylesheet" href="/assets/site.css">${ld({ "@context": "https://schema.org", "@type": "MedicalClinic", "@id": ORG_ID, name: "Fort Abbas Poly Clinic Laboratories", url: SITE })}</head><body data-page="blog" class="${bodyClass}"><header class="nav" id="nav"></header><div style="position:relative;z-index:1">${ssr}</div><footer id="foot"></footer><div class="dock" id="dock"></div><div id="main" hidden></div><script src="/assets/config.js"></script><script src="/assets/defaults.js"></script><script src="/assets/core.js"></script><script src="/assets/site.js"></script></body></html>`;
+const crumbsHtml = (items) => `<nav class="seo-crumbs" aria-label="Breadcrumb"><ol>${items.map(([n, u], i) => `<li>${u && i < items.length - 1 ? `<a href="${esc(u)}">${esc(n)}</a>` : `<span aria-current="page">${esc(n)}</span>`}</li>`).join("")}</ol></nav>`;
+const crumbsLd = (items) => ({ "@type": "BreadcrumbList", itemListElement: items.map(([n, u], i) => ({ "@type": "ListItem", position: i + 1, name: n, ...(u ? { item: u } : {}) })) });
+
+let cache = null;
+async function build() {
+  if (cache && Date.now() - cache.at < 30_000) return cache;
+  const [posts, categories, settings, t] = await Promise.all([
+    get(`blog_posts?select=${COLS}&status=eq.published&order=published_at.desc`),
+    get("blog_categories?select=*&active=eq.true&order=sort"),
+    fetch(`${U}/rest/v1/rpc/blog_public_settings`, { method: "POST", headers: { ...H, "content-type": "application/json" }, body: "{}" }).then((r) => r.json()),
+    tests()
+  ]);
+  const products = (t.items || []).filter((x) => x.active !== false);
+  const productPath = (p) => `/tests.html?book=${encodeURIComponent(p.id)}`;
+  const priceText = (p) => (t.showPrices && p.price !== "" && p.price != null ? `Rs ${p.price}` : "Book this test");
+  const card = (p) => `<a class="blog-test-card" href="${esc(productPath(p))}"><span><small>Lab test</small><b>${esc(p.name)}</b></span><span class="go">${esc(priceText(p))} →</span></a>`;
+  const out = new Map(), write = (k, v) => out.set(k, v);
+  const r = renderBlog({ SITE, STORE, esc, write, shopPage, headTags, crumbsHtml, crumbsLd, ld, short, isoDay, products, productPath, S: { safeUrl, productImages: () => [] }, priceText, ORG_ID, MD, BF, validPaths: new Set(["/", "/tests.html", "/reports.html"]), blog: { posts, categories, settings }, card });
+  cache = { at: Date.now(), out, r, products };
+  return cache;
+}
 export default async function handler(req, res) {
-  const { slug, sitemap } = req.query || {};
-  res.setHeader("content-type", sitemap ? "application/xml" : "text/html; charset=utf-8");
+  const q = req.query || {};
   res.setHeader("cache-control", "public, s-maxage=30, stale-while-revalidate=300");
-  if (sitemap) {
-    const p = await get("select=slug,updated_at");
-    const urls = ["/", "/tests.html", "/blog", ...p.map((x) => `/blog/${x.slug}`)];
-    return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map((u) => `<url><loc>${SITE}${u}</loc></url>`).join("")}</urlset>`);
+  try {
+    if (q.catalog) { const t = await tests(); res.setHeader("content-type", "application/json"); return res.status(200).send(JSON.stringify((t.items || []).filter((x) => x.active !== false).map((x) => ({ id: x.id, name: x.name, category: x.category, isPanel: !!x.isPanel })))); }
+    const b = await build();
+    if (q.sitemap) {
+      const base = ["/", "/tests.html"].map((u) => ({ loc: SITE + u }));
+      res.setHeader("content-type", "application/xml");
+      return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${[...base, ...b.r.urls].map((u) => `<url><loc>${esc(u.loc)}</loc>${u.lastmod ? `<lastmod>${u.lastmod}</lastmod>` : ""}</url>`).join("")}</urlset>`);
+    }
+    const path = String(q.p || "blog").replace(/^\/+|\/+$/g, "");
+    if (path === "blog/feed.xml") { res.setHeader("content-type", "application/rss+xml; charset=utf-8"); return res.status(200).send(b.out.get(path)); }
+    res.setHeader("content-type", "text/html; charset=utf-8");
+    if (path === "blog/search") return res.status(200).send(b.r.search(q.q || ""));
+    const html = b.out.get(`${path}.html`);
+    if (html) return res.status(200).send(html);
+    return res.status(404).send(shopPage({ head: headTags({ title: "Article not found", description: "", url: `${SITE}/blog`, index: false }), bodyClass: "seo-blog", ssr: `<main class="wrap seo-page"><h1>Article not found</h1><p><a href="/blog">All articles</a></p></main>` }));
+  } catch (e) {
+    console.error(e);
+    res.setHeader("cache-control", "no-store");
+    res.setHeader("content-type", "text/html; charset=utf-8");
+    return res.status(503).send("<!doctype html><title>Please try again</title><p>The health blog is briefly unavailable. Please try again in a minute.</p>");
   }
-  if (slug) {
-    const [p] = await get(`select=*&slug=eq.${encodeURIComponent(slug)}&limit=1`);
-    if (!p) return res.status(404).send(shell("Article not found", "", "/blog", "<h1>Article not found</h1><p><a href='/blog'>All articles</a></p>"));
-    const faq = (p.faq || []).map((f) => `<h3>${esc(f.q)}</h3><p>${esc(f.a)}</p>`).join("");
-    const src = (p.sources || []).map((s) => `<li><a href="${esc(s.url)}" rel="noopener">${esc(s.title || s.url)}</a></li>`).join("");
-    const ld = { "@context": "https://schema.org", "@type": "MedicalWebPage", headline: p.title, description: p.seo_desc || p.excerpt, datePublished: p.published_at, dateModified: p.updated_at, publisher: { "@type": "MedicalClinic", name: "Fort Abbas Poly Clinic Laboratories" } };
-    return res.status(200).send(shell(p.seo_title || p.title, p.seo_desc || p.excerpt, `/blog/${p.slug}`, `<article class="article"><h1>${esc(p.title)}</h1>${p.image ? `<img src="${esc(p.image)}" alt="">` : ""}${md(p.body_md)}${faq ? `<h2>Questions</h2>${faq}` : ""}${src ? `<h2>Sources</h2><ul>${src}</ul>` : ""}<p><em>This article is general information and does not replace advice from your doctor.</em></p></article>`, ld));
-  }
-  const ps = await get("select=slug,title,excerpt,image&order=published_at.desc");
-  return res.status(200).send(shell("Health awareness | Fort Abbas Poly Clinic", "New medical discoveries, common health myths and practical information.", "/blog", `<h1>Health awareness</h1><p class="lead">New discoveries, common myths and practical health information.</p><div class="grid">${ps.map((p) => `<a class="card glass" style="text-decoration:none" href="/blog/${esc(p.slug)}">${p.image ? `<img class="top" src="${esc(p.image)}" alt="" loading="lazy">` : ""}<div class="in"><h3>${esc(p.title)}</h3><p>${esc(p.excerpt)}</p></div></a>`).join("") || "<p>Articles are coming soon.</p>"}</div>`));
 }

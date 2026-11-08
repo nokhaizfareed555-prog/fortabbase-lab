@@ -1,0 +1,312 @@
+/* Divaar.pk — admin polish (Oct 23 2026). Loaded LAST, after admin-find.css.
+   Conversations table · customer page that really scrolls · Agents · sidebar sub-links & counts ·
+   save buttons that are easy to find · colour & email editors that scroll inside their own box ·
+   product notes. Looks and layout only, plus the small bits of markup admin-polish.js adds. */
+
+/* =====================================================================
+   Conversations (was Customers) — the list is a table
+   ===================================================================== */
+.cv-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin: 6px 0 14px; }
+.cv-stat { display: flex; flex-direction: column; align-items: flex-start; gap: 4px; padding: 14px 16px; border: 1px solid var(--ad-line, rgba(20,22,30,.08)); border-radius: 18px; background: #fff; color: var(--ad-ink, #14161E); font: inherit; text-align: left; cursor: pointer; transition: border-color .15s, box-shadow .15s, transform .15s; }
+.cv-stat span { font-size: 12.5px; font-weight: 600; color: var(--ad-muted, #6B7180); }
+.cv-stat b { font-size: 26px; font-weight: 800; letter-spacing: -.03em; line-height: 1; }
+.cv-stat:hover { border-color: var(--ad-line-2, rgba(20,22,30,.16)); transform: translateY(-1px); }
+.cv-stat[aria-selected="true"] { border-color: var(--ad-ink, #14161E); box-shadow: 0 0 0 1px var(--ad-ink, #14161E); }
+.cv-stat.hot b { color: var(--ad-red, #E5484D); }
+.cv-stat:focus-visible { outline: 2px solid var(--ad-blue, #1570EF); outline-offset: 2px; }
+
+.cv-tools { margin: 0 0 8px !important; }
+.cv-tools .input { max-width: none !important; }
+.cv-sort { display: inline-flex; align-items: center; gap: 8px; }
+.cv-sort .input { min-width: 170px; }
+.cv-tools-r { display: inline-flex; gap: 8px; margin-left: auto; flex-wrap: wrap; }
+.cv-count { margin: 4px 2px 10px; }
+
+.cv-table-wrap { display: block !important; overflow-x: auto; background: #fff; border: 1px solid var(--ad-line, rgba(20,22,30,.08)); border-radius: 20px; box-shadow: var(--ad-shadow, none); }
+.cv-table { width: 100%; border-collapse: separate; border-spacing: 0; font-size: 14px; color: var(--ad-ink, #14161E); }
+.cv-table thead th { position: sticky; top: 0; z-index: 1; background: var(--ad-sunk, #F7F8FA); text-align: left; font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ad-muted, #6B7180); padding: 0 14px; height: 42px; border-bottom: 1px solid var(--ad-line, rgba(20,22,30,.08)); white-space: nowrap; }
+.cv-table thead th:first-child { border-top-left-radius: 20px; padding-left: 18px; }
+.cv-table thead th:last-child { border-top-right-radius: 20px; }
+.cv-th { border: 0; background: none; padding: 0; font: inherit; color: inherit; letter-spacing: inherit; text-transform: inherit; cursor: pointer; }
+.cv-th:hover, .cv-th.on { color: var(--ad-ink, #14161E); }
+.cv-table td { padding: 10px 14px; border-bottom: 1px solid var(--ad-line, rgba(20,22,30,.06)); vertical-align: middle; }
+.cv-table tbody tr:last-child td { border-bottom: 0; }
+.cv-table td:first-child { padding-left: 18px; }
+.cv-row { cursor: pointer; transition: background .12s; }
+.cv-row:hover { background: var(--ad-sunk, #F7F8FA); }
+.cv-row:focus-visible { outline: 2px solid var(--ad-blue, #1570EF); outline-offset: -2px; }
+.cv-row.is-unread { background: color-mix(in srgb, var(--ad-red, #E5484D) 5%, #fff); }
+.cv-row.is-unread .crm-who b, .cv-row.is-unread .crm-prev { font-weight: 700; color: var(--ad-ink, #14161E); }
+.cv-c-who { display: flex; align-items: center; gap: 12px; min-width: 220px; }
+.cv-c-who .crm-av { width: 38px; height: 38px; font-size: 13px; }
+.cv-c-who .crm-who b { display: flex; align-items: center; gap: 7px; font-size: 15px; }
+.cv-dot { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--ad-red, #E5484D); }
+.cv-tag { font-style: normal; display: inline-block; margin-right: 4px; padding: 0 7px; border-radius: 999px; background: var(--ad-sunk, #F2F3F5); color: var(--ad-ink-2, #3A3F4B); font-size: 11.5px; font-weight: 600; line-height: 18px; }
+.cv-two { display: flex; flex-direction: column; gap: 1px; font-size: 13px; color: var(--ad-ink-2, #3A3F4B); white-space: nowrap; }
+.cv-c-msg { max-width: 0; width: 34%; }
+.cv-c-msg .crm-prev { display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13.5px; }
+.cv-c-num { text-align: right; white-space: nowrap; font-variant-numeric: tabular-nums; }
+th.cv-c-num { text-align: right; }
+.cv-c-time { white-space: nowrap; color: var(--ad-muted, #6B7180); font-size: 13px; text-align: right; }
+th.cv-c-time { text-align: right; }
+
+@media (max-width: 1180px) { .cv-c-contact { display: none; } }
+@media (max-width: 860px) {
+  .cv-table thead { display: none; }
+  .cv-table, .cv-table tbody { display: block; }
+  .cv-table tr { display: grid; grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "who time" "msg msg" "st num"; gap: 6px 10px; padding: 12px 14px; border-bottom: 1px solid var(--ad-line, rgba(20,22,30,.06)); }
+  .cv-table td { display: block; padding: 0 !important; border: 0; }
+  .cv-c-who { grid-area: who; min-width: 0; } .cv-c-time { grid-area: time; } .cv-c-msg { grid-area: msg; max-width: none; width: auto; } .cv-c-st { grid-area: st; }
+  .cv-table td.cv-c-num:nth-of-type(5) { display: none; } .cv-table td.cv-c-num:nth-of-type(6) { grid-area: num; align-self: center; }
+  .cv-sort { flex: 1 1 100%; } .cv-sort .input { flex: 1; }
+  .cv-tools-r { margin-left: 0; }
+  .cv-stats { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  .cv-stat { padding: 10px 12px; } .cv-stat b { font-size: 20px; }
+}
+
+/* =====================================================================
+   One conversation: the three columns fill the window and each scrolls on its own.
+   The older header rules (admin-shell.css: sticky "top" + 100dvh heights) were winning over the
+   one-screen layout, pushing the columns ~90px down and off the bottom of the window — so the
+   conversation and the reply box could not be reached. These win now.
+   ===================================================================== */
+@media (min-width: 861px) {
+  html.fx body.admin #panel-customers.is-detail #crmGrid :is(.crm-card, .crm-activity, .crm-convo, .crm-split) { position: relative; top: auto; height: 100%; max-height: none; min-height: 0; }
+  html.fx body.admin #panel-customers.is-detail #crmGrid :is(.crm-card, .crm-activity) { overflow-y: auto; overscroll-behavior: contain; }
+  html.fx body.admin #panel-customers.is-detail #crmGrid .crm-convo { display: flex; flex-direction: column; overflow: hidden; }
+  html.fx body.admin #panel-customers.is-detail #crmStream { flex: 1 1 auto; min-height: 0; overflow-y: auto; }
+  html.fx body.admin #panel-customers.is-detail #crmCompose { flex: none; max-height: 48%; overflow-y: auto; }
+  html.fx body.admin #panel-customers.is-detail { padding-bottom: 0 !important; }
+}
+/* phones & small tablets: one column, each part keeps its own scroll so the page doesn't become endless */
+@media (max-width: 860px) {
+  html.fx body.admin #panel-customers.is-detail #crmGrid :is(.crm-card, .crm-activity, .crm-convo) { position: static; top: auto; height: auto; max-height: none; }
+  html.fx body.admin #panel-customers.is-detail #crmGrid .crm-split { display: none; }
+  html.fx body.admin #panel-customers.is-detail #crmStream { height: 62dvh; min-height: 320px; }
+  html.fx body.admin #panel-customers.is-detail .crm-activity { max-height: 60dvh; overflow-y: auto; }
+}
+
+/* =====================================================================
+   Sidebar: sub-sections under the open link, folding groups, counts
+   ===================================================================== */
+html.fx body.admin .side-nav .nav-kids { display: flex; flex-direction: column; gap: 1px; margin: 2px 0 6px 22px; padding-left: 12px; border-left: 1.5px solid var(--ad-line, rgba(20,22,30,.1)); }
+html.fx body.admin .side-nav .nav-kids[hidden] { display: none; }
+html.fx body.admin .side-nav .nav-kid { display: flex; align-items: center; gap: 8px; width: 100%; min-height: 34px; padding: 0 10px; border: 0; border-radius: 10px; background: none; color: var(--ad-muted, #6B7180); font: inherit; font-size: 13.5px; font-weight: 500; text-align: left; cursor: pointer; }
+html.fx body.admin .side-nav .nav-kid:hover { background: var(--ad-sunk, #F4F5F7); color: var(--ad-ink, #14161E); }
+html.fx body.admin .side-nav .nav-kid.on { color: var(--ad-ink, #14161E); font-weight: 700; background: var(--ad-sunk, #F4F5F7); }
+html.fx body.admin .side-nav .nav-kid .nk-l { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.fx body.admin .side-nav .nav-kid .nk-n { flex: none; min-width: 20px; height: 18px; padding: 0 6px; border-radius: 999px; background: var(--ad-line-2, rgba(20,22,30,.13)); color: var(--ad-ink, #14161E); font-size: 11px; font-weight: 700; display: inline-flex; align-items: center; justify-content: center; }
+html.fx body.admin .side-nav .nav-kid .nk-n.hot { background: var(--ad-red, #E5484D); color: #fff; }
+html.fx body.admin .side-nav .nav-child { padding-left: 22px !important; font-size: 13.5px; }
+html.fx body.admin .side-nav .nav-child .ni { width: 17px; height: 17px; }
+/* folding groups */
+html.fx body.admin .side-nav .nav-label { display: flex; align-items: center; gap: 6px; cursor: pointer; user-select: none; border-radius: 8px; }
+html.fx body.admin .side-nav .nav-label:hover { color: var(--ad-ink-2, #3A3F4B); }
+html.fx body.admin .side-nav .nav-label:focus-visible { outline: 2px solid var(--ad-blue, #1570EF); outline-offset: 2px; }
+html.fx body.admin .side-nav .nl-fold { margin-left: auto; width: 8px; height: 8px; border-right: 1.6px solid currentColor; border-bottom: 1.6px solid currentColor; transform: rotate(45deg) translate(-2px, -2px); opacity: .55; transition: transform .2s; }
+html.fx body.admin .side-nav .nav-group.folded .nl-fold { transform: rotate(-45deg); }
+html.fx body.admin .side-nav .nl-sum { min-width: 18px; height: 16px; padding: 0 5px; border-radius: 999px; background: var(--ad-red, #E5484D); color: #fff; font-size: 10.5px; letter-spacing: 0; display: inline-flex; align-items: center; justify-content: center; }
+html.fx body.admin .side-nav .nl-sum[hidden] { display: none; }
+html.fx body.admin .side-nav .nav-group.folded > :is(button[data-tab], .nav-link, .nav-kids):not([aria-selected="true"]) { display: none; }
+html.fx body.admin .side-nav .nav-group.folded > button[aria-selected="true"] + .nav-kids { display: flex; }
+@media (min-width: 1025px) {
+  html.fx body.admin .app.side-folded .side-nav .nav-kids, html.fx body.admin .app.side-folded .side-nav .nl-fold, html.fx body.admin .app.side-folded .side-nav .nl-sum { display: none !important; }
+  html.fx body.admin .app.side-folded .side-nav .nav-group.folded > :is(button[data-tab], .nav-link) { display: flex; }
+  html.fx body.admin .app.side-folded .side-nav .nav-child { padding-left: 0 !important; }
+}
+
+/* =====================================================================
+   Agents — cards in the same style as the guides on the blog
+   ===================================================================== */
+#panel-agents .ag-intro { margin: 2px 0 16px; max-width: 72ch; }
+#panel-agents .gd-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: 20px; align-items: stretch; }
+#panel-agents .gd-card { display: flex; flex-direction: column; overflow: hidden; border-radius: 24px; background: #fff; color: var(--ad-ink, #14161E); text-decoration: none; border: 1px solid var(--ad-line, rgba(20,22,30,.08)); box-shadow: var(--ad-shadow, none); transition: transform .25s ease, box-shadow .25s ease; }
+#panel-agents .gd-card:hover { transform: translateY(-3px); box-shadow: 0 18px 40px -22px rgba(20, 16, 40, .35); }
+#panel-agents .gd-card:focus-visible { outline: 3px solid var(--ad-blue, #1570EF); outline-offset: 3px; }
+#panel-agents .gd-img { position: relative; display: grid; place-items: center; aspect-ratio: 16 / 9; overflow: hidden; }
+#panel-agents .ag-ic { width: 76px; height: 76px; border-radius: 24px; display: grid; place-items: center; background: rgba(255,255,255,.72); color: var(--ad-ink, #14161E); box-shadow: 0 10px 30px -12px rgba(20,16,40,.35); -webkit-backdrop-filter: blur(8px); backdrop-filter: blur(8px); transition: transform .5s ease; }
+#panel-agents .gd-card:hover .ag-ic { transform: scale(1.06) rotate(-3deg); }
+#panel-agents .ag-state { position: absolute; top: 14px; left: 14px; display: inline-flex; align-items: center; gap: 6px; padding: 4px 11px; border-radius: 999px; background: rgba(255,255,255,.86); font-size: 12px; font-weight: 700; color: var(--ad-muted, #6B7180); }
+#panel-agents .ag-state::before { content: ""; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+#panel-agents .ag-state.on { color: #12803F; } #panel-agents .ag-state.off { color: #A15C00; }
+#panel-agents .ag-alert { position: absolute; top: 14px; right: 14px; padding: 4px 11px; border-radius: 999px; background: var(--ad-red, #E5484D); color: #fff; font-size: 12px; font-weight: 700; }
+#panel-agents .gd-txt { display: flex; flex-direction: column; gap: 6px; padding: 16px 18px 18px; flex: 1; }
+#panel-agents .gd-txt small { font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: var(--ad-muted, #6B7180); }
+#panel-agents .gd-txt b { font-size: 20px; line-height: 1.25; letter-spacing: -.01em; }
+#panel-agents .gd-txt > span { font-size: 14.5px; line-height: 1.45; color: var(--ad-muted, #6B7180); }
+#panel-agents .gd-txt em { font-style: normal; font-size: 14.5px; font-weight: 700; margin-top: auto; padding-top: 8px; }
+#panel-agents .ag-stats { display: grid !important; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; margin: 6px 0 2px; }
+#panel-agents .ag-stat { display: flex; flex-direction: column; gap: 2px; padding: 10px 12px; border-radius: 14px; background: var(--ad-sunk, #F4F5F7); }
+#panel-agents .ag-stat b { font-size: 20px; font-weight: 800; color: var(--ad-ink, #14161E); }
+#panel-agents .ag-stat small { font-size: 11.5px; letter-spacing: 0; text-transform: none; font-weight: 600; line-height: 1.25; }
+#panel-agents .ag-stat.hot b { color: var(--ad-red, #E5484D); }
+#panel-agents .gd-soon { display: flex; align-items: center; gap: 18px; padding: 22px 24px; border-radius: 24px; background: var(--ad-sunk, #F4F5F7); border: 1.5px dashed var(--ad-line-2, rgba(20,22,30,.14)); color: var(--ad-ink, #14161E); }
+#panel-agents .gd-soon > span:first-child { flex: none; width: 56px; height: 56px; border-radius: 18px; display: grid; place-items: center; background: #fff; color: var(--ad-muted, #6B7180); }
+#panel-agents .gd-soon > span:nth-child(2) { display: flex; flex-direction: column; gap: 4px; line-height: 1.45; font-size: 14px; color: var(--ad-muted, #6B7180); }
+#panel-agents .gd-soon b { font-size: 17px; color: var(--ad-ink, #14161E); }
+
+/* Guides admin: the agent bar (Back to Main Admin Panel + the agent's name instead of the logo) */
+html.fx body.blog-admin .agent-bar { display: flex; align-items: center; gap: 10px; min-width: 0; }
+html.fx body.blog-admin .agent-back { display: inline-flex; align-items: center; gap: 6px; flex: none; font-weight: 700 !important; }
+html.fx body.blog-admin .agent-name { display: inline-flex; align-items: center; gap: 10px; min-width: 0; padding: 5px 16px 5px 6px; border-radius: 999px; background: var(--ad-ink, #14161E); color: #fff !important; text-decoration: none !important; box-shadow: 0 8px 20px -12px rgba(20,22,30,.6); }
+html.fx body.blog-admin .agent-name:hover { filter: brightness(1.15); }
+html.fx body.blog-admin .agent-ic { flex: none; width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,255,255,.14); }
+html.fx body.blog-admin .agent-name-t { font-size: 15px; font-weight: 800; white-space: nowrap; }
+html.fx body.blog-admin .agent-name-s { font-size: 12.5px; opacity: .7; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+@media (max-width: 1100px) { html.fx body.blog-admin .agent-name-s { display: none; } }
+@media (max-width: 640px) {
+  html.fx body.blog-admin .topbar-in { flex-wrap: wrap; row-gap: 8px; }
+  html.fx body.blog-admin .agent-bar { width: 100%; justify-content: space-between; }
+  html.fx body.blog-admin .agent-back span { font-size: 13px; }
+}
+
+/* =====================================================================
+   Saving: obvious buttons, a clear ✓ Saved, messages that aren't hidden by the save bar
+   ===================================================================== */
+/* the header copy of a box's own Save button */
+html.fx body.admin .sv-head { display: inline-flex; align-items: center; gap: 10px; margin-left: auto; flex-wrap: wrap; justify-content: flex-end; }
+html.fx body.admin .sv-made-head { display: flex; align-items: center; gap: 12px; margin-bottom: 6px; }
+html.fx body.admin .sv-made-head h3 { margin: 0; }
+html.fx body.admin .sv-head-state { font-size: 12.5px; font-weight: 700; color: #A15C00; white-space: nowrap; }
+html.fx body.admin .sv-head-state:empty { display: none; }
+html.fx body.admin .sv-head-state::before { content: ""; display: inline-block; width: 7px; height: 7px; margin-right: 6px; border-radius: 50%; background: currentColor; vertical-align: 1px; }
+html.fx body.admin .card-box .pm-head { flex-wrap: wrap; }
+/* the box's own save row stays on screen while you work in the box */
+html.fx body.admin .sv-own .sv-dock { position: relative; bottom: auto; z-index: 6; display: flex !important; align-items: center; flex-wrap: wrap; gap: 10px; margin-top: 14px; padding: 10px 12px 10px 16px; border-radius: 18px; background: rgba(255,255,255,.9); -webkit-backdrop-filter: blur(14px); backdrop-filter: blur(14px); box-shadow: 0 0 0 1px var(--ad-line, rgba(20,22,30,.08)), 0 14px 34px -16px rgba(20,22,30,.35); }
+html.fx body.admin .sv-own.sv-has-changes .sv-dock { box-shadow: 0 0 0 1.5px #E89B1A, 0 14px 34px -16px rgba(20,22,30,.35); }
+html.fx body.admin .sv-own .sv-dock .btn-primary { min-height: 42px; padding-inline: 20px; font-size: 14.5px; }
+html.fx body.admin .sv-own.sv-has-changes .sv-dock .btn-primary:not(:disabled) { animation: svPulse 1.8s ease-in-out 2; }
+@keyframes svPulse { 50% { box-shadow: 0 0 0 6px color-mix(in srgb, var(--ad-blue, #1570EF) 22%, transparent); } }
+/* ✓ Saved / didn't save */
+html.fx body.admin .btn.sv-done { background: #12A150 !important; color: #fff !important; border-color: #12A150 !important; display: inline-flex; align-items: center; justify-content: center; gap: 6px; }
+html.fx body.admin .btn.sv-fail { animation: svShake .45s; }
+@keyframes svShake { 20%, 60% { transform: translateX(-4px); } 40%, 80% { transform: translateX(4px); } }
+html.fx body.admin .card-box.sv-flash { box-shadow: 0 0 0 2px #12A150, var(--ad-shadow) !important; transition: box-shadow .3s; }
+/* page-wide save bar: light, says what it saves, turns amber with changes and green once saved */
+html.fx body.admin .save-bar { background: rgba(255,255,255,.94) !important; color: var(--ad-ink, #14161E) !important; border: 1px solid var(--ad-line, rgba(20,22,30,.08)) !important; box-shadow: 0 18px 44px -18px rgba(20,22,30,.4) !important; justify-content: flex-start !important; flex-wrap: wrap; padding: 10px 12px 10px 18px !important; }
+html.fx body.admin .save-bar :is(.muted, small, span) { color: var(--ad-muted, #6B7180) !important; }
+html.fx body.admin .save-bar .btn-primary { margin-left: auto; min-height: 44px; padding-inline: 22px; font-size: 15px; }
+html.fx body.admin .save-bar .sv-bar-state { display: inline-flex; align-items: center; gap: 6px; min-width: 0; font-size: 13.5px; }
+html.fx body.admin .save-bar .sv-bar-state b { color: var(--ad-ink, #14161E) !important; }
+html.fx body.admin .save-bar .sv-bar-state span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 62vw; }
+html.fx body.admin .save-bar .sv-dot { width: 8px; height: 8px; border-radius: 50%; background: #E89B1A; flex: none; }
+html.fx body.admin .save-bar.sv-dirty { border-color: #E89B1A !important; box-shadow: 0 0 0 1px #E89B1A, 0 18px 44px -18px rgba(20,22,30,.45) !important; }
+html.fx body.admin .save-bar.sv-saved { border-color: #12A150 !important; box-shadow: 0 0 0 1px #12A150, 0 18px 44px -18px rgba(20,22,30,.4) !important; }
+html.fx body.admin .save-bar.sv-saved .sv-bar-state, html.fx body.admin .save-bar.sv-saved .sv-bar-state b { color: #12803F !important; }
+html.fx body.admin .save-bar #saveNote, html.fx body.admin .save-bar #msgNote, html.fx body.admin .save-bar #payNote { order: 2; font-size: 12px; }
+html.fx body.admin .card-box.sv-box-dirty { box-shadow: inset 3px 0 0 #E89B1A, var(--ad-shadow) !important; }
+/* room under the last box so the save bar never covers it */
+html.fx body.admin :is(#settingsForm, #msgForm, #payForm) { padding-bottom: 12px; }
+/* messages (toasts) sit at the top, under the header — the save bar used to cover them */
+html.fx body.admin #toasts { top: calc(var(--ad-top, 76px) + 10px); bottom: auto !important; }
+html.fx body.admin .toast { font-size: 15px !important; padding: 12px 18px 12px 12px !important; }
+html.fx body.admin .toast-ok .toast-ic { background: #12A150 !important; }
+
+/* =====================================================================
+   Colour & email editors: settings and preview side by side, the same height,
+   each scrolling inside its own box (the page doesn't drag them apart)
+   ===================================================================== */
+@media (min-width: 1101px) {
+  html.fx body.admin .t2-split { grid-template-columns: minmax(340px, 1fr) minmax(0, 1.3fr); align-items: stretch; height: clamp(520px, calc(100dvh - var(--ad-top, 76px) - 150px), 1000px); }
+  html.fx body.admin .t2-controls { height: 100%; min-height: 0; overflow-y: auto; overscroll-behavior: auto; padding: 2px 8px 2px 2px; scrollbar-width: thin; }
+  html.fx body.admin .t2-prev { position: relative; top: auto; height: 100%; min-height: 0; }
+  html.fx body.admin .t2-frame-wrap { flex: 1 1 auto; height: auto; min-height: 0; }
+  html.fx body.admin #t2Contrast { flex: none; margin: 0; }
+}
+@media (max-width: 1100px) {
+  html.fx body.admin .t2-split { display: flex; flex-direction: column; }
+  html.fx body.admin .t2-prev { order: -1; }
+  html.fx body.admin .t2-frame-wrap { height: clamp(300px, 48dvh, 560px); }
+  html.fx body.admin .t2-controls { max-height: 70dvh; overflow-y: auto; }
+}
+@media (min-width: 981px) {
+  html.fx body.admin .et-split { align-items: stretch; height: clamp(520px, calc(100dvh - var(--ad-top, 76px) - 150px), 1000px); }
+  html.fx body.admin .et-edit { height: 100%; min-height: 0; overflow-y: auto; padding: 2px 8px 2px 2px; scrollbar-width: thin; }
+  html.fx body.admin .et-prev { position: relative; top: auto; height: 100%; min-height: 0; align-self: stretch; }
+  html.fx body.admin .et-frame-wrap { flex: 1 1 auto; min-height: 0; }
+  html.fx body.admin .et-frame-wrap iframe { height: 100%; }
+}
+@media (max-width: 980px) {
+  html.fx body.admin .et-split { display: flex; flex-direction: column; }
+  html.fx body.admin .et-prev { order: -1; }
+  html.fx body.admin .et-frame-wrap iframe { height: clamp(320px, 52dvh, 560px); }
+  html.fx body.admin .et-edit { max-height: 75dvh; overflow-y: auto; }
+}
+
+/* =====================================================================
+   Products: internal notes (colour dot + line), attention, Card design
+   ===================================================================== */
+.pn-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 4px 0 2px; }
+.pn-bar-l { font-size: 11.5px; font-weight: 700; letter-spacing: .07em; text-transform: uppercase; color: var(--ad-faint, #9EA3AE); margin-right: 4px; }
+.pn-chip { display: inline-flex; align-items: center; gap: 7px; height: 32px; padding: 0 12px; border-radius: 999px; border: 1px solid var(--ad-line, rgba(20,22,30,.08)); background: #fff; color: var(--ad-ink-2, #3A3F4B); font: inherit; font-size: 13px; font-weight: 600; cursor: pointer; }
+.pn-chip i { width: 9px; height: 9px; border-radius: 50%; flex: none; }
+.pn-chip b { font-size: 12px; color: var(--ad-muted, #6B7180); font-weight: 700; }
+.pn-chip:hover { border-color: var(--ad-line-2, rgba(20,22,30,.16)); }
+.pn-chip.on { background: var(--ad-ink, #14161E); border-color: var(--ad-ink, #14161E); color: #fff; }
+.pn-chip.on b { color: rgba(255,255,255,.75); }
+.prow .pn-dot { display: inline-block; flex: none; width: 11px; height: 11px; margin: 0 8px 0 0; padding: 0; border: 0; border-radius: 50%; background: var(--pn); box-shadow: 0 0 0 3px color-mix(in srgb, var(--pn) 22%, transparent); vertical-align: 1px; cursor: pointer; }
+.prow.has-note { box-shadow: inset 3px 0 0 var(--pn), var(--ad-shadow, none) !important; }
+.prow .pn-line { display: block; max-width: 100%; margin-top: 4px; padding: 0; border: 0; background: none; font: inherit; font-size: 13px; color: var(--ad-ink-2, #3A3F4B); text-align: left; cursor: pointer; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.prow .pn-line b { color: var(--pn); font-weight: 700; margin-right: 4px; }
+.prow .pn-line b::after { content: " ·"; color: var(--ad-faint, #9EA3AE); }
+.prow .pn-attn { font-size: 11px !important; }
+.prow .pn-btn { color: var(--ad-muted, #6B7180); }
+.prow .pn-btn.on { color: var(--pn, var(--ad-ink)); }
+html.fx body.admin dialog.pn-dlg { width: min(560px, 100vw); max-width: 560px; }
+.pn-labels { display: flex; flex-wrap: wrap; gap: 6px; }
+.pn-lab { display: inline-flex; align-items: center; gap: 7px; height: 36px; padding: 0 14px; border-radius: 999px; border: 1px solid var(--ad-line, rgba(20,22,30,.1)); background: #fff; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer; color: var(--ad-ink-2, #3A3F4B); }
+.pn-lab i { width: 10px; height: 10px; border-radius: 50%; }
+.pn-lab.on { border-color: var(--ad-ink, #14161E); box-shadow: 0 0 0 1px var(--ad-ink, #14161E); color: var(--ad-ink, #14161E); }
+
+/* Card design dialog: controls left, live preview right, both inside the window */
+.cd-dlg { width: min(1400px, 96vw); max-width: none; height: min(920px, 94dvh); padding: 0; }
+.cd-dlg[open] { display: flex; }
+.cd-sheet { display: flex; flex-direction: column; width: 100%; height: 100%; max-height: none !important; }
+.cd-sheet .sheet-head { flex: none; align-items: flex-start; gap: 16px; }
+.cd-sheet .sheet-head p { margin: 4px 0 0; max-width: 80ch; }
+.cd-split { flex: 1 1 auto; min-height: 0; display: grid; grid-template-columns: minmax(320px, 420px) minmax(0, 1fr); gap: 18px; padding: 0 20px; }
+.cd-ctrls { min-height: 0; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; padding: 2px 6px 14px 2px; scrollbar-width: thin; }
+.cd-prev { min-height: 0; display: flex; flex-direction: column; gap: 10px; padding-bottom: 14px; }
+.cd-prev-bar { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 8px; }
+.cd-cats { display: flex; flex-wrap: wrap; gap: 6px; }
+html.fx body.admin .cd-frame-wrap { flex: 1 1 auto; height: auto !important; min-height: 0; }
+.cd-foot { flex: none; display: flex; align-items: center; gap: 10px; flex-wrap: wrap; }
+.cd-dlg.is-dirty .cd-state { color: #A15C00; font-weight: 700; }
+@media (max-width: 900px) {
+  .cd-dlg { width: 100vw; height: 100dvh; border-radius: 0; }
+  .cd-split { grid-template-columns: 1fr; grid-template-rows: minmax(260px, 42%) minmax(0, 1fr); padding: 0 12px; }
+  .cd-prev { order: -1; padding-bottom: 0; }
+}
+
+/* =====================================================================
+   Responsive fixes found while checking every section
+   ===================================================================== */
+html.fx body.admin .panel { min-width: 0; }
+html.fx body.admin .crm-card .crm-stats { display: grid !important; grid-template-columns: repeat(auto-fit, minmax(84px, 1fr)); gap: 8px; }
+html.fx body.admin .crm-card .crm-stats > div { min-width: 0; }
+html.fx body.admin .crm-card .crm-stats b { white-space: normal; overflow-wrap: anywhere; }
+/* a box's own save row sits just above the page-wide save bar, so both stay readable */
+/* the box's save row follows you down the box only while it has unsaved changes,
+   just above the page-wide save bar so both stay readable */
+html.fx body.admin .sv-own.sv-has-changes .sv-dock { position: sticky; bottom: 12px; }
+html.fx body.admin form.settings .sv-own.sv-has-changes .sv-dock { bottom: 86px; }
+/* nothing unsaved: the page-wide bar shrinks to a small button on the right, out of the way */
+html.fx body.admin .save-bar:not(.sv-dirty):not(.sv-saved) { margin-left: auto; width: max-content; max-width: 100%; padding: 6px 6px 6px 16px !important; background: rgba(255,255,255,.82) !important; }
+html.fx body.admin .save-bar:not(.sv-dirty):not(.sv-saved) .btn-primary { min-height: 40px; }
+html.fx body.admin .save-bar:not(.sv-dirty):not(.sv-saved) .sv-bar-state span { max-width: 38vw; }
+html.fx body.admin .save-bar:not(.sv-dirty):not(.sv-saved) :is(#saveNote, #msgNote, #payNote) { display: none; }
+html.fx body.admin dialog.pn-dlg .sheet { width: 100%; max-width: 100%; }
+@media (max-width: 640px) {
+  html.fx body.blog-admin .agent-name { flex: 1 1 auto; overflow: hidden; padding-right: 12px; }
+  html.fx body.blog-admin .agent-name-t { overflow: hidden; text-overflow: ellipsis; font-size: 14px; }
+  html.fx body.blog-admin .agent-back { padding-inline: 12px !important; }
+  html.fx body.blog-admin .topbar-actions { width: 100%; justify-content: flex-start; flex-wrap: wrap; }
+}
+html.fx body.admin :is(.et-split, .t2-split) > * { min-width: 0; max-width: 100%; }
+html.fx body.admin .et-prev-bar .et-subj { min-width: 0; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+html.fx body.admin .et-prev .test-row { flex-wrap: wrap; }
+html.fx body.admin .et-prev .test-row .input { min-width: 0; flex: 1 1 180px; }
+
+/* every section uses the whole window width (it stopped at 1560px and left an empty strip on wide / zoomed-out screens) */
+html.fx body.admin .app .wrap { max-width: none; }
+html.fx body.admin .page-desc { max-width: none; }

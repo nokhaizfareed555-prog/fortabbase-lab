@@ -1,0 +1,280 @@
+/* Divaar.pk — admin "Soft glass" skin (loaded last on /admin and /admin/blog).
+   One design language for every tab, section and sub-section: frosted white cards, pill buttons,
+   round icon buttons, raised checkboxes, big quiet numbers — all coloured from the chosen palette
+   (assets/admin-theme.js sets the --pal-* colours; the values below are the default "Sunset" palette).
+   Looks only: no id, name or form is changed. */
+
+:root {
+  --pal-50: #FDF0EB; --pal-100: #FADBCF; --pal-200: #F4B49C; --pal-500: #E0573D; --pal-600: #C2412D; --pal-700: #9A3024;
+  --pal-ink: #4A1A24; --pal-on: #FFFFFF; --pal-page: #F6F4F2;
+  --pal-s1: #F2A65A; --pal-s2: #EB6D45; --pal-s3: #A8323A; --pal-s4: #4A1A24;
+  --pal-grad: linear-gradient(135deg, #F9D77E, #EB6D45 45%, #7A2433);
+}
+
+/* ================= tokens: every older colour follows the palette ================= */
+html.fx body.admin {
+  --ad-page: var(--pal-page); --ad-card: #FFFFFF; --ad-sunk: color-mix(in srgb, var(--pal-50) 30%, #F4F5F7);
+  --ad-line: rgba(20,22,30,.075); --ad-line-2: rgba(20,22,30,.13);
+  --ad-ink: #14161E; --ad-ink-2: #3A3F4B; --ad-muted: #6B7180; --ad-faint: #9EA3AE;
+  --ad-blue: var(--pal-600); --ad-blue-600: var(--pal-700); --ad-blue-50: var(--pal-50); --ad-blue-100: var(--pal-100);
+  --ad-green: #12A150; --ad-red: #E5484D; --ad-amber: #E89B1A;
+  --ad-r: 22px; --ad-r-sm: 12px; --ad-pill: 999px;
+  --ad-ring: color-mix(in srgb, var(--pal-500) 24%, transparent);
+  --ad-shadow: 0 1px 0 rgba(255,255,255,.9) inset, 0 1px 2px rgba(20,22,30,.04), 0 10px 28px -16px rgba(20,22,30,.14);
+  --ad-lift: 0 1px 0 rgba(255,255,255,.9) inset, 0 2px 4px rgba(20,22,30,.05), 0 18px 40px -18px rgba(20,22,30,.22);
+  --ad-glass: rgba(255,255,255,.74);
+  --fx-lime: var(--pal-50); --fx-on-lime: var(--pal-700); --fx-soft: var(--ad-sunk); --fx-line: var(--ad-line);
+  --blue: var(--pal-600); --blue-hover: var(--pal-700); --brand-bg: var(--pal-600); --brand-bg-hover: var(--pal-700); --ok: var(--pal-600);
+  background:
+    radial-gradient(900px 420px at 100% -8%, color-mix(in srgb, var(--pal-100) 60%, transparent), transparent 70%),
+    radial-gradient(700px 360px at -10% 105%, color-mix(in srgb, var(--pal-50) 70%, transparent), transparent 70%),
+    var(--ad-page) !important;
+  background-attachment: fixed !important;
+  color: var(--ad-ink);
+  -webkit-font-smoothing: antialiased;
+}
+html.fx body.admin ::selection { background: var(--pal-100); color: var(--pal-ink); }
+html.fx body.admin * { scrollbar-width: thin; scrollbar-color: rgba(20,22,30,.18) transparent; }
+
+/* ================= sidebar: round icon chips (filled when open) ================= */
+html.fx body.admin .side { background: var(--ad-glass); -webkit-backdrop-filter: blur(20px) saturate(170%); backdrop-filter: blur(20px) saturate(170%); border-right: 1px solid var(--ad-line); }
+html.fx body.admin .brand-mark { background: var(--pal-grad) !important; border-radius: 50% !important; box-shadow: 0 6px 16px -6px var(--pal-600) !important; color: #fff !important; }
+html.fx body.admin .side-fold { border-radius: 50%; background: #fff; border-color: var(--ad-line-2); }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link) { border-radius: var(--ad-pill); min-height: 44px; padding-left: 6px; }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link) .ni { box-sizing: content-box; width: 18px; height: 18px; padding: 7px; border-radius: 50%; background: rgba(20,22,30,.045); transition: background .15s, color .15s, box-shadow .15s; }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link):hover { background: rgba(20,22,30,.035); }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link):hover .ni { background: #fff; box-shadow: 0 1px 3px rgba(20,22,30,.1); }
+html.fx body.admin .side-nav button[data-tab][aria-selected="true"] { background: #fff; color: var(--ad-ink); box-shadow: 0 1px 2px rgba(20,22,30,.05), 0 6px 16px -8px rgba(20,22,30,.18); }
+html.fx body.admin .side-nav button[data-tab][aria-selected="true"]::before { display: none; }
+html.fx body.admin .side-nav button[data-tab][aria-selected="true"] .ni { background: var(--pal-600); color: var(--pal-on); box-shadow: 0 4px 10px -3px var(--pal-600); }
+html.fx body.admin .nav-label { letter-spacing: .1em; font-size: 10.5px; }
+html.fx body.admin .side .tab-count { background: var(--ad-ink) !important; }
+html.fx body.admin .side-shop { border-radius: var(--ad-pill); background: #fff; border: 1px solid var(--ad-line); }
+html.fx body.admin .side-shop:hover { background: var(--pal-50); color: var(--pal-700); }
+html.fx body.admin .side-foot .role-tag { background: var(--pal-50); color: var(--pal-700); }
+@media (min-width: 1025px) {
+  html.fx body.admin .app.side-folded .side-nav :is(button[data-tab], .nav-link) { padding: 0; background: transparent; box-shadow: none; }
+  html.fx body.admin .app.side-folded .side-nav :is(button[data-tab], .nav-link) .ni { padding: 10px; }
+}
+
+/* ================= header ================= */
+html.fx body.admin .topbar { background: color-mix(in srgb, var(--ad-page) 70%, transparent) !important; border-bottom: 1px solid var(--ad-line) !important; }
+html.fx body.admin .page-title { font-size: 24px; font-weight: 600; letter-spacing: -0.025em; }
+html.fx body.admin .crumbs b { color: var(--ad-ink-2); }
+html.fx body.admin .topbar .icon-btn, html.fx body.admin .icon-btn { border-radius: 50% !important; background: #fff !important; border: 1px solid var(--ad-line-2) !important; color: var(--ad-ink-2) !important; box-shadow: 0 1px 2px rgba(20,22,30,.05); transition: transform .15s, background .15s, color .15s; }
+html.fx body.admin .icon-btn:hover { background: var(--ad-ink) !important; color: #fff !important; border-color: var(--ad-ink) !important; }
+html.fx body.admin .topbar .live-dot { background: #fff !important; color: var(--ad-ink-2) !important; border: 1px solid var(--ad-line); }
+html.fx body.admin .topbar .live-dot::before { background: var(--ad-green) !important; }
+
+/* ================= panels, cards, sections, sub-sections ================= */
+html.fx body.admin .panel { gap: 18px; }
+html.fx body.admin .card-box {
+  background: var(--ad-card); border: 1px solid var(--ad-line); border-radius: var(--ad-r); padding: 24px 26px; box-shadow: var(--ad-shadow);
+}
+html.fx body.admin .card-box > h3, html.fx body.admin .card-box > .cb-head h3, html.fx body.admin .card-box .pm-head h3, html.fx body.admin .card-box .box-head h3, html.fx body.admin .card-box > .ba-row-head h3 {
+  font-size: 18px; font-weight: 600; letter-spacing: -0.02em; display: flex; align-items: center; gap: 10px;
+}
+html.fx body.admin .card-box > h3::before, html.fx body.admin .card-box > .cb-head h3::before, html.fx body.admin .card-box .pm-head h3::before, html.fx body.admin .card-box .box-head h3::before, html.fx body.admin .card-box > .ba-row-head h3::before {
+  content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--pal-500); box-shadow: 0 0 0 4px var(--pal-50);
+}
+html.fx body.admin .card-box .card-box, html.fx body.admin :is(.bank-edit, .paybox, .pe-section .card-box) {
+  background: var(--ad-sunk); border: 1px solid var(--ad-line); border-radius: 16px; box-shadow: none;
+}
+html.fx body.admin :is(.card-box h4, .nav-sub, .pe-section h3, .pbg-title, .et-styles-head, .ba-sub) {
+  font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--ad-muted);
+}
+html.fx body.admin .cb-toggle { width: 34px; height: 34px; border-radius: 50% !important; background: #fff !important; border: 1px solid var(--ad-line-2) !important; color: var(--ad-ink-2); display: inline-grid; place-items: center; }
+html.fx body.admin .cb-toggle:hover { background: var(--ad-ink) !important; color: #fff; }
+html.fx body.admin .card-box.collapsed { padding-top: 16px; padding-bottom: 16px; }
+html.fx body.admin .panel-head h2 { font-size: 22px; font-weight: 600; letter-spacing: -0.025em; }
+html.fx body.admin .muted { color: var(--ad-muted); }
+html.fx body.admin hr { border: 0; border-top: 1px solid var(--ad-line); }
+
+/* notes */
+html.fx body.admin .fx-note { background: color-mix(in srgb, var(--pal-50) 70%, #fff) !important; color: var(--ad-ink-2) !important; border: 1px solid color-mix(in srgb, var(--pal-100) 70%, transparent) !important; border-radius: 16px !important; }
+html.fx body.admin .fx-note::before { background: var(--pal-600) !important; color: var(--pal-on) !important; font-family: inherit !important; }
+html.fx body.admin .fx-note b, html.fx body.admin .fx-note strong { color: var(--ad-ink); }
+
+/* stat tiles: big quiet numbers, a coloured dot per tile, the first one dark */
+html.fx body.admin .tiles { gap: 14px; grid-template-columns: repeat(auto-fill, minmax(196px, 1fr)); }
+html.fx body.admin .tile, html.fx body.admin .tiles > .tile:nth-child(n) { border-radius: 20px !important; padding: 18px 20px !important; border: 1px solid var(--ad-line) !important; box-shadow: var(--ad-shadow) !important; background: #fff !important; }
+html.fx body.admin .tile::before { display: none !important; }
+html.fx body.admin .tile span { display: inline-flex; align-items: center; gap: 8px; font-size: 12.5px; letter-spacing: .01em; }
+html.fx body.admin .tile span::before { content: ""; flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--pal-s1); }
+html.fx body.admin .tiles > .tile:nth-child(4n+2) span::before { background: var(--pal-s2); }
+html.fx body.admin .tiles > .tile:nth-child(4n+3) span::before { background: var(--pal-s3); }
+html.fx body.admin .tiles > .tile:nth-child(4n) span::before { background: var(--pal-s4); }
+html.fx body.admin .tile b { font-size: 30px; font-weight: 500; letter-spacing: -0.035em; line-height: 1.15; }
+html.fx body.admin .tiles > .tile:first-child { background: var(--ad-ink) !important; border-color: var(--ad-ink) !important; }
+html.fx body.admin .tiles > .tile:first-child :is(b, span) { color: #fff !important; }
+html.fx body.admin .tiles > .tile:first-child small { color: rgba(255,255,255,.6) !important; }
+html.fx body.admin .tiles > .tile:first-child span::before { background: var(--pal-500); box-shadow: 0 0 0 4px rgba(255,255,255,.12); }
+html.fx body.admin .tile.hot { box-shadow: 0 0 0 2px var(--pal-500), var(--ad-shadow) !important; }
+html.fx body.admin button.tile { transition: transform .15s, box-shadow .15s; }
+html.fx body.admin button.tile:hover { transform: translateY(-2px); box-shadow: var(--ad-lift) !important; }
+
+/* lists: orders, requests, products, reviews, users, mailboxes, emails */
+html.fx body.admin :is(.item, .prow, .rrow, .user-list > *, .mb-row, .et-all-row, .ob-item, .audit-list > *) { border-radius: 18px; border: 1px solid var(--ad-line); box-shadow: var(--ad-shadow); background: #fff; }
+html.fx body.admin :is(.item, .prow, .rrow) { transition: transform .15s, box-shadow .15s, border-color .15s; }
+html.fx body.admin :is(.prow, .rrow):hover, html.fx body.admin .item:not([open]):hover { transform: translateY(-1px); box-shadow: var(--ad-lift); border-color: var(--ad-line-2); }
+html.fx body.admin .item[open] { box-shadow: 0 0 0 2px var(--pal-500), var(--ad-lift); }
+html.fx body.admin .item.is-new { box-shadow: inset 4px 0 0 var(--pal-500), var(--ad-shadow); }
+html.fx body.admin .item[open] > summary { border-radius: 18px 18px 0 0; }
+html.fx body.admin .o-num { border-radius: var(--ad-pill); padding-left: 12px; padding-right: 12px; background: var(--ad-sunk); }
+html.fx body.admin .item[open] .o-num { background: var(--pal-600); color: var(--pal-on); }
+html.fx body.admin :is(.prow img, .prow .ph, .gal-media, .gal-item, .slot-img, .hero-slot, .pe-m, .img-prev) { border-radius: 14px !important; }
+html.fx body.admin .prow.copy { background: color-mix(in srgb, var(--pal-50) 45%, #fff); }
+html.fx body.admin .paybox { border-radius: 16px; }
+
+/* toolbars */
+html.fx body.admin .toolbar:not(dialog .toolbar):not(.card-box .toolbar):not(.topbar .toolbar) { background: var(--ad-glass); -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); border: 1px solid var(--ad-line); border-radius: 20px; padding: 10px; box-shadow: var(--ad-shadow); }
+
+/* ================= buttons: pills, with a soft shine ================= */
+html.fx body.admin .btn {
+  border-radius: var(--ad-pill) !important; min-height: 42px; padding: 0 20px; font-weight: 600; font-size: 14px; letter-spacing: -0.005em;
+  transition: transform .15s ease, box-shadow .15s ease, background .15s ease, color .15s ease;
+}
+html.fx body.admin .btn-sm { min-height: 34px; padding: 0 14px; font-size: 13px; }
+html.fx body.admin .btn:not([disabled]):hover { transform: translateY(-1px); }
+html.fx body.admin .btn:active { transform: translateY(0) scale(.98); }
+html.fx body.admin :is(.btn-primary, .btn-amber), html.fx body.admin .save-bar .btn-primary {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pal-500) 85%, #fff), var(--pal-600)) !important; color: var(--pal-on) !important; border: 0 !important;
+  box-shadow: 0 1px 0 rgba(255,255,255,.35) inset, 0 6px 16px -6px var(--pal-600) !important;
+}
+html.fx body.admin :is(.btn-primary, .btn-amber):not([disabled]):hover { background: linear-gradient(180deg, var(--pal-600), var(--pal-700)) !important; box-shadow: 0 1px 0 rgba(255,255,255,.3) inset, 0 10px 22px -8px var(--pal-600) !important; }
+html.fx body.admin .btn-dark, html.fx body.admin .badge-dark { background: var(--ad-ink) !important; color: #fff !important; border: 0 !important; box-shadow: 0 6px 16px -8px rgba(20,22,30,.5) !important; }
+html.fx body.admin .btn-dark:not([disabled]):hover { background: #000 !important; }
+html.fx body.admin .btn-soft, html.fx body.admin :is(.card-box, .item, .prow, .rrow, .tile, .bank-edit, .paybox, .toolbar, .sheet, .save-bar) .btn-soft {
+  background: #fff !important; color: var(--ad-ink) !important; border: 1px solid var(--ad-line-2) !important; box-shadow: 0 1px 2px rgba(20,22,30,.05) !important;
+}
+html.fx body.admin .btn-soft:not([disabled]):hover, html.fx body.admin :is(.card-box, .item, .prow, .rrow, .toolbar, .sheet) .btn-soft:not([disabled]):hover { background: var(--ad-ink) !important; color: #fff !important; border-color: var(--ad-ink) !important; }
+html.fx body.admin .btn-ghost { background: transparent !important; border: 1px solid var(--ad-line-2) !important; color: var(--ad-ink-2) !important; }
+html.fx body.admin :is(.btn-danger) { background: var(--ad-red) !important; color: #fff !important; border: 0 !important; }
+html.fx body.admin .btn-danger-soft { background: #FDECEC !important; color: #B42318 !important; border: 0 !important; }
+html.fx body.admin .btn[disabled] { opacity: .42; box-shadow: none !important; }
+html.fx body.admin .link-btn { color: var(--pal-700); font-weight: 600; }
+html.fx body.admin .btn :is(svg) { flex: none; }
+
+/* ================= badges, chips, pills ================= */
+html.fx body.admin .badge { border-radius: var(--ad-pill) !important; padding: 3px 10px; font-size: 12px; font-weight: 600; background: rgba(20,22,30,.06); color: var(--ad-ink-2); }
+html.fx body.admin .badge-blue { background: var(--pal-50) !important; color: var(--pal-700) !important; }
+html.fx body.admin .badge-soft { background: rgba(20,22,30,.06) !important; color: var(--ad-ink-2) !important; }
+html.fx body.admin .badge-ok { background: #E7F7EE !important; color: #0F7B3F !important; }
+html.fx body.admin .badge-warn { background: #FFF5E0 !important; color: #A15C00 !important; }
+html.fx body.admin :is(.badge-amber, .badge-danger) { background: #FDECEC !important; color: #B42318 !important; }
+html.fx body.admin :is(.et-chips button, .pbg-chip, .var-chip, .crm-tag, .code-pill, .mb-pill, .mb-tag, .tag, .ba-cat, .bp-chip) { border-radius: var(--ad-pill) !important; }
+html.fx body.admin :is(.et-chips button, .et-tag.ed) { background: var(--pal-50) !important; color: var(--pal-700) !important; border: 0; }
+html.fx body.admin .mb-pill.sender { background: var(--pal-600) !important; color: var(--pal-on) !important; }
+
+/* ================= fields: soft sunk wells, white on focus ================= */
+html.fx body.admin :is(.field input:not([type=checkbox]):not([type=color]):not([type=range]):not([type=radio]):not([type=file]), .field select, .field textarea, .input, .note-input, .rt-wrap),
+html.fx body.admin :is(.card-box, .item, .paybox, .bank-edit, .tile, .toolbar, .sheet) :is(.field input:not([type=checkbox]):not([type=color]):not([type=range]):not([type=radio]):not([type=file]), .field select, .field textarea, .input, .note-input, .rt-wrap),
+html.fx body.admin :is(.panel select, .panel input[type=search], .panel input[type=text]:not(.field input), .panel input[type=email], .panel input[type=number], .panel input[type=url], .panel textarea, .sheet input[type=text], .sheet textarea, .sheet select) {
+  background-color: var(--ad-sunk) !important; border: 1px solid transparent !important; border-radius: 14px !important;
+  box-shadow: inset 0 0 0 1px var(--ad-line), inset 0 1px 2px rgba(20,22,30,.03) !important; color: var(--ad-ink);
+  transition: background-color .15s, box-shadow .15s;
+}
+html.fx body.admin :is(.field input, .field select, .field textarea, .input, .note-input, .panel input, .panel select, .panel textarea, .sheet input, .sheet textarea, .sheet select):not([type=checkbox]):not([type=radio]):not([type=range]):hover { box-shadow: inset 0 0 0 1px var(--ad-line-2) !important; }
+html.fx body.admin :is(.field input, .field select, .field textarea, .input, .note-input, .panel input, .panel select, .panel textarea, .sheet input, .sheet textarea, .sheet select):not([type=checkbox]):not([type=radio]):not([type=range]):focus {
+  background-color: #fff !important; box-shadow: inset 0 0 0 1.5px var(--pal-500), 0 0 0 4px var(--ad-ring) !important; outline: 0;
+}
+html.fx body.admin :is(.rt-area) { background: transparent !important; border: 0 !important; box-shadow: none !important; }
+html.fx body.admin .rt-bar { background: #fff; border-radius: 12px 12px 0 0; border-bottom: 1px solid var(--ad-line); }
+html.fx body.admin .rt-bar button { border-radius: 8px; }
+html.fx body.admin .rt-bar button:hover { background: var(--pal-50); color: var(--pal-700); }
+html.fx body.admin :is(.panel select, .field select, .sheet select, select.input) {
+  -webkit-appearance: none; appearance: none; padding-right: 38px !important;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%236B7180' stroke-width='2.4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='m6 9 6 6 6-6'/%3E%3C/svg%3E") !important;
+  background-repeat: no-repeat !important; background-position: right 14px center !important;
+}
+html.fx body.admin .fx-sel { background: var(--ad-sunk) !important; border: 0 !important; box-shadow: inset 0 0 0 1px var(--ad-line); border-radius: 14px !important; }
+html.fx body.admin .fx-sel[aria-expanded="true"], html.fx body.admin .fx-sel:focus-visible { background: #fff !important; box-shadow: inset 0 0 0 1.5px var(--pal-500), 0 0 0 4px var(--ad-ring); }
+html.fx body.admin .fx-pop { border-radius: 16px !important; border: 1px solid var(--ad-line) !important; box-shadow: var(--ad-lift) !important; }
+html.fx body.admin .field > span, html.fx body.admin .lbl { font-size: 13px; font-weight: 500; color: var(--ad-ink-2); }
+
+/* checkboxes & radios: raised, glossy when on */
+html.fx body.admin input[type=checkbox]:not(.switch input), html.fx body.admin input[type=radio] {
+  -webkit-appearance: none; appearance: none; flex: none; width: 20px; height: 20px; margin: 0; cursor: pointer; vertical-align: middle;
+  background: #fff; border: 0; border-radius: 7px; box-shadow: inset 0 0 0 1.5px rgba(20,22,30,.16), 0 1px 2px rgba(20,22,30,.08);
+  transition: background .15s, box-shadow .15s, transform .1s; display: inline-grid; place-items: center;
+}
+html.fx body.admin input[type=radio] { border-radius: 50%; }
+html.fx body.admin input[type=checkbox]:not(.switch input):hover, html.fx body.admin input[type=radio]:hover { box-shadow: inset 0 0 0 1.5px var(--pal-500), 0 1px 2px rgba(20,22,30,.08); }
+html.fx body.admin input[type=checkbox]:not(.switch input):checked {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pal-500) 80%, #fff), var(--pal-600)) center / 100% 100%;
+  box-shadow: 0 1px 0 rgba(255,255,255,.45) inset, 0 3px 8px -2px var(--pal-600);
+}
+html.fx body.admin input[type=checkbox]:not(.switch input):checked::after { content: ""; width: 11px; height: 11px; background: var(--pal-on); -webkit-mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5 9.5 18 20 6'/%3E%3C/svg%3E") center / contain no-repeat; mask: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='4' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M4 12.5 9.5 18 20 6'/%3E%3C/svg%3E") center / contain no-repeat; }
+html.fx body.admin input[type=radio]:checked { background: #fff; box-shadow: inset 0 0 0 6px var(--pal-600), 0 3px 8px -2px var(--pal-600); }
+html.fx body.admin input:is([type=checkbox], [type=radio]):focus-visible { outline: 0; box-shadow: 0 0 0 4px var(--ad-ring), inset 0 0 0 1.5px var(--pal-500); }
+html.fx body.admin input:is([type=checkbox], [type=radio]):disabled { opacity: .45; cursor: not-allowed; }
+html.fx body.admin input[type=range] { accent-color: var(--pal-600); }
+html.fx body.admin .check { gap: 10px; }
+
+/* switches */
+html.fx body.admin .switch input { width: 44px !important; height: 26px !important; border-radius: 999px !important; background: rgba(20,22,30,.14) !important; box-shadow: inset 0 1px 2px rgba(20,22,30,.12); }
+html.fx body.admin .switch input::after { top: 3px !important; left: 3px !important; width: 20px !important; height: 20px !important; box-shadow: 0 2px 5px rgba(20,22,30,.22); }
+html.fx body.admin .switch input:checked { background: var(--pal-600) !important; }
+html.fx body.admin .switch input:checked::after { left: 21px !important; }
+
+/* segmented controls & sub-section tabs */
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav, .ep-tabs, .crm-c-tabs) { background: rgba(20,22,30,.055) !important; border-radius: var(--ad-pill) !important; padding: 4px !important; box-shadow: inset 0 1px 2px rgba(20,22,30,.05) !important; gap: 2px; }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav, .ep-tabs, .crm-c-tabs) button { border-radius: var(--ad-pill) !important; background: transparent; color: var(--ad-muted); min-height: 36px; }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav, .ep-tabs, .crm-c-tabs) button:is(.on, [aria-selected="true"]) { background: #fff !important; color: var(--ad-ink) !important; box-shadow: 0 1px 2px rgba(20,22,30,.06), 0 4px 12px -6px rgba(20,22,30,.25) !important; }
+html.fx body.admin .fit-seg button { border-radius: var(--ad-pill) !important; background: #fff; border: 1px solid var(--ad-line-2); }
+html.fx body.admin .fit-seg button.on { background: var(--ad-ink) !important; border-color: var(--ad-ink) !important; color: #fff !important; }
+html.fx body.admin .collapse-bar .btn { min-height: 34px; }
+
+/* settings building blocks */
+html.fx body.admin :is(.t2-group, .et-colors, .mb-add, .t2-preset, .et-style, .nav-fx, .st-group, .bp-row, .lamp-box, .boost-list > *, .tpl, .var-sib) { border-radius: 16px !important; box-shadow: none !important; border: 1px solid var(--ad-line) !important; background: #fff; }
+html.fx body.admin :is(.mb-row.is-sender, .et-all-row.cur, .t2-preset.on, .et-style.on, .st-card.on, .bp-opt.on) { box-shadow: 0 0 0 2px var(--pal-500), 0 8px 20px -12px var(--pal-600) !important; border-color: transparent !important; }
+html.fx body.admin :is(.t2-sw, .swatch, .t2-color, .nav-swatch, .bp-sw) { border-radius: 50% !important; }
+html.fx body.admin .t2-hex, html.fx body.admin .hx { border-radius: var(--ad-pill) !important; }
+html.fx body.admin :is(.t2-frame-wrap, .et-frame-wrap, .nav-prev-wrap, .st-prev-wrap) { border-radius: 20px !important; border: 1px solid var(--ad-line) !important; box-shadow: var(--ad-shadow); overflow: hidden; }
+html.fx body.admin .quote { background: var(--pal-grad) !important; border-radius: 20px; }
+html.fx body.admin .slot-img, html.fx body.admin .hero-slot { border: 1.5px dashed var(--ad-line-2) !important; background: var(--ad-sunk); }
+html.fx body.admin .meter, html.fx body.admin .bar-row > * { border-radius: 999px; }
+html.fx body.admin .chart :is(rect, path) { shape-rendering: geometricPrecision; }
+
+/* sticky save bar: a dark floating pill */
+html.fx body.admin .save-bar, html.fx body.admin .ba-savebar { background: rgba(20,22,30,.92) !important; color: #fff !important; border: 0 !important; border-radius: 22px !important; -webkit-backdrop-filter: blur(16px); backdrop-filter: blur(16px); box-shadow: 0 20px 50px -18px rgba(20,22,30,.55) !important; }
+html.fx body.admin :is(.save-bar, .ba-savebar) :is(.muted, small, span) { color: rgba(255,255,255,.7) !important; }
+html.fx body.admin :is(.save-bar, .ba-savebar) .btn-soft { background: rgba(255,255,255,.1) !important; color: #fff !important; border-color: rgba(255,255,255,.18) !important; }
+
+/* customers (CRM) */
+html.fx body.admin #panel-customers :is(.crm-card, .crm-activity, .crm-convo, .crm-list) { border-radius: 22px !important; border: 1px solid var(--ad-line) !important; box-shadow: var(--ad-shadow) !important; background: #fff; }
+html.fx body.admin .crm-av { background: var(--pal-grad) !important; color: #fff !important; }
+html.fx body.admin .crm-msg { border-radius: 18px !important; }
+html.fx body.admin :is(.crm-c-row:hover, .crm-c-row.on) { background: var(--pal-50) !important; }
+
+/* tables (Guides admin) */
+html.fx body.admin .ba-table-wrap { border-radius: 20px; border: 1px solid var(--ad-line); background: #fff; box-shadow: var(--ad-shadow); overflow: auto; }
+html.fx body.admin .ba-table th { font-size: 11.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--ad-muted); font-weight: 600; background: var(--ad-sunk); }
+html.fx body.admin .ba-table :is(td, th) { border-color: var(--ad-line) !important; }
+html.fx body.admin .ba-table tr:hover td { background: color-mix(in srgb, var(--pal-50) 40%, #fff); }
+
+/* pop-ups */
+html.fx body.admin dialog::backdrop { background: rgba(20,22,30,.38); -webkit-backdrop-filter: blur(6px); backdrop-filter: blur(6px); }
+html.fx body.admin :is(.sheet, .drawer-panel) { border-radius: 28px !important; border: 1px solid rgba(255,255,255,.6) !important; box-shadow: 0 30px 80px -20px rgba(20,22,30,.4) !important; }
+html.fx body.admin .sheet-head h2 { font-size: 20px; font-weight: 600; letter-spacing: -0.02em; }
+html.fx body.admin .sheet-foot { background: color-mix(in srgb, var(--ad-sunk) 60%, #fff); }
+html.fx body.admin .toast { border-radius: var(--ad-pill) !important; background: var(--ad-ink) !important; color: #fff !important; box-shadow: 0 16px 40px -12px rgba(20,22,30,.5) !important; }
+
+/* login */
+html.fx body.admin .login-card { border-radius: 28px !important; box-shadow: var(--ad-lift) !important; }
+
+/* Guides admin header & tabs */
+html.fx body.blog-admin .tabs button[aria-selected="true"] { color: var(--ad-ink); }
+html.fx body.blog-admin .tabs button[aria-selected="true"]::after { background: var(--pal-600); height: 3px; }
+html.fx body.blog-admin .topbar .badge-blue { background: var(--pal-50) !important; color: var(--pal-700) !important; }
+
+@media (max-width: 760px) {
+  html.fx body.admin .card-box { padding: 18px; border-radius: 18px; }
+  html.fx body.admin .tile b { font-size: 24px; }
+  html.fx body.admin .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+  html.fx body.admin .tile, html.fx body.admin .tiles > .tile:nth-child(n) { padding: 14px 16px !important; border-radius: 18px !important; }
+  html.fx body.admin .o-num { justify-self: start; align-self: start; width: max-content; }
+  html.fx body.admin :is(.sheet, .drawer-panel) { border-radius: 24px 24px 0 0 !important; }
+  html.fx body.admin .page-title { font-size: 20px; }
+}
+@media (prefers-reduced-motion: reduce) { html.fx body.admin * { transition: none !important; } }

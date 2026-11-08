@@ -1,0 +1,11 @@
+/* Fits the Divaar blog layout into the clinic's theme. Colours follow the site's own settings. */
+html{--ink:#10233f;--muted:#55657c;--line:rgba(20,57,111,.12);--surface-2:#eef3f9;--fx-ink:#10233f;--fx-muted:#55657c;--fx-soft:rgba(238,243,249,.85);--fx-line:rgba(20,57,111,.12);--fx-hot:var(--accent,#0c8f8b);--blue-ink:var(--accent,#0c8f8b);--fx-page:#fff;--fx-media:#e5edf6;--fx-lime:#dff3f2;--fx-on-lime:#0a4f4d;--fx-lav:#e3e9f6;--fx-on-lav:#14396f;--ease:cubic-bezier(.2,.7,.2,1);--display:var(--fh,inherit);--body:var(--fb,inherit)}
+.seo-page{padding-top:26px;padding-bottom:40px;position:relative;z-index:1}
+.seo-crumbs ol{display:flex;flex-wrap:wrap;gap:6px;list-style:none;margin:0 0 18px;padding:0;font-size:14px;color:var(--muted)}
+.seo-crumbs li+li::before{content:"›";margin-right:6px;opacity:.6}.seo-crumbs a{color:inherit;text-decoration:none}.seo-crumbs a:hover{text-decoration:underline}
+.seo-page h1{font-size:clamp(30px,4vw,48px);line-height:1.1;margin:10px 0 12px}
+.blog-page .btn-sm{padding:9px 16px;font-size:14px}
+.blog-med-note{margin:26px 0 0;padding:14px 16px;border-radius:14px;background:var(--fx-soft);font-size:15px;color:var(--muted)}
+.blog-test-card{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:16px 18px;border:1px solid var(--line);border-radius:16px;background:#fff;text-decoration:none;color:var(--ink)}
+.blog-test-card small{display:block;color:var(--muted);font-size:13px}.blog-test-card b{font-size:16px}.blog-test-card span.go{color:var(--accent,#0c8f8b);font-weight:700;white-space:nowrap}
+.blog-product-card{margin:20px 0}

@@ -1,0 +1,449 @@
+<!doctype html>
+<html lang="en" class="fx" data-theme2="off">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Blog agent · Fort Abbas Admin</title>
+<meta name="robots" content="noindex, nofollow">
+<meta name="theme-color" content="#E8E8E9">
+<link rel="icon" href="/favicon.png">
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link rel="preconnect" href="https://mdndkrpyrcgrpytdtiim.supabase.co" crossorigin>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&family=Noto+Naskh+Arabic:wght@400;600&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="/assets/guides/styles.css">
+<link rel="stylesheet" href="/assets/guides/admin.css">
+<link rel="stylesheet" href="/assets/guides/theme-admin.css">
+<link rel="stylesheet" href="/assets/guides/blog.css">
+<link rel="stylesheet" href="/assets/guides/blog-admin.css">
+<link rel="stylesheet" href="/assets/guides/admin-shell.css">
+<link rel="stylesheet" href="/assets/guides/admin-skin.css">
+<link rel="stylesheet" href="/assets/guides/admin-find.css">
+<link rel="stylesheet" href="/assets/guides/admin-polish.css">
+<link rel="stylesheet" href="/assets/guides/admin-depth.css">
+<link rel="stylesheet" href="/assets/guides/admin-toast.css">
+<link rel="stylesheet" href="/assets/guides/blog-steps.css">
+<link rel="stylesheet" href="/assets/guides/guides-layout.css">
+<script src="/assets/guides/admin-theme.js"></script>
+</head>
+<body class="admin blog-admin">
+
+<!-- ================= SIGN IN ================= -->
+<main class="login" id="login" hidden>
+  <form class="login-card lg" id="loginForm">
+    <div class="login-brand"><span class="brand-mark">F</span><span>Fort Abbas Admin · Blog agent</span></div>
+    <h1>Sign in</h1>
+    <label class="field"><span>Email</span><input name="email" type="email" required autocomplete="username"></label>
+    <label class="field"><span>Password</span><input name="password" type="password" required autocomplete="current-password"></label>
+    <button class="btn btn-primary btn-block" type="submit" id="loginBtn">Sign in</button>
+    <p class="err" id="loginErr" role="alert"></p>
+    <a class="link-btn" href="/admin">← Back to Main Admin Panel</a>
+  </form>
+</main>
+
+<!-- ================= APP ================= -->
+<div class="app" id="app" hidden>
+  <aside class="side" id="side" aria-label="Blog agent menu">
+    <div class="side-top">
+      <a class="brand" href="#overview" title="Blog agent — home"><span class="brand-mark">B</span><span class="brand-name">Blog agent</span></a>
+    </div>
+    <nav class="side-nav" id="tabs" role="tablist" aria-orientation="vertical" aria-label="Guides sections">
+      <div class="nav-group"><p class="nav-label">Work</p>
+        <button type="button" role="tab" data-tab="overview" title="Home"><svg class="ni" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11 12 4l9 7"/><path d="M5 10v10h14V10"/></svg><span class="nl">Home</span><span class="ai-n" data-ain hidden></span></button>
+        <button type="button" role="tab" data-tab="articles" title="Articles"><svg class="ni" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M6 3h9l4 4v14H6z"/><path d="M14 3v5h5M9 13h7M9 17h5"/></svg><span class="nl">Articles</span><span class="tab-count" id="tcReview" hidden></span><span class="ai-n" data-ain hidden></span></button>
+        <button type="button" role="tab" data-tab="topics" title="Topics"><svg class="ni" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 18h6M10 21h4"/><path d="M12 3a6 6 0 0 0-4 10.5c.8.8 1 1.5 1 2.5h6c0-1 .2-1.7 1-2.5A6 6 0 0 0 12 3z"/></svg><span class="nl">Topics</span><span class="ai-n" data-ain hidden></span></button>
+      </div>
+      <div class="nav-group"><p class="nav-label">Team</p>
+        <button type="button" role="tab" data-tab="pipeline" title="Live flow"><svg class="ni" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="3" width="7" height="5" rx="1.5"/><rect x="14" y="10" width="7" height="5" rx="1.5"/><rect x="3" y="16" width="7" height="5" rx="1.5"/><path d="M6.5 8v8M10 12.5h4"/></svg><span class="nl">Live flow</span><span class="tab-count ba-count-bad" id="tcFailed" hidden></span><span class="ai-n" data-ain hidden></span></button>
+        <button type="button" role="tab" data-tab="activity" title="Activity log"><svg class="ni" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h10"/></svg><span class="nl">Activity log</span><span class="ai-n" data-ain hidden></span></button>
+      </div>
+      <div class="nav-group"><p class="nav-label">Results</p>
+        <button type="button" role="tab" data-tab="performance" title="Performance"><svg class="ni" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M22 20H2"/></svg><span class="nl">Performance</span><span class="tab-count" id="tcReco" hidden></span><span class="ai-n" data-ain hidden></span></button>
+      </div>
+      <div class="nav-group"><p class="nav-label">Setup</p>
+        <button type="button" role="tab" data-tab="settings" title="Settings"><svg class="ni" viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.7 1.7 0 0 0 .3 1.8l.1.1a2 2 0 1 1-2.8 2.8l-.1-.1a1.7 1.7 0 0 0-1.8-.3 1.7 1.7 0 0 0-1 1.5V21a2 2 0 1 1-4 0v-.1a1.7 1.7 0 0 0-1.1-1.5 1.7 1.7 0 0 0-1.8.3l-.1.1a2 2 0 1 1-2.8-2.8l.1-.1a1.7 1.7 0 0 0 .3-1.8 1.7 1.7 0 0 0-1.5-1H3a2 2 0 1 1 0-4h.1a1.7 1.7 0 0 0 1.5-1.1 1.7 1.7 0 0 0-.3-1.8l-.1-.1a2 2 0 1 1 2.8-2.8l.1.1a1.7 1.7 0 0 0 1.8.3H9a1.7 1.7 0 0 0 1-1.5V3a2 2 0 1 1 4 0v.1a1.7 1.7 0 0 0 1 1.5 1.7 1.7 0 0 0 1.8-.3l.1-.1a2 2 0 1 1 2.8 2.8l-.1.1a1.7 1.7 0 0 0-.3 1.8V9a1.7 1.7 0 0 0 1.5 1H21a2 2 0 1 1 0 4h-.1a1.7 1.7 0 0 0-1.5 1z"/></svg><span class="nl">Settings</span><span class="ai-n" data-ain hidden></span></button>
+        <div class="gd-kids" id="setKids">
+          <a class="nav-link nav-child" href="#settings/schedule" data-ss="schedule"><span class="nl">Schedule &amp; approval</span></a>
+          <a class="nav-link nav-child" href="#settings/writing" data-ss="writing"><span class="nl">Writing &amp; look</span></a>
+          <a class="nav-link nav-child" href="#settings/ai" data-ss="ai"><span class="nl">AI &amp; limits</span></a>
+          <a class="nav-link nav-child" href="#settings/alerts" data-ss="alerts"><span class="nl">Alerts &amp; Search Console</span></a>
+        </div>
+      </div>
+    </nav>
+    <div class="side-foot">
+      <a class="side-shop" href="/admin" title="Leave the Blog agent"><svg class="ni" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m15 18-6-6 6-6"/></svg><span class="nl">Back to Main Admin Panel</span></a>
+      <a class="side-shop" href="/blog" target="_blank" rel="noopener"><svg class="ni" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M14 4h6v6M20 4l-9 9M18 14v6H4V6h6"/></svg><span class="nl">View the blog</span></a>
+    </div>
+  </aside>
+  <div class="side-scrim" id="sideScrim" hidden></div>
+
+  <div class="main">
+  <header class="topbar">
+    <div class="topbar-in">
+      <button type="button" class="icon-btn menu-btn" id="sideOpen" aria-label="Open menu" aria-controls="side"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M4 6h16M4 12h16M4 18h16"/></svg></button>
+      <div class="page-head">
+        <p class="crumbs"><span>Blog agent</span><i>/</i><span id="crumbGroup">Work</span><i>/</i><b id="crumbPage">Home</b></p>
+        <h1 class="page-title" id="pageTitle">Home</h1>
+      </div>
+      <div class="topbar-actions">
+        <button type="button" class="ai-meter" id="aiMeter" data-go="settings/ai" title="AI calls in the last 60 seconds, out of your per-minute limit. Open AI &amp; limits to change the limit.">
+          <span class="ai-meter-t">AI calls <small>last minute</small></span><span class="ai-meter-n" id="aiMeterN">0 / 4</span><span class="ai-meter-pips" id="aiMeterPips"></span>
+        </button>
+        <span class="ba-agent-state" id="agentState" hidden></span>
+        <button type="button" class="btn btn-soft btn-sm" id="logoutBtn">Sign out</button>
+      </div>
+    </div>
+    <p class="page-desc" id="pageDesc"></p>
+  </header>
+
+  <!-- OVERVIEW -->
+  <section class="wrap panel" id="panel-overview" role="tabpanel" hidden>
+    <div class="panel-head"><h2>Health blog &amp; AI writing team</h2><p>Articles that answer real questions, written by a team of AI agents and checked before they go live.</p></div>
+    <div id="setupBox"></div>
+    <div class="ba-pubnow" id="pubNowBox">
+      <div><b>Publish a guide now</b><span class="muted small" id="pubNowHint">Publishes the next ready guide straight away — or writes one now and publishes it as soon as it passes the checks.</span></div>
+      <span class="gd-act-row"><span class="ai-chip" data-pubai>≈5 AI</span><button type="button" class="btn btn-primary" data-pubnow>🚀 Publish a guide now</button></span>
+    </div>
+    <div class="tiles" id="ovTiles"></div>
+    <div class="card-box">
+      <div class="ba-row-head"><h3>Things you can start</h3><button type="button" class="btn btn-soft btn-sm" data-go="pipeline">Open Live flow</button></div>
+      <p class="muted small">The agents also do all of this on their own, on your schedule. Use these only when you want something now. Each card says what happens and where to watch it.</p>
+      <div class="gd-actions">
+        <div class="gd-act"><b>Find topics now</b><p>The Topic Scout looks for questions people search for and adds the best ones to your list.</p><p class="gd-where">Results: <a href="#topics">Topics → To write</a>, in 1–2 minutes.</p><div class="gd-act-row"><span class="ai-chip" title="About 1 AI call">≈1 AI</span><button type="button" class="btn btn-soft btn-sm" data-run="scout">Find topics</button></div></div>
+        <div class="gd-act"><b>Plan &amp; start articles now</b><p>The Planner checks your publishing slots for the next 2 days and starts an article for each empty one (none if the week is full).</p><p class="gd-where">Watch: <a href="#pipeline">Live flow</a>. Each article ≈ 5 AI calls.</p><div class="gd-act-row"><span class="ai-chip" title="About 0–10 AI calls">≈0–10 AI</span><button type="button" class="btn btn-soft btn-sm" data-run="planner">Plan now</button></div></div>
+        <div class="gd-act"><b>Check performance now</b><p>Reads visits, test clicks and Search Console, then writes improvement ideas. Normally runs once a week.</p><p class="gd-where">Results: <a href="#performance">Performance → Recommendations</a>.</p><div class="gd-act-row"><span class="ai-chip free">No AI</span><button type="button" class="btn btn-soft btn-sm" data-run="monitor">Check now</button></div></div>
+        <div class="gd-act"><b id="toggleTitle">Pause the agents</b><p id="toggleText">Stops all new work, including your schedule. Jobs already running finish first. Nothing is deleted.</p><p class="gd-where">Status shows at the top right.</p><div class="gd-act-row"><span></span><button type="button" class="btn btn-dark btn-sm" id="toggleAgents">Pause agents</button></div></div>
+      </div>
+    </div>
+    <div class="card-box"><div class="ba-row-head"><h3>Latest activity</h3><button type="button" class="btn btn-soft btn-sm" data-go="activity">Full activity log</button></div><div class="ba-log" id="ovLog"></div></div>
+  </section>
+
+  <!-- ARTICLES -->
+  <section class="wrap panel" id="panel-articles" role="tabpanel" hidden>
+    <div class="toolbar">
+      <div class="seg" id="artFilter" role="tablist">
+        <button data-f="review" class="on">Needs review</button><button data-f="draft">Drafts</button><button data-f="scheduled">Scheduled</button><button data-f="published">Published</button><button data-f="unpublished">Unpublished</button><button data-f="all">All</button>
+      </div>
+      <input class="input" id="artSearch" type="search" placeholder="Search titles…">
+      <select class="input" id="artLang"><option value="">All languages</option><option value="en">English</option><option value="ur">Urdu</option></select>
+      <button type="button" class="btn btn-soft" data-pubnow>🚀 Publish a guide now</button>
+      <button type="button" class="btn btn-primary" id="newArticle">+ New article</button>
+    </div>
+    <div class="list" id="artList"></div>
+  </section>
+
+  <!-- TOPICS -->
+  <section class="wrap panel" id="panel-topics" role="tabpanel" hidden>
+    <div class="panel-head"><h2>Topic backlog</h2><p>Questions people search for. The planner picks approved topics first, then the best-scoring ideas.</p></div>
+    <form class="card-box" id="topicForm">
+      <h3>Add a topic yourself</h3>
+      <div class="form-row">
+        <label class="field grow"><span>Search question</span><input name="query" required maxlength="200" placeholder="e.g. what does a high HbA1c mean"></label>
+        <label class="field grow"><span>Working title (optional)</span><input name="title_idea" maxlength="200"></label>
+        <label class="field"><span>Category</span><select name="category_slug" class="ba-cat-select"></select></label>
+      </div>
+      <label class="field"><span>Reference pages the researcher should read (optional, one per line, trusted sites only)</span><textarea name="reference_urls" rows="2" placeholder="https://medlineplus.gov/…"></textarea></label>
+      <div class="toolbar"><label class="switch"><input type="checkbox" name="is_pillar"> Pillar guide (broad, links to smaller guides)</label><button class="btn btn-dark" type="submit">Add topic</button><button class="btn btn-soft" type="button" id="topicWriteNow">Add &amp; write now <small class="ai-in">≈5 AI</small></button></div>
+    </form>
+    <div class="toolbar">
+      <div class="seg" id="topicFilter"><button data-f="open" class="on">To write</button><button data-f="writing">In progress</button><button data-f="done">Done</button><button data-f="rejected">Rejected / duplicate</button></div>
+      <button type="button" class="btn btn-soft" data-run="scout">Find more topics <small class="ai-in">≈1 AI</small></button>
+    </div>
+    <div class="list" id="topicList"></div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section class="wrap panel" id="panel-pipeline" role="tabpanel" hidden>
+    <div class="gd-explain">
+      <b>How work moves</b>
+      <p>Every article goes down this flow, one step at a time. Each step hands its work to the next by itself. The boxes light up while they work: <span class="gd-k run">blue = working</span> <span class="gd-k wait">amber = waiting its turn</span> <span class="gd-k ok">green = done</span> <span class="gd-k bad">red = failed</span>. Click a box to see only its jobs.</p>
+    </div>
+    <div class="gd-flow-grid">
+      <div class="gd-canvas" id="ovFlow" aria-label="The agent flow"></div>
+      <div class="gd-jobs">
+        <div class="card-box gd-jobs-box">
+          <div class="ba-row-head"><h3>Jobs</h3><span class="live-dot" id="liveDot" hidden>Live</span></div>
+          <div class="seg" id="jobFilter"><button data-f="active" class="on">Running &amp; waiting</button><button data-f="failed">Failed</button><button data-f="done">Done</button><button data-f="all">All</button></div>
+          <div class="gd-agent-filter" id="jobAgentChip" hidden></div>
+          <div class="gd-wake">
+            <div><b>Start waiting jobs now</b><span class="muted small" id="wakeHint">Waiting jobs start by themselves within 2 minutes. This button skips that wait — it doesn't add new work.</span></div>
+            <button type="button" class="btn btn-soft btn-sm" id="wakeAgents">Start now</button>
+          </div>
+          <div class="list" id="jobList"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ACTIVITY -->
+  <section class="wrap panel" id="panel-activity" role="tabpanel" hidden>
+    <div class="card-box"><div class="ba-row-head"><h3>Everything the agents did</h3><select class="input input-sm ba-w-auto" id="logLevel"><option value="">Everything</option><option value="warn">Warnings &amp; errors</option><option value="error">Errors only</option></select></div>
+      <p class="muted small">Newest first. "Will retry" means the step waits and tries again by itself — you don't need to do anything. Only "Failed" needs you (Live flow → Failed → Retry).</p>
+      <div class="ba-log" id="logList"></div></div>
+  </section>
+
+  <!-- PERFORMANCE -->
+  <section class="wrap panel" id="panel-performance" role="tabpanel" hidden>
+    <div class="panel-head"><h2>How the guides are doing</h2><p>Reads, test clicks and visits from AI assistants are measured on the site. Google clicks, impressions and positions appear once Search Console is connected in Settings.</p></div>
+    <div class="tiles" id="perfTiles"></div>
+    <div class="card-box"><div class="ba-row-head"><h3>Recommendations</h3><button type="button" class="btn btn-soft btn-sm" data-run="monitor">Check now</button></div><div class="list" id="recoList"></div></div>
+    <div class="card-box"><h3>Every published article (last 28 days)</h3><div class="ba-table-wrap"><table class="ba-table" id="perfTable"></table></div></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="wrap panel" id="panel-settings" role="tabpanel" hidden>
+    <div class="seg gd-ss" id="setSub"><button type="button" data-ss="schedule">Schedule &amp; approval</button><button type="button" data-ss="writing">Writing &amp; look</button><button type="button" data-ss="ai">AI &amp; limits</button><button type="button" data-ss="alerts">Alerts &amp; Search Console</button></div>
+    <form id="setForm" class="stack">
+      <div class="card-box" data-sg="schedule" data-ss="schedule">
+        <h3>Schedule &amp; approval</h3>
+        <div class="form-row">
+          <label class="field"><span>Articles per week</span><input name="articles_per_week" type="number" min="0" max="21" required></label>
+          <label class="field"><span>Publish at (Pakistan time)</span><select name="publish_hour"></select></label>
+        </div>
+        <div class="field"><span>Publishing days</span><div class="ba-days" id="pubDays"></div></div>
+        <label class="switch"><input type="checkbox" name="agents_enabled"> Agents are on (when off, nothing runs except the connection test)</label>
+        <label class="switch"><input type="checkbox" name="manual_approval"> Manual approval — I approve every article before it goes live <b>(recommended)</b></label>
+        <label class="switch"><input type="checkbox" name="auto_publish"> Auto-publish: articles go live by themselves after the checks (unverified sentences and dose instructions are removed first; serious safety concerns wait for you)</label>
+      </div>
+      <div class="card-box" data-sg="content" data-ss="writing">
+        <h3>Content</h3>
+        <div class="form-row">
+          <label class="field"><span>Article length</span><select name="length_pref"><option value="short">Short (900–1,200 words)</option><option value="standard">Standard (1,400–2,000 words)</option><option value="long">Long (2,200–3,000 words)</option></select></label>
+          <label class="field"><span>Lab-test cards</span><select name="promo_level"><option value="off">Off — no test cards</option><option value="light">Light — at most one, only if relevant</option><option value="natural">Natural — where they genuinely help</option></select></label>
+          <label class="field"><span>Max test cards per article</span><input name="max_product_links" type="number" min="0" max="6"></label>
+        </div>
+        <div class="field"><span>Categories the agents may write for (none ticked = all)</span><div class="ba-checks" id="setCats"></div></div>
+        <div class="field"><span>Focus first on</span><div class="ba-checks" id="setPrio"></div></div>
+        <label class="field"><span>Research seeds — subjects the Topic Scout starts from (one per line)</span><textarea name="research_seeds" rows="4"></textarea></label>
+        <label class="field"><span>Trusted source websites (one domain per line) — only these may be cited or fetched</span><textarea name="trusted_sources" rows="4"></textarea></label>
+        <div class="form-row">
+          <label class="field"><span>Author shown on articles</span><input name="author_name" maxlength="80" required></label>
+          <label class="field grow"><span>About the author (shown under every article)</span><input name="author_bio" maxlength="400"></label>
+        </div>
+        <div class="field ba-voice">
+          <span>Writing style — extra instructions for the AI writer <small class="muted">(optional · up to 4,000 characters)</small></span>
+          <p class="muted small" style="margin:2px 0 8px">Every article is already written in the house voice: a professional, friendly writer who hooks the reader in the first lines, keeps it practical and easy to scan, and avoids cringe phrases (no scare tactics, no emojis). Add anything you want on top — tone, words to use or avoid, how to talk about Pakistan, things patients ask you about. Facts, honesty and medical-safety rules always stay on.</p>
+          <textarea name="writing_style" id="writingStyle" rows="7" maxlength="4000" placeholder="e.g. Mention home sample collection only in the last section. Use examples from daily life in Pakistan. Explain every medical word."></textarea>
+          <div class="ba-voice-row"><button type="button" class="btn btn-ghost btn-sm" id="voiceSample">Insert a starter example</button><button type="button" class="btn btn-ghost btn-sm" id="voiceShow">See the built-in house voice</button><span class="muted small" id="voiceCount"></span></div>
+          <pre class="ba-voice-default" id="voiceDefault" hidden></pre>
+        </div>
+        <label class="switch"><input type="checkbox" name="urdu_enabled"> Urdu versions — translate each article into Urdu (saved for review, published at /ur/blog/…)</label>
+      </div>
+      <div class="card-box" data-sg="ai" data-ss="ai">
+        <h3>AI</h3>
+        <p class="muted small">Pick any AI service you have a key for. Each service keeps its own saved key, so you can switch between them without pasting keys again. Keys are stored on the server only — they are never shown again or sent to visitors' browsers. <b>Free to start:</b> Google Gemini, Groq, Cerebras, Mistral, OpenRouter (models ending in <code>:free</code>), GitHub Models and Z.ai GLM Flash.</p>
+        <div class="form-row">
+          <label class="field"><span>Provider</span><select name="provider" id="aiProvider">
+            <optgroup label="Big AI companies">
+              <option value="gemini">Google Gemini</option>
+              <option value="anthropic">Anthropic Claude</option>
+              <option value="openai">OpenAI (ChatGPT models)</option>
+              <option value="xai">xAI Grok</option>
+              <option value="deepseek">DeepSeek</option>
+              <option value="mistral">Mistral AI</option>
+              <option value="cohere">Cohere</option>
+              <option value="perplexity">Perplexity (Sonar)</option>
+              <option value="moonshot">Moonshot Kimi</option>
+              <option value="qwen">Alibaba Qwen</option>
+              <option value="zai">Z.ai GLM (Zhipu)</option>
+            </optgroup>
+            <optgroup label="Fast hosts for open models">
+              <option value="groq">Groq (not Grok — Llama, Qwen, GPT-OSS…)</option>
+              <option value="cerebras">Cerebras</option>
+              <option value="together">Together AI</option>
+              <option value="fireworks">Fireworks AI</option>
+              <option value="nvidia">NVIDIA NIM</option>
+              <option value="huggingface">Hugging Face</option>
+            </optgroup>
+            <optgroup label="One key, many companies">
+              <option value="openrouter">OpenRouter (Claude, GPT, Grok, DeepSeek, Llama… with one key)</option>
+              <option value="github">GitHub Models</option>
+            </optgroup>
+            <optgroup label="Anything else">
+              <option value="openai_compat">Other OpenAI-compatible API (enter its address)</option>
+            </optgroup>
+          </select></label>
+          <label class="field grow"><span>Model</span><input name="model" list="modelList" required maxlength="120"><datalist id="modelList"></datalist></label>
+          <label class="field grow" id="baseUrlWrap"><span>API address</span><input name="base_url" placeholder="https://api.example.com/v1"></label>
+        </div>
+        <p class="muted small" id="provInfo"></p>
+        <div class="form-row">
+          <label class="field grow"><span>API key for <b id="keyFor">this provider</b> <span id="keyHint" class="muted"></span></span><input id="aiKey" type="password" autocomplete="off" placeholder="Paste a key to save it for this provider"></label>
+        </div>
+        <div class="toolbar"><button type="button" class="btn btn-soft" id="saveKey">Save key</button><button type="button" class="btn btn-soft" id="testAi">Test &amp; list models <small class="ai-in">1 AI</small></button><button type="button" class="btn btn-soft ba-danger-text" id="removeKey" hidden>Remove this key</button><span class="muted small" id="testOut"></span></div>
+        <p class="muted small" id="keysSaved"></p>
+      </div>
+      <div class="card-box" data-sg="images" data-ss="writing">
+        <h3>Images</h3>
+        <label class="field"><span>Cover photos come from</span><select name="image_source"><option value="products_then_openverse">Clinic photos, otherwise openly licensed photos (Openverse)</option><option value="products">Only clinic photos</option><option value="openverse">Only openly licensed photos (Openverse, with credit)</option><option value="none">No cover photos</option></select></label>
+        <p class="muted small">Openly licensed photos (CC0, Public Domain, CC BY, CC BY-SA) are saved to your own storage and always shown with the photographer's credit and licence. Free AI image generation isn't available, so the agents don't generate images.</p>
+      </div>
+      <div class="card-box" id="fontsBox" data-ss="writing">
+        <h3>Fonts</h3>
+        <p class="muted small">The default fonts for every guide. Urdu guides use Nastaliq: by default a display Nastaliq (Gulzar) for titles, a bold Nastaliq for sub-headings and a regular Nastaliq for the text. Press <b>Save settings</b> — live guides update within about a minute.</p>
+        <div class="seg" id="fontLang" role="tablist"><button type="button" data-flang="ur" class="on">اردو · Urdu</button><button type="button" data-flang="en">English</button></div>
+        <div class="ba-fonts">
+          <div class="ba-font-ctrls" id="fontCtrls"></div>
+          <div class="ba-font-prev blog-page" id="fontPrev"></div>
+        </div>
+        <div class="gd-fgal" id="fontGallery">
+          <div class="ba-row-head"><h4>More Urdu fonts to try</h4><div class="seg"><span class="muted small" style="align-self:center;padding:0 6px">Use for:</span><button type="button" data-grole="heading">Headings</button><button type="button" data-grole="sub">Sub-headings</button><button type="button" data-grole="body" class="on">Paragraphs</button><button type="button" data-grole="other">Other text</button></div></div>
+          <p class="muted small">Every font is free. Each one is tested here: <b>✓</b> shows every Urdu letter, <b>✕</b> is missing some (the live blog would swap it for a working font by itself). Click a font to use it, then press Save settings.</p>
+          <div class="gd-ftiles" id="fontTiles"></div>
+        </div>
+        <div class="toolbar"><button type="button" class="btn btn-soft btn-sm" id="fontReset">Back to the default fonts</button></div>
+      </div>
+      <div class="card-box" data-sg="limits" data-ss="ai">
+        <h3>Limits &amp; costs</h3>
+        <div class="form-row">
+          <label class="field"><span>AI calls per minute</span><input name="max_calls_per_minute" type="number" min="1" max="60"></label>
+          <label class="field"><span>AI calls per month</span><input name="monthly_call_limit" type="number" min="0"></label>
+          <label class="field"><span>Tokens per month</span><input name="monthly_token_limit" type="number" min="0"></label>
+        </div>
+        <div class="form-row">
+          <label class="field"><span>Price per 1M input tokens (USD)</span><input name="price_in_per_m" type="number" min="0" step="0.0001"></label>
+          <label class="field"><span>Price per 1M output tokens (USD)</span><input name="price_out_per_m" type="number" min="0" step="0.0001"></label>
+          <label class="field"><span>Monthly budget (USD)</span><input name="monthly_cost_limit" type="number" min="0" step="0.01"></label>
+        </div>
+        <p class="muted small"><b>AI calls per minute</b> is your normal pace. The counter at the top shows how many calls ran in the last 60 seconds. If a button would go past this number you get one confirm first; if you go ahead, the extra steps simply wait their turn (no tries are used up). Scheduled work never asks. On a free tier leave the prices at 0. One article ≈ 5 AI calls (6 with Urdu).</p>
+        <div id="usageNow"></div>
+      </div>
+      <div class="card-box" data-sg="notify" data-ss="alerts">
+        <h3>Notifications</h3>
+        <label class="field"><span>Email for "article ready for review" and failures (blank = no email)</span><input name="notify_email" type="email"></label>
+        <label class="field"><span>Send from (an address on a domain verified in Resend)</span><input name="email_from" type="text" maxlength="200" placeholder="Fort Abbas Clinic &lt;blog@fortabbaspolyclinic.com&gt;"></label><div class="form-row"><label class="field grow"><span>Resend API key (optional, free tier)</span><input id="resendKey" type="password" autocomplete="off"></label><label class="field"><span>&nbsp;</span><button type="button" class="btn btn-soft" id="saveResend">Save key</button></label></div><p class="muted small">Failures are always shown on this page too.</p>
+      </div>
+      <div class="ba-savebar"><button class="btn btn-primary" type="submit">Save settings</button></div>
+    </form>
+    <div class="card-box" data-sg="gsc" data-ss="alerts">
+      <h3>Google Search Console (optional, free)</h3>
+      <p class="muted small">Lets the agents read which searches bring people to your guides. In Google Cloud create a service account with a JSON key, then in Search Console → Settings → Users add its email as a <b>Restricted</b> user. Paste the JSON key below; it is stored on the server only.</p>
+      <div class="form-row">
+        <label class="field grow"><span>Property</span><input id="gscProp" placeholder="sc-domain:fortabbaspolyclinic.com  or  https://fortabbaspolyclinic.com/"></label>
+      </div>
+      <label class="field"><span>Service-account JSON key <span class="muted" id="gscHint"></span></span><textarea id="gscKey" rows="3" placeholder='{"type":"service_account", …}'></textarea></label>
+      <div class="toolbar"><button type="button" class="btn btn-soft" id="saveGsc">Save Search Console</button><button type="button" class="btn btn-soft" id="clearGsc">Disconnect</button></div>
+    </div>
+    <div class="card-box" data-sg="cats" data-ss="writing">
+      <div class="ba-row-head"><h3>Blog categories</h3><button type="button" class="btn btn-soft btn-sm" id="addCat">+ Add category</button></div>
+      <div class="list" id="catList"></div>
+    </div>
+  </section>
+</div><!-- /main -->
+</div>
+
+<!-- AI pace check: buttons only -->
+<dialog id="aiDlg" class="sheet gd-ai-dlg" aria-labelledby="aiDlgT">
+  <div class="gd-ai-dlg-in">
+    <span class="gd-ai-ic" aria-hidden="true"><svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v5M12 16.5v.01"/><path d="M10.3 3.9 2.4 17.5A2 2 0 0 0 4.1 20.5h15.8a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"/></svg></span>
+    <h3 id="aiDlgT">More AI calls than your usual pace</h3>
+    <div class="gd-ai-meter" id="aiDlgMeter"></div>
+    <p id="aiDlgText"></p>
+    <div class="gd-ai-btns"><button type="button" class="btn btn-soft" id="aiDlgNo">Not now</button><button type="button" class="btn btn-primary" id="aiDlgYes">Yes, run it</button></div>
+  </div>
+</dialog>
+
+<!-- ================= ARTICLE EDITOR ================= -->
+<dialog id="editDlg" class="ba-editor" aria-labelledby="edTitle">
+  <form class="sheet" id="edForm" method="dialog">
+    <header class="ba-ed-head gd-ed-head">
+      <div class="gd-ed-top">
+        <div class="ba-ed-meta"><span class="badge" id="edStatus"></span> <span class="muted small" id="edMeta"></span><span class="seg ba-ed-lang" id="edLang" hidden></span></div>
+        <button type="button" class="gd-close" data-close aria-label="Close the editor" title="Close (Esc)"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg><span>Close</span><kbd>Esc</kbd></button>
+      </div>
+      <nav class="gd-ed-tabs" id="edView" aria-label="Editor views"><button type="button" data-v="edit" class="on">Write</button><button type="button" data-v="preview">Preview</button><button type="button" data-v="seo">SEO &amp; details</button><button type="button" data-v="history">History</button></nav>
+    </header>
+    <div class="gd-script-warn" id="edScript" hidden></div>
+    <div class="ba-ed-body">
+      <div class="ba-notes" id="edNotes"></div>
+      <div id="edProposed"></div>
+      <div data-pane="edit">
+        <div class="ba-cover" id="edCover"></div>
+        <label class="field"><span>Title</span><input name="title" id="edTitle" required maxlength="140"></label>
+        <label class="field"><span>One-line summary (shown under the title and on cards)</span><input name="excerpt" maxlength="390"></label>
+        <label class="field"><span>Quick answer (40–80 words — answers the main question straight away)</span><textarea name="answer_summary" rows="3" maxlength="880"></textarea></label>
+        <div class="field"><span>Article</span>
+          <div class="ba-md-tools" id="mdTools">
+            <button type="button" data-md="h2">H2</button><button type="button" data-md="h3">H3</button><button type="button" data-md="b"><b>B</b></button><button type="button" data-md="i"><i>I</i></button><button type="button" data-md="ul">• List</button><button type="button" data-md="ol">1. List</button><button type="button" data-md="quote">“ Tip</button><button type="button" data-md="link">Link</button><button type="button" data-md="table">Table</button><button type="button" data-md="image">🖼 Picture</button><button type="button" data-md="product">+ Test card</button>
+            <span class="muted small" id="edWords"></span>
+          </div>
+          <textarea name="body_md" id="edBody" rows="22" class="ba-md"></textarea>
+        </div>
+        <div class="field"><span>FAQ</span><div id="edFaq" class="stack"></div><button type="button" class="btn btn-soft btn-sm" id="addFaq">+ Add question</button></div>
+      </div>
+      <div data-pane="preview" hidden><div class="ba-preview"><div class="blog-article"><h1 id="pvTitle"></h1><p class="blog-dek" id="pvDek"></p><div id="pvCover"></div><section class="blog-answer" id="pvAnswer"><h2>Quick answer</h2><div></div></section><div class="blog-body" id="pvBody"></div><section class="blog-faq" id="pvFaq"></section></div></div><p class="muted small">Links to pages that don't exist and tests that aren't on the site are left out, exactly as on the live page.</p></div>
+      <div data-pane="seo" hidden>
+        <div class="form-row">
+          <label class="field grow"><span>Address</span><input name="slug" required pattern="[a-z0-9]+(-[a-z0-9]+)*" maxlength="90"></label>
+          <label class="field"><span>Category</span><select name="category_id" class="ba-catid-select"></select></label>
+          <label class="field"><span>Language</span><select name="lang" disabled><option value="en">English</option><option value="ur">Urdu</option></select></label>
+        </div>
+        <label class="field"><span>Search title <span class="muted" id="cntSeo"></span></span><input name="seo_title" maxlength="70" placeholder="Leave blank to use the title"></label>
+        <label class="field"><span>Meta description <span class="muted" id="cntMeta"></span></span><textarea name="meta_description" rows="2" maxlength="170"></textarea></label>
+        <div class="ba-serp" id="serp"></div>
+        <div class="form-row">
+          <label class="field grow"><span>Main search query</span><input name="focus_query" maxlength="200"></label>
+          <label class="field grow"><span>Tags (comma separated)</span><input name="tags"></label>
+        </div>
+        <div class="form-row">
+          <label class="field grow"><span>Part of pillar guide</span><select name="pillar_id" id="edPillar"></select></label>
+          <label class="field"><span>&nbsp;</span><label class="switch"><input type="checkbox" name="is_pillar"> This is a pillar guide</label></label>
+        </div>
+        <div class="toolbar"><label class="switch"><input type="checkbox" name="featured"> Featured on /blog</label><label class="switch"><input type="checkbox" name="noindex"> Hide from Google (noindex)</label></div>
+        <h4 class="ba-sub">Cover photo</h4>
+        <input type="hidden" name="cv_ratio"><input type="hidden" name="cv_pos">
+        <div class="form-row">
+          <label class="field grow"><span>Photo address</span><input name="cv_url" type="url"></label>
+          <label class="field grow"><span>Alt text (describe the photo)</span><input name="cv_alt" maxlength="200"></label>
+        </div>
+        <div class="form-row">
+          <label class="field"><span>Credit</span><input name="cv_credit" maxlength="120"></label>
+          <label class="field"><span>Licence</span><input name="cv_license" maxlength="60"></label>
+          <label class="field"><span>Licence link</span><input name="cv_license_url" type="url"></label>
+          <label class="field"><span>Source page</span><input name="cv_source_url" type="url"></label>
+        </div>
+        <button type="button" class="btn btn-soft btn-sm" id="findPhoto">Find a new photo (Image Curator) <small class="ai-in free">No AI</small></button>
+        <h4 class="ba-sub">Sources</h4>
+        <div id="edSources" class="stack"></div><button type="button" class="btn btn-soft btn-sm" id="addSource">+ Add source</button>
+      </div>
+      <div data-pane="history" hidden><div class="list" id="edVersions"></div></div>
+    </div>
+    <footer class="ba-ed-foot gd-ed-foot">
+      <div class="gd-ft-l">
+        <button type="button" class="btn btn-soft btn-sm" data-act="recheck">Re-check (Reviewer) <small class="ai-in">≈1 AI</small></button>
+        <button type="button" class="btn btn-soft btn-sm" data-act="improve">Improve with AI <small class="ai-in">≈3 AI</small></button>
+        <button type="button" class="btn btn-soft btn-sm" data-act="translate">Urdu version <small class="ai-in">≈1 AI</small></button>
+        <a class="btn btn-soft btn-sm" id="edLive" target="_blank" rel="noopener" hidden>View live ↗</a>
+        <button type="button" class="btn btn-soft btn-sm ba-danger-text" data-act="delete">Delete</button>
+      </div>
+      <div class="gd-ft-r">
+        <button type="button" class="btn btn-soft" data-act="save">Save</button>
+        <button type="button" class="btn btn-soft" data-act="unpublish" hidden>Unpublish</button>
+        <input type="datetime-local" class="input input-sm ba-w-auto" id="edWhen" aria-label="Publish date and time">
+        <button type="button" class="btn btn-dark" data-act="schedule">Schedule</button>
+        <button type="button" class="btn btn-primary" data-act="publish">Approve &amp; publish now</button>
+      </div>
+    </footer>
+  </form>
+</dialog>
+
+<!-- product picker -->
+<dialog id="prodDlg"><div class="sheet ba-small-sheet"><h3>Insert a lab-test card</h3><p class="muted small">Only tests shown on the site appear here.</p><div class="list" id="prodList"></div><div class="toolbar"><button type="button" class="btn btn-soft" data-close>Cancel</button></div></div></dialog>
+
+<!-- confirm -->
+<dialog id="confirmDlg"><form class="sheet ba-small-sheet" id="confirmForm" method="dialog"><h3 id="confirmTitle"></h3><p id="confirmText" class="muted"></p><div class="toolbar"><button type="button" class="btn btn-soft" id="confirmCancel">Cancel</button><button class="btn btn-danger" id="confirmOk" type="submit">OK</button></div></form></dialog>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.116.0/dist/umd/supabase.js"></script>
+<script src="/assets/config.js"></script>
+<script>window.STORE_CONFIG={SUPABASE_URL:window.FA_CONFIG.url,SUPABASE_ANON_KEY:window.FA_CONFIG.anon,STORE_NAME:"Fort Abbas Poly Clinic",BRAND_KEY:"fa"};</script>
+<script src="/assets/defaults.js"></script>
+<script src="/assets/core.js"></script>
+<script src="/assets/guides/shared.js"></script>
+<script src="/assets/guides/blog-md.js"></script>
+<script src="/assets/guides/blog-fonts.js"></script>
+<script src="/assets/guides/blog-media.js"></script>
+<script src="/assets/guides/blog-admin.js"></script>
+<script src="/assets/guides/admin-find.js"></script>
+</body>
+</html>

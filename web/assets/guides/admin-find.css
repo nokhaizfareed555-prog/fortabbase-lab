@@ -1,0 +1,116 @@
+/* Divaar.pk — admin search bar, directory, "On this page" index and the colours pop-over. */
+
+/* ---------- search bar in the header ---------- */
+html.fx body.admin .find-box { position: relative; flex: 0 1 380px; min-width: 0; margin-left: auto; }
+html.fx body.admin .find-field { display: flex; align-items: center; gap: 10px; height: 44px; padding: 0 8px 0 16px; border-radius: 999px; background: #fff; border: 1px solid var(--ad-line-2); box-shadow: 0 1px 2px rgba(20,22,30,.04); color: var(--ad-muted); cursor: text; transition: box-shadow .15s, border-color .15s; }
+html.fx body.admin .find-field:focus-within { border-color: var(--pal-500); box-shadow: 0 0 0 4px var(--ad-ring); color: var(--ad-ink); }
+html.fx body.admin .find-field input { flex: 1; min-width: 0; height: 100%; border: 0 !important; background: transparent !important; box-shadow: none !important; padding: 0 !important; font: inherit; font-size: 14.5px; color: var(--ad-ink); outline: 0; }
+html.fx body.admin .find-field input::-webkit-search-cancel-button { display: none; }
+html.fx body.admin .find-kbd { flex: none; display: grid; place-items: center; min-width: 26px; height: 26px; border-radius: 8px; background: var(--ad-sunk); border: 1px solid var(--ad-line); font: 600 12px/1 inherit; color: var(--ad-muted); }
+html.fx body.admin .find-field:focus-within .find-kbd { visibility: hidden; }
+html.fx body.admin .find-phone { display: none !important; }
+html.fx body.admin .topbar-actions { flex: none; }
+
+html.fx body.admin .find-pop { position: absolute; top: calc(100% + 10px); right: 0; width: min(560px, calc(100vw - 24px)); max-height: min(70vh, 620px); overflow: auto; z-index: 90; background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(20px) saturate(160%); backdrop-filter: blur(20px) saturate(160%); border: 1px solid var(--ad-line); border-radius: 22px; box-shadow: 0 30px 70px -24px rgba(20,22,30,.35), 0 2px 6px rgba(20,22,30,.05); padding: 8px; animation: findIn .16s ease; }
+@keyframes findIn { from { opacity: 0; transform: translateY(-4px); } }
+html.fx body.admin .find-list { display: flex; flex-direction: column; gap: 2px; }
+html.fx body.admin .find-row { display: flex; align-items: flex-start; gap: 12px; padding: 10px 12px; border-radius: 14px; text-decoration: none; color: var(--ad-ink); }
+html.fx body.admin .find-row:hover, html.fx body.admin .find-row.on { background: var(--pal-50); }
+html.fx body.admin .find-ic { flex: none; width: 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--ad-sunk); color: var(--ad-ink-2); }
+html.fx body.admin .find-row.on .find-ic { background: var(--pal-600); color: var(--pal-on); }
+html.fx body.admin .find-ic.k-task { background: var(--ad-ink); color: #fff; }
+html.fx body.admin .find-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px; }
+html.fx body.admin .find-t { font-size: 14.5px; font-weight: 600; letter-spacing: -0.01em; }
+html.fx body.admin .find-w { font-size: 12px; color: var(--ad-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.fx body.admin .find-d { font-size: 12.5px; color: var(--ad-faint); display: -webkit-box; -webkit-line-clamp: 1; -webkit-box-orient: vertical; overflow: hidden; }
+html.fx body.admin .find-row mark, html.fx body.admin .find-dir mark { background: none; color: var(--pal-700); font-weight: 700; }
+html.fx body.admin .find-ext { flex: none; align-self: center; font-size: 11.5px; font-weight: 600; color: var(--ad-muted); background: var(--ad-sunk); border-radius: 999px; padding: 3px 9px; }
+html.fx body.admin .find-empty { padding: 16px 14px 12px; display: flex; flex-direction: column; gap: 6px; font-size: 13.5px; color: var(--ad-muted); }
+html.fx body.admin .find-empty b { color: var(--ad-ink); font-size: 15px; font-weight: 600; }
+html.fx body.admin .find-sug { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 6px; }
+html.fx body.admin .find-sug button { border: 1px solid var(--ad-line-2); background: #fff; border-radius: 999px; padding: 6px 12px; font: inherit; font-size: 13px; color: var(--ad-ink-2); cursor: pointer; }
+html.fx body.admin .find-sug button:hover { background: var(--ad-ink); color: #fff; border-color: var(--ad-ink); }
+html.fx body.admin .find-foot { display: flex; align-items: center; justify-content: space-between; gap: 10px; margin-top: 6px; padding: 8px 6px 2px; border-top: 1px solid var(--ad-line); }
+html.fx body.admin .find-dirbtn { display: inline-flex; align-items: center; gap: 8px; border: 0; background: transparent; color: var(--pal-700); font: inherit; font-size: 13.5px; font-weight: 600; padding: 6px 8px; border-radius: 999px; cursor: pointer; }
+html.fx body.admin .find-dirbtn:hover { background: var(--pal-50); }
+html.fx body.admin .find-keys { font-size: 11.5px; color: var(--ad-faint); }
+html.fx body.admin .find-keys kbd { font: inherit; padding: 1px 5px; border-radius: 5px; background: var(--ad-sunk); border: 1px solid var(--ad-line); }
+
+/* the place a result points at */
+html.fx body.admin .find-flash { animation: findFlash 2.2s ease; border-radius: 16px; }
+@keyframes findFlash { 0%, 30% { box-shadow: 0 0 0 3px var(--pal-500), 0 0 0 10px var(--ad-ring); } 100% { box-shadow: 0 0 0 3px transparent, 0 0 0 10px transparent; } }
+
+/* ---------- "On this page" ---------- */
+html.fx body.admin .find-toc { display: flex; align-items: center; gap: 6px; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; padding: 2px 2px 4px; margin: 0 0 -4px; }
+html.fx body.admin .find-toc::-webkit-scrollbar { display: none; }
+html.fx body.admin .find-toc-l { flex: none; font-size: 11px; font-weight: 600; letter-spacing: .09em; text-transform: uppercase; color: var(--ad-faint); margin-right: 4px; }
+html.fx body.admin .find-toc button { flex: none; border: 1px solid var(--ad-line); background: rgba(255,255,255,.7); border-radius: 999px; padding: 6px 13px; font: inherit; font-size: 13px; font-weight: 500; color: var(--ad-ink-2); cursor: pointer; white-space: nowrap; transition: background .15s, color .15s; }
+html.fx body.admin .find-toc button:hover { background: var(--ad-ink); color: #fff; border-color: var(--ad-ink); }
+html.fx body.admin #panel-settings > .find-toc { padding-right: 140px; }
+
+/* ---------- directory ---------- */
+html.fx body.admin dialog.find-dir { width: min(1120px, calc(100vw - 32px)); max-width: none; max-height: calc(100dvh - 40px); padding: 0; border: 0; background: transparent; }
+html.fx body.admin .find-sheet { display: flex; flex-direction: column; max-height: calc(100dvh - 40px); background: var(--ad-page); padding: 0; overflow: hidden; }
+html.fx body.admin .find-dir-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 16px; padding: 26px 28px 12px; }
+html.fx body.admin .find-eyebrow { margin: 0 0 2px; font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--pal-700); }
+html.fx body.admin .find-dir-head h2 { margin: 0; font-size: 28px; font-weight: 600; letter-spacing: -0.03em; }
+html.fx body.admin .find-dir-q { margin: 0 28px 14px; }
+html.fx body.admin .find-dir-body { overflow: auto; padding: 4px 28px 32px; display: flex; flex-direction: column; gap: 26px; }
+html.fx body.admin .find-dir-body h3 { margin: 0 0 10px; font-size: 11.5px; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--ad-muted); }
+html.fx body.admin .find-task-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 8px; }
+html.fx body.admin .find-task { display: grid; grid-template-columns: auto 1fr; grid-template-rows: auto auto; column-gap: 10px; align-items: center; padding: 10px 14px; border-radius: 16px; background: #fff; border: 1px solid var(--ad-line); text-decoration: none; color: var(--ad-ink); transition: transform .15s, box-shadow .15s; }
+html.fx body.admin .find-task svg { grid-row: span 2; color: var(--pal-600); }
+html.fx body.admin .find-task span { font-size: 14px; font-weight: 600; }
+html.fx body.admin .find-task small { font-size: 12px; color: var(--ad-muted); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+html.fx body.admin .find-task:hover { transform: translateY(-1px); box-shadow: var(--ad-lift); }
+html.fx body.admin .find-dir-grid { columns: 3 300px; column-gap: 14px; }
+html.fx body.admin .find-card { break-inside: avoid; margin: 0 0 14px; background: #fff; border: 1px solid var(--ad-line); border-radius: 22px; padding: 18px 18px 14px; box-shadow: var(--ad-shadow); }
+html.fx body.admin .find-card-h { display: flex; align-items: center; justify-content: space-between; gap: 8px; text-decoration: none; color: var(--ad-ink); }
+html.fx body.admin .find-card-h b { font-size: 17px; font-weight: 600; letter-spacing: -0.02em; }
+html.fx body.admin .find-card-h:hover b { color: var(--pal-700); }
+html.fx body.admin .find-card-d { margin: 4px 0 8px; font-size: 13px; color: var(--ad-muted); }
+html.fx body.admin .find-card ul { list-style: none; margin: 6px 0 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+html.fx body.admin .find-card li p { margin: -2px 0 4px 12px; font-size: 12px; color: var(--ad-faint); }
+html.fx body.admin .find-dl { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding: 6px 10px; border-radius: 10px; text-decoration: none; color: var(--ad-ink-2); font-size: 14px; }
+html.fx body.admin .find-dl:hover { background: var(--pal-50); color: var(--pal-700); }
+html.fx body.admin .find-dl em { font-style: normal; font-size: 11.5px; font-weight: 600; color: var(--ad-muted); background: var(--ad-sunk); border-radius: 999px; padding: 1px 8px; }
+html.fx body.admin .find-dir-sub { margin-top: 8px; padding-left: 10px; border-left: 2px solid var(--pal-100); }
+html.fx body.admin .find-dl-sub { font-weight: 600; color: var(--ad-ink); }
+html.fx body.admin .find-acts { margin: 6px 0 0; font-size: 12.5px; color: var(--ad-muted); }
+html.fx body.admin .find-dir .find-row { background: #fff; border: 1px solid var(--ad-line); margin-bottom: 6px; }
+
+/* ---------- the colours pop-over ---------- */
+html.fx body.admin .pal-pop { position: fixed; z-index: 95; width: min(380px, calc(100vw - 24px)); padding: 16px; border-radius: 24px; background: rgba(255,255,255,.96); -webkit-backdrop-filter: blur(20px); backdrop-filter: blur(20px); border: 1px solid var(--ad-line); box-shadow: 0 30px 70px -24px rgba(20,22,30,.35); animation: findIn .16s ease; }
+html.fx body.admin .pal-pop[hidden] { display: none; }
+html.fx body.admin .pal-head { display: flex; flex-direction: column; gap: 2px; margin: 0 4px 12px; }
+html.fx body.admin .pal-head b { font-size: 16px; font-weight: 600; letter-spacing: -0.015em; }
+html.fx body.admin .pal-list { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; max-height: 52vh; overflow: auto; padding: 2px; }
+html.fx body.admin .pal-opt { display: flex; flex-direction: column; align-items: flex-start; gap: 8px; padding: 10px; border-radius: 16px; border: 1px solid var(--ad-line); background: #fff; cursor: pointer; font: inherit; text-align: left; transition: transform .15s, box-shadow .15s; }
+html.fx body.admin .pal-opt:hover { transform: translateY(-1px); box-shadow: var(--ad-lift); }
+html.fx body.admin .pal-opt.on { box-shadow: 0 0 0 2px var(--ad-ink); border-color: transparent; }
+html.fx body.admin .pal-strip { display: flex; width: 100%; height: 30px; }
+html.fx body.admin .pal-strip i { flex: 1; height: 100%; border-radius: 999px; margin-left: -6px; box-shadow: -2px 0 4px rgba(0,0,0,.08); }
+html.fx body.admin .pal-strip i:first-child { margin-left: 0; }
+html.fx body.admin .pal-name { font-size: 13px; font-weight: 600; color: var(--ad-ink-2); }
+html.fx body.admin .pal-acts { display: flex; gap: 8px; margin-top: 12px; }
+html.fx body.admin .pal-acts .btn { flex: 1; }
+html.fx body.admin .pal-btn[aria-expanded="true"] { background: var(--ad-ink) !important; color: #fff !important; }
+
+/* ---------- phones: search becomes a round button that opens a full-width bar ---------- */
+@media (max-width: 760px) {
+  html.fx body.admin .find-box { flex: none; margin-left: 0; position: static; }
+  html.fx body.admin .find-phone { display: grid !important; width: 38px; height: 38px; }
+  html.fx body.admin .find-box .find-field { display: none; }
+  html.fx body.admin .find-box.phone-open .find-field { display: flex; position: fixed; z-index: 92; top: 10px; left: 10px; right: 10px; height: 48px; box-shadow: 0 10px 30px -10px rgba(20,22,30,.35); }
+  html.fx body.admin .find-box.phone-open .find-kbd { display: none; }
+  html.fx body.admin .find-pop { position: fixed; top: 66px; left: 10px; right: 10px; width: auto; max-height: calc(100dvh - 80px); }
+  html.fx body.admin .find-keys { display: none; }
+  html.fx body.admin .find-dir-head { padding: 20px 18px 10px; }
+  html.fx body.admin .find-dir-head h2 { font-size: 22px; }
+  html.fx body.admin .find-dir-q { margin: 0 18px 12px; }
+  html.fx body.admin .find-dir-body { padding: 4px 18px 24px; }
+  html.fx body.admin dialog.find-dir { width: 100vw; max-height: 100dvh; margin: auto 0 0; }
+  html.fx body.admin .find-sheet { max-height: 92dvh; border-radius: 24px 24px 0 0 !important; }
+  html.fx body.admin #panel-settings > .find-toc { padding-right: 2px; }
+}
+html.fx body.admin :is(#findBox, #findDir) .find-field input:is(*, :focus, :hover) { background: transparent !important; box-shadow: none !important; border: 0 !important; border-radius: 0 !important; outline: 0 !important; }

@@ -1,0 +1,74 @@
+/* Divaar.pk Guides admin — agent steps with one clear look per state.
+   working = blue, moving bar · waiting = amber, dashed · done = green tick · failed = red · not run = grey */
+.blog-admin { --st-run: #2E6BE6; --st-run-s: #EAF1FF; --st-wait: #B54708; --st-wait-s: #FFF4E0;
+  --st-ok: #12A150; --st-ok-s: #E7F6EC; --st-bad: #D92D20; --st-bad-s: #FEECEB; --st-off: #98A2B3; --st-off-s: #F2F4F7; }
+
+/* ---------- Overview: the team, one card per step ---------- */
+html.fx body.blog-admin .ba-flow { gap: 12px; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); }
+html.fx body.blog-admin .ba-agent {
+  --c: var(--st-off); --cs: var(--st-off-s);
+  display: grid; grid-template-columns: 36px 1fr; gap: 12px; align-items: start;
+  background: #fff !important; border: 1px solid #E4E7EC; border-radius: 16px; padding: 14px;
+  position: relative; overflow: hidden; box-shadow: 0 1px 2px rgba(16,24,40,.05) !important;
+  transition: border-color .2s, box-shadow .2s, background .2s;
+}
+html.fx body.blog-admin .ba-agent::before { content: none; }
+html.fx body.blog-admin .ba-agent.st-running { --c: var(--st-run); --cs: var(--st-run-s); border-color: color-mix(in srgb, var(--st-run) 55%, #fff); background: linear-gradient(180deg, #F7FAFF, #fff) !important; box-shadow: 0 0 0 3px color-mix(in srgb, var(--st-run) 14%, transparent), 0 8px 22px -12px rgba(46,107,230,.45) !important; }
+html.fx body.blog-admin .ba-agent.st-queued { --c: var(--st-wait); --cs: var(--st-wait-s); border-style: dashed; border-color: color-mix(in srgb, var(--st-wait) 50%, #fff); background: #FFFCF5 !important; }
+html.fx body.blog-admin .ba-agent.st-done { --c: var(--st-ok); --cs: var(--st-ok-s); }
+html.fx body.blog-admin .ba-agent.st-failed { --c: var(--st-bad); --cs: var(--st-bad-s); border-color: color-mix(in srgb, var(--st-bad) 45%, #fff); background: #FFFBFA !important; }
+html.fx body.blog-admin .ba-agent.st-cancelled, html.fx body.blog-admin .ba-agent.st-idle { opacity: .82; }
+
+.blog-admin .ba-step-ic {
+  width: 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; flex: none;
+  background: var(--cs, var(--st-off-s)); color: var(--c, var(--st-off));
+}
+.blog-admin .ba-step-ic svg { width: 18px; height: 18px; display: block; }
+.blog-admin .ba-step-ic i { font-style: normal; font-weight: 700; font-size: 14px; }
+.blog-admin .ba-step-ic .spin { animation: stSpin .9s linear infinite; }
+.blog-admin .ba-step-txt { display: flex; flex-direction: column; gap: 3px; min-width: 0; }
+.blog-admin .ba-step-txt b { font-size: 15px; }
+.blog-admin .ba-step-state { margin-top: 4px; align-self: flex-start; font-size: 12.5px; font-weight: 600; color: var(--c, var(--st-off)); background: var(--cs, var(--st-off-s)); padding: 3px 9px; border-radius: 980px; }
+.blog-admin .ba-step-bar { position: absolute; left: 0; right: 0; bottom: 0; height: 3px; background: linear-gradient(90deg, transparent, var(--st-run), transparent); background-size: 40% 100%; background-repeat: no-repeat; animation: stBar 1.4s ease-in-out infinite; }
+
+/* ---------- Writing team: every job ---------- */
+html.fx body.blog-admin .ba-job {
+  --c: var(--st-off); --cs: var(--st-off-s);
+  position: relative; overflow: hidden; align-items: flex-start !important;
+  border: 1px solid #E4E7EC !important; border-left: 4px solid var(--c) !important; box-shadow: 0 1px 2px rgba(16,24,40,.05) !important;
+}
+html.fx body.blog-admin .ba-job.st-running { --c: var(--st-run); --cs: var(--st-run-s); background: linear-gradient(90deg, #F5F9FF, #fff 55%) !important; }
+html.fx body.blog-admin .ba-job.st-queued { --c: var(--st-wait); --cs: var(--st-wait-s); background: #FFFCF5 !important; }
+html.fx body.blog-admin .ba-job.st-done { --c: var(--st-ok); --cs: var(--st-ok-s); }
+html.fx body.blog-admin .ba-job.st-failed { --c: var(--st-bad); --cs: var(--st-bad-s); background: #FFFBFA !important; }
+html.fx body.blog-admin .ba-job.st-cancelled { opacity: .8; }
+.blog-admin .ba-job-head { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; }
+.blog-admin .ba-job-state { font-size: 12.5px; font-weight: 600; color: var(--c); background: var(--cs); padding: 2px 9px; border-radius: 980px; }
+.blog-admin .ba-job.st-running .ba-job-state::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: currentColor; margin-right: 6px; vertical-align: 1px; animation: stPulse 1.2s ease-in-out infinite; }
+.blog-admin .ba-job-target { font-weight: 600; }
+
+/* the article's journey: researcher → … → publisher */
+.blog-admin .ba-track { display: flex; gap: 4px; margin: 6px 0 2px; flex-wrap: wrap; }
+.blog-admin .ba-tk { display: flex; flex-direction: column; align-items: center; gap: 4px; min-width: 52px; flex: 1 1 52px; max-width: 92px; }
+.blog-admin .ba-tk i { display: block; width: 100%; height: 6px; border-radius: 980px; background: #EAECF0; }
+.blog-admin .ba-tk em { font-style: normal; font-size: 11px; color: #98A2B3; white-space: nowrap; }
+.blog-admin .ba-tk.past i { background: var(--st-ok); }
+.blog-admin .ba-tk.past em { color: #475467; }
+.blog-admin .ba-tk.now em { color: var(--c); font-weight: 700; }
+.blog-admin .ba-tk.now i { background: var(--c); }
+.blog-admin .ba-tk.now.st-running i { background: linear-gradient(90deg, var(--st-run) 0 40%, #BFD3FA 40% 100%); background-size: 250% 100%; animation: stFill 1.3s linear infinite; }
+.blog-admin .ba-tk.now.st-queued i { background: repeating-linear-gradient(45deg, var(--st-wait) 0 4px, #FFD9A8 4px 8px); }
+
+@keyframes stSpin { to { transform: rotate(360deg); } }
+@keyframes stBar { from { background-position: -40% 0; } to { background-position: 140% 0; } }
+@keyframes stPulse { 50% { opacity: .3; } }
+@keyframes stFill { from { background-position: 100% 0; } to { background-position: 0 0; } }
+@media (prefers-reduced-motion: reduce) { .blog-admin .spin, .blog-admin .ba-step-bar, .blog-admin .ba-tk i, .blog-admin .ba-job-state::before { animation: none !important; } }
+@media (max-width: 760px) { html.fx body.blog-admin .ba-job { flex-direction: row; } }
+@media (max-width: 640px) {
+  .blog-admin .ba-track { flex-wrap: nowrap; }
+  .blog-admin .ba-tk { min-width: 0; flex: 1 1 0; } .blog-admin .ba-tk em { display: none; }
+  html.fx body.blog-admin .ba-job { flex-wrap: wrap; }
+  html.fx body.blog-admin .ba-job .ba-row-main { flex: 1 1 calc(100% - 52px); }
+  html.fx body.blog-admin .ba-job .ba-row-side:not(:empty) { flex: 1 1 100%; justify-content: flex-start; padding-left: 50px; }
+}

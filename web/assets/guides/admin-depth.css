@@ -1,0 +1,93 @@
+/* Divaar.pk — admin "depth" layer (Oct 23 2026). Loaded last on /admin and /admin/blog.
+   The round brand mark and the open menu icon already have a soft gradient, a glow and a lit edge; this
+   gives the flat parts the same feel: tab strips (Store details · Website look …), secondary buttons
+   (Speed booster, Card design …), chip rows, segment buttons and info banners. Colours come from the
+   chosen admin palette (assets/admin-theme.js → --pal-*). Looks only — no markup or behaviour changes.
+   Also styles the reorder lists used by Products → Opened card and Website look → Page sections. */
+
+html.fx body.admin {
+  --dp-lit: inset 0 1px 0 rgba(255,255,255,.95);
+  --dp-edge: inset 0 -1px 0 rgba(20,22,30,.06);
+  --dp-btn: linear-gradient(180deg, #FFFFFF 0%, color-mix(in srgb, var(--pal-50) 45%, #F4F2F0) 100%);
+  --dp-btn-hover: linear-gradient(180deg, #FFFFFF 0%, color-mix(in srgb, var(--pal-100) 55%, #F7EFEA) 100%);
+  --dp-shadow: 0 1px 1px rgba(20,22,30,.06), 0 4px 10px -4px rgba(20,22,30,.16), 0 10px 22px -14px color-mix(in srgb, var(--pal-600) 45%, transparent);
+  --dp-shadow-hi: 0 2px 2px rgba(20,22,30,.06), 0 8px 18px -6px rgba(20,22,30,.2), 0 16px 30px -16px color-mix(in srgb, var(--pal-600) 60%, transparent);
+  --dp-active: linear-gradient(135deg, var(--pal-500) 0%, var(--pal-600) 55%, var(--pal-700) 100%);
+}
+
+/* ---------- tab strips: a sunken track with a lit lower edge; the open tab is a raised, glowing pill ---------- */
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav, .ep-tabs, .crm-c-tabs) {
+  background: linear-gradient(180deg, color-mix(in srgb, var(--pal-100) 30%, #E7E4E2) 0%, color-mix(in srgb, var(--pal-50) 40%, #F1EEEC) 100%) !important;
+  box-shadow: inset 0 2px 4px rgba(20,22,30,.09), inset 0 1px 1px rgba(20,22,30,.06), 0 1px 0 rgba(255,255,255,.9) !important;
+  border: 1px solid rgba(20,22,30,.05) !important;
+}
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav, .ep-tabs, .crm-c-tabs) button { transition: background .2s, color .2s, box-shadow .2s, transform .15s; }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav, .ep-tabs, .crm-c-tabs) button:not(.on):not([aria-selected="true"]):hover { background: rgba(255,255,255,.55) !important; color: var(--ad-ink) !important; box-shadow: var(--dp-lit); }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav, .ep-tabs, .crm-c-tabs) button:is(.on, [aria-selected="true"]) {
+  background: var(--dp-active) !important; color: var(--pal-on, #fff) !important; text-shadow: 0 1px 1px rgba(0,0,0,.18);
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.4), inset 0 -2px 4px rgba(0,0,0,.12), 0 4px 12px -3px color-mix(in srgb, var(--pal-600) 70%, transparent), 0 1px 2px rgba(20,22,30,.12) !important;
+}
+
+/* ---------- secondary buttons (Speed booster, Card design, Opened card, Undo …): raised, lit, soft glow ---------- */
+html.fx body.admin .btn-soft:not([disabled]), html.fx body.admin :is(.card-box, .item, .prow, .rrow, .tile, .bank-edit, .paybox, .toolbar, .sheet) .btn-soft:not([disabled]) {
+  background: var(--dp-btn) !important; border: 1px solid rgba(20,22,30,.1) !important; color: var(--ad-ink) !important;
+  box-shadow: var(--dp-lit), var(--dp-edge), var(--dp-shadow) !important; transition: transform .15s, box-shadow .2s, background .2s, color .2s;
+}
+html.fx body.admin .btn-soft:not([disabled]):hover, html.fx body.admin :is(.card-box, .item, .prow, .rrow, .toolbar, .sheet) .btn-soft:not([disabled]):hover {
+  background: var(--dp-btn-hover) !important; color: var(--pal-700) !important; border-color: color-mix(in srgb, var(--pal-500) 30%, transparent) !important;
+  box-shadow: var(--dp-lit), var(--dp-edge), var(--dp-shadow-hi) !important; transform: translateY(-1px);
+}
+html.fx body.admin .btn-soft:not([disabled]):active { transform: translateY(0); box-shadow: inset 0 2px 4px rgba(20,22,30,.12) !important; }
+/* the dark save bar keeps its own look */
+html.fx body.admin :is(.save-bar, .ba-savebar) .btn-soft:not([disabled]) { background: rgba(255,255,255,.1) !important; color: #fff !important; border-color: rgba(255,255,255,.18) !important; box-shadow: inset 0 1px 0 rgba(255,255,255,.12) !important; }
+
+/* primary buttons: a lit top edge and a coloured glow, like the brand mark */
+html.fx body.admin .btn-primary:not([disabled]) { box-shadow: inset 0 1px 0 rgba(255,255,255,.3), inset 0 -2px 4px rgba(0,0,0,.14), 0 6px 16px -6px color-mix(in srgb, var(--pal-600) 75%, transparent) !important; }
+
+/* ---------- segment buttons and chips (Desktop / Phone, filters …) ---------- */
+html.fx body.admin .fit-seg button:not(.on) { background: var(--dp-btn) !important; box-shadow: var(--dp-lit), 0 1px 2px rgba(20,22,30,.06) !important; }
+html.fx body.admin .fit-seg button.on, html.fx body.admin .pn-chip.on {
+  background: var(--dp-active) !important; border-color: transparent !important; color: var(--pal-on, #fff) !important;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.35), inset 0 -2px 3px rgba(0,0,0,.12), 0 4px 10px -4px color-mix(in srgb, var(--pal-600) 70%, transparent) !important;
+}
+html.fx body.admin .pn-chip:not(.on) { background: var(--dp-btn); box-shadow: var(--dp-lit), 0 1px 2px rgba(20,22,30,.06); }
+
+/* ---------- banners and notes: a soft gradient, a lit edge and a gentle lift ---------- */
+html.fx body.admin .fx-note { background: linear-gradient(180deg, #FFFFFF 0%, color-mix(in srgb, var(--pal-50) 85%, #fff) 100%) !important; box-shadow: var(--dp-lit), 0 4px 14px -10px color-mix(in srgb, var(--pal-600) 50%, transparent); }
+html.fx body.admin .diag-sum { box-shadow: inset 0 1px 0 rgba(255,255,255,.7), 0 6px 18px -12px rgba(20,22,30,.35); }
+html.fx body.admin .diag-sum.bad { background: linear-gradient(180deg, #FFF4F3 0%, #FDE3E1 100%) !important; }
+html.fx body.admin .diag-sum.mid { background: linear-gradient(180deg, #FFF9EC 0%, #FDEFCB 100%) !important; }
+html.fx body.admin .diag-sum.good { background: linear-gradient(180deg, #F1FBF4 0%, #DDF4E5 100%) !important; }
+html.fx body.admin .badge-blue { background: linear-gradient(180deg, #fff, var(--pal-50)) !important; box-shadow: var(--dp-lit), 0 1px 3px color-mix(in srgb, var(--pal-600) 30%, transparent); }
+
+/* ---------- reorder lists (Opened card → block order, Page sections) ---------- */
+.t2-row.t2-row-wide { display: block; }
+.t2-row.t2-row-wide .t2-lbl { margin-bottom: 8px; }
+.dd-order { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.dd-order li { display: flex; align-items: center; gap: 10px; min-height: 44px; padding: 4px 6px 4px 10px; border-radius: 14px; background: linear-gradient(180deg, #fff, #F7F5F3); border: 1px solid rgba(20,22,30,.09); box-shadow: inset 0 1px 0 #fff, 0 2px 6px -3px rgba(20,22,30,.18); cursor: grab; user-select: none; font-size: 14px; }
+.dd-order li > span:not(.dd-grip) { flex: 1; min-width: 0; }
+.dd-order li b { width: 22px; height: 22px; flex: none; display: grid; place-items: center; border-radius: 50%; font-size: 12px; background: var(--pal-grad, #222); color: #fff; }
+.dd-order li.dragging { opacity: .55; box-shadow: 0 10px 24px -8px rgba(20,22,30,.35); }
+.dd-order li.dd-fixed { cursor: default; background: rgba(20,22,30,.035); box-shadow: none; color: var(--ad-muted, #6B7180); }
+.dd-order li.dd-fixed b { background: rgba(20,22,30,.18); }
+.dd-grip { color: #A6A9B2; font-size: 13px; letter-spacing: -2px; flex: none; }
+.dd-order .dd-mv { width: 30px; height: 30px; min-height: 30px; padding: 0; border-radius: 50%; font-size: 14px; }
+.dd-order .dd-mv[disabled] { opacity: .3; }
+
+/* ---------- Website look → Page sections ---------- */
+.pl-top { display: flex; flex-wrap: wrap; align-items: center; gap: 10px 14px; margin: 4px 0 14px; }
+html.fx body.admin .pl-ctrls { display: flex; flex-direction: column; gap: 12px; min-width: 0; min-height: 0; overflow-y: auto; padding: 2px 8px 2px 2px; scrollbar-width: thin; }
+@media (min-width: 1101px) { html.fx body.admin .pl-split { height: clamp(480px, calc(100dvh - var(--ad-top, 76px) - 190px), 900px); } html.fx body.admin .pl-ctrls { height: 100%; } }
+.pl-list li > span small { font-size: 12px; }
+.pl-list li.pl-off { opacity: .62; background: repeating-linear-gradient(135deg, #fff 0 8px, #F6F4F2 8px 16px); }
+.pl-list li .pl-hid { color: #A15C00; font-weight: 700; }
+.pl-list li.pl-div { background: linear-gradient(180deg, #FFFDF5, #FBF4DF); border-style: dashed; }
+.pl-list li.pl-div b { background: #1E1F24; }
+.pl-div-body { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+.pl-div-body select, .pl-div-body input { height: 32px; border-radius: 10px; border: 1px solid rgba(20,22,30,.14); background: #fff; padding: 0 8px; font: inherit; font-size: 13px; min-width: 0; }
+.pl-div-body input { flex: 1 1 160px; }
+.pl-list .pl-ins { font-weight: 800; }
+.pl-add { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.pl-add select { height: 36px; border-radius: 999px; border: 1px solid rgba(20,22,30,.14); padding: 0 12px; font: inherit; font-size: 13.5px; background: #fff; }
+.pl-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 14px; }
+.pl-box.is-dirty #plState { color: #A15C00; font-weight: 700; }

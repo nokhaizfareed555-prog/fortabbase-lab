@@ -1,0 +1,280 @@
+/* Divaar.pk — admin layout & look (loaded last).
+   A grouped sidebar on the left, a page header with breadcrumb and title, and calm white cards on a soft
+   blue-grey page — the clean "SaaS dashboard" style. Looks only: every id, button and form is unchanged. */
+
+/* ================= tokens ================= */
+html.fx body.admin {
+  --ad-page: #F3F6FB; --ad-card: #FFFFFF; --ad-sunk: #F7F9FC; --ad-line: #E6EBF2; --ad-line-2: #D5DCE6;
+  --ad-ink: #101828; --ad-ink-2: #344054; --ad-muted: #667085; --ad-faint: #98A2B3;
+  --ad-blue: #1570EF; --ad-blue-600: #175CD3; --ad-blue-50: #EFF5FF; --ad-blue-100: #DCE9FF;
+  --ad-red: #F04438; --ad-green: #12B76A; --ad-amber: #F79009;
+  --ad-r: 16px; --ad-r-sm: 10px; --ad-shadow: 0 1px 2px rgba(16,24,40,.04), 0 1px 3px rgba(16,24,40,.03);
+  --ad-side: 264px; --ad-side-folded: 76px; --ad-top: 76px;
+  /* re-point the older theme colours so every component follows */
+  --fx-page: var(--ad-page); --fx-ink: var(--ad-ink); --fx-muted: var(--ad-muted); --fx-soft: var(--ad-sunk); --fx-soft-2: #EEF2F7; --fx-line: var(--ad-line);
+  --fx-lime: var(--ad-blue-50); --fx-on-lime: var(--ad-blue-600); --fx-green: var(--ad-green); --fx-orange: var(--ad-red);
+  --ink: var(--ad-ink); --muted: var(--ad-muted); --line: var(--ad-line);
+  background: var(--ad-page); color: var(--ad-ink); font-size: 15px;
+}
+html.fx body.admin :is(h1, h2, h3, h4) { letter-spacing: -0.015em; }
+
+/* ================= login ================= */
+html.fx body.admin .login { background: var(--ad-page) !important; }
+html.fx body.admin .login-card { border-radius: 20px !important; box-shadow: 0 12px 40px rgba(16,24,40,.08) !important; border: 1px solid var(--ad-line) !important; }
+html.fx body.admin .login-card::before { display: none; }
+html.fx body.admin .login-card h1 { font-size: 28px; font-weight: 700; text-transform: none; letter-spacing: -0.02em; margin-top: 10px; }
+html.fx body.admin .login-card .field input { background: #fff !important; border: 1px solid var(--ad-line-2) !important; border-radius: var(--ad-r-sm); min-height: 46px; }
+html.fx body.admin .login-card .brand-mark { border-radius: 12px; }
+
+/* ================= shell ================= */
+html.fx body.admin .app { margin: 0; padding: 0; border-radius: 0; background: transparent; box-shadow: none; min-height: 100dvh; max-width: none; }
+html.fx body.admin .app[hidden] { display: none; }
+html.fx body.admin .main { margin-left: var(--ad-side); min-width: 0; min-height: 100dvh; display: flex; flex-direction: column; transition: margin-left .22s ease; }
+html.fx body.admin .app .wrap { width: 100%; max-width: 1560px; margin-left: 0; margin-right: 0; box-sizing: border-box; padding-left: 28px; padding-right: 28px; }
+html.fx body.admin .toolbar > input[type=search] { flex: 1 1 260px; }
+
+/* ---------- sidebar ---------- */
+.side { position: fixed; inset: 0 auto 0 0; z-index: 70; width: var(--ad-side); display: flex; flex-direction: column; background: #fff; border-right: 1px solid var(--ad-line); transition: width .22s ease, transform .25s ease; }
+.side-top { display: flex; align-items: center; justify-content: space-between; gap: 8px; height: var(--ad-top); padding: 0 14px 0 20px; flex: none; }
+html.fx body.admin .side .brand { display: flex; align-items: center; gap: 11px; min-width: 0; text-decoration: none; color: var(--ad-ink); }
+html.fx body.admin .brand-mark { width: 38px; height: 38px; flex: none; border-radius: 11px; background: var(--ad-blue) !important; color: #fff !important; display: grid; place-items: center; font-size: 18px; font-weight: 800; box-shadow: 0 4px 10px rgba(21,112,239,.28) !important; }
+html.fx body.admin .side .brand-name { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side-fold { flex: none; width: 32px; height: 32px; display: grid; place-items: center; border: 1px solid var(--ad-line); border-radius: 9px; background: #fff; color: var(--ad-muted); cursor: pointer; transition: background .15s, color .15s, transform .22s; }
+.side-fold:hover { background: var(--ad-sunk); color: var(--ad-ink); }
+
+.side-nav { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding: 4px 12px 16px; display: flex; flex-direction: column; gap: 14px; scrollbar-width: thin; }
+.nav-group { display: flex; flex-direction: column; gap: 2px; }
+.nav-group[hidden] { display: none; }
+.nav-label { margin: 0 0 4px; padding: 0 10px; font-size: 11.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--ad-faint); white-space: nowrap; }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link) {
+  position: relative; display: flex; align-items: center; gap: 12px; width: 100%; min-height: 42px; padding: 0 10px 0 12px;
+  border: 0; border-radius: var(--ad-r-sm); background: transparent; color: var(--ad-ink-2); font: inherit; font-size: 14.5px; font-weight: 500; text-align: left; text-decoration: none; cursor: pointer;
+  transition: background .12s, color .12s;
+}
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link)[hidden] { display: none; }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link) .ni { flex: none; color: var(--ad-muted); transition: color .12s; }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link):hover { background: var(--ad-sunk); color: var(--ad-ink); }
+html.fx body.admin .side-nav :is(button[data-tab], .nav-link):hover .ni { color: var(--ad-ink); }
+html.fx body.admin .side-nav button[data-tab][aria-selected="true"] { background: var(--ad-blue-50); color: var(--ad-blue-600); font-weight: 600; }
+html.fx body.admin .side-nav button[data-tab][aria-selected="true"] .ni { color: var(--ad-blue); }
+html.fx body.admin .side-nav button[data-tab][aria-selected="true"]::before { content: ""; position: absolute; left: -12px; top: 9px; bottom: 9px; width: 3px; border-radius: 0 3px 3px 0; background: var(--ad-blue); }
+html.fx body.admin .side-nav :is(button, a):focus-visible { outline: 2px solid var(--ad-blue); outline-offset: -2px; }
+.side .nl { flex: 1; min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.side .nl-ext { color: var(--ad-faint); font-size: 13px; }
+html.fx body.admin .side .tab-count { flex: none; min-width: 22px; height: 20px; padding: 0 7px; border-radius: 999px; background: var(--ad-red) !important; color: #fff !important; font-size: 11.5px; font-weight: 600; display: inline-flex; align-items: center; justify-content: center; }
+html.fx body.admin .side .tab-count[hidden] { display: none; }
+
+.side-foot { flex: none; display: flex; flex-direction: column; gap: 8px; padding: 12px; border-top: 1px solid var(--ad-line); }
+html.fx body.admin .side-foot .role-tag { align-self: flex-start; margin-left: 4px; padding: 4px 10px; border-radius: 999px; background: var(--ad-blue-50); color: var(--ad-blue-600); font-size: 12px; font-weight: 600; }
+html.fx body.admin .side-foot .role-tag[hidden] { display: none; }
+.side-shop { display: flex; align-items: center; gap: 12px; min-height: 42px; padding: 0 12px; border-radius: var(--ad-r-sm); color: var(--ad-ink-2); font-size: 14px; font-weight: 500; text-decoration: none; background: var(--ad-sunk); }
+.side-shop:hover { background: var(--ad-blue-50); color: var(--ad-blue-600); }
+.side-shop svg { flex: none; width: 18px; height: 18px; margin: 0 1px; }
+
+/* folded: just the icons (computers) */
+@media (min-width: 1025px) {
+  .app.side-folded .side { width: var(--ad-side-folded); }
+  html.fx body.admin .app.side-folded .main { margin-left: var(--ad-side-folded); }
+  .app.side-folded .side-top { flex-direction: column; justify-content: center; gap: 10px; height: auto; padding: 18px 0 12px; }
+  .app.side-folded .side .brand-name, .app.side-folded .side .nl, .app.side-folded .side .nl-ext, .app.side-folded .side-foot .role-tag { display: none !important; }
+  .app.side-folded .side-fold { transform: rotate(180deg); }
+  .app.side-folded .nav-label { height: 1px; margin: 4px 14px 8px; padding: 0; overflow: hidden; color: transparent; background: var(--ad-line); }
+  .app.side-folded .side-nav { padding-left: 14px; padding-right: 14px; gap: 6px; }
+  html.fx body.admin .app.side-folded .side-nav :is(button[data-tab], .nav-link) { justify-content: center; padding: 0; min-height: 46px; }
+  html.fx body.admin .app.side-folded .side-nav button[data-tab][aria-selected="true"]::before { left: -14px; }
+  html.fx body.admin .app.side-folded .side .tab-count { position: absolute; top: 5px; right: 5px; min-width: 18px; height: 18px; padding: 0 5px; font-size: 10.5px; box-shadow: 0 0 0 2px #fff; }
+  .app.side-folded .side-shop { justify-content: center; padding: 0; }
+}
+
+/* phones & tablets: the sidebar slides in */
+.side-scrim { position: fixed; inset: 0; z-index: 65; background: rgba(16,24,40,.42); animation: adFade .2s ease; }
+.side-scrim[hidden] { display: none; }
+@keyframes adFade { from { opacity: 0; } }
+.menu-btn { display: none !important; }
+html.side-lock, html.side-lock body { overflow: hidden; }
+@media (max-width: 1024px) {
+  .side { width: min(300px, 86vw); transform: translateX(-102%); box-shadow: 0 20px 60px rgba(16,24,40,.2); }
+  .app.side-open .side { transform: none; }
+  .side-fold { display: none; }
+  html.fx body.admin .main { margin-left: 0; }
+  .menu-btn { display: grid !important; }
+}
+
+/* ---------- page header ---------- */
+html.fx body.admin .topbar { position: sticky; top: 0; z-index: 50; background: rgba(255,255,255,.92) !important; -webkit-backdrop-filter: saturate(160%) blur(14px) !important; backdrop-filter: saturate(160%) blur(14px) !important; border: 0 !important; border-bottom: 1px solid var(--ad-line) !important; border-radius: 0; box-shadow: none; }
+html.fx body.admin .topbar-in { display: flex; align-items: center; gap: 14px; min-height: var(--ad-top); padding: 10px 28px; max-width: none; }
+.page-head { flex: 1; min-width: 0; }
+.crumbs { margin: 0 0 2px; display: flex; align-items: center; gap: 6px; font-size: 12.5px; color: var(--ad-faint); white-space: nowrap; overflow: hidden; }
+.crumbs i { font-style: normal; color: var(--ad-line-2); }
+.crumbs b { font-weight: 500; color: var(--ad-muted); }
+html.fx body.admin .page-title { margin: 0; font-size: 22px; font-weight: 700; letter-spacing: -0.02em; line-height: 1.2; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.page-desc { margin: 0; padding: 0 28px 12px; font-size: 13.5px; color: var(--ad-muted); margin-top: -8px; }
+.page-desc:empty { display: none; }
+html.fx body.admin .topbar-actions { display: flex; align-items: center; gap: 8px; }
+html.fx body.admin .topbar .icon-btn { width: 40px; height: 40px; border-radius: var(--ad-r-sm); background: #fff; border: 1px solid var(--ad-line); color: var(--ad-ink-2); display: grid; place-items: center; }
+html.fx body.admin .topbar .icon-btn:hover { background: var(--ad-sunk); color: var(--ad-ink); }
+html.fx body.admin .topbar .live-dot { padding: 6px 12px 6px 10px; border-radius: 999px; background: #ECFDF3 !important; color: #067647 !important; font-size: 12.5px; font-weight: 600; }
+
+/* ================= panels & cards ================= */
+html.fx body.admin .panel { padding-top: 24px; padding-bottom: 96px; gap: 16px; }
+html.fx body.admin .panel-head h2 { font-size: 20px; font-weight: 700; text-transform: none; letter-spacing: -0.015em; line-height: 1.25; }
+html.fx body.admin .panel-head p { font-size: 14px; }
+html.fx body.admin .panel-title { font-size: 20px; font-weight: 700; }
+html.fx body.admin .card-box { background: var(--ad-card); border: 1px solid var(--ad-line); border-radius: var(--ad-r); padding: 22px 24px; box-shadow: var(--ad-shadow); }
+html.fx body.admin .card-box h3 { font-size: 17px; font-weight: 650; letter-spacing: -0.01em; }
+html.fx body.admin .card-box h4, html.fx body.admin .nav-sub { font-size: 15px; font-weight: 650; letter-spacing: -0.005em; }
+html.fx body.admin .card-box .card-box { background: var(--ad-sunk); box-shadow: none; }
+html.fx body.admin .card-box.collapsed { padding-top: 16px; padding-bottom: 16px; }
+html.fx body.admin .cb-toggle { background: var(--ad-sunk) !important; border: 1px solid var(--ad-line) !important; border-radius: 9px !important; color: var(--ad-muted); }
+html.fx body.admin .collapse-bar { display: flex; justify-content: flex-end; margin-bottom: -4px; }
+html.fx body.admin .collapse-bar .btn { border-radius: var(--ad-r-sm); min-height: 34px; font-size: 13px; }
+html.fx body.admin .muted { color: var(--ad-muted); }
+html.fx body.admin .small { font-size: 13px; }
+
+/* notes: soft blue, not neon */
+html.fx body.admin .fx-note { background: var(--ad-blue-50); color: #1D3E80; border: 1px solid var(--ad-blue-100); border-radius: 12px; font-size: 13.5px; }
+html.fx body.admin .fx-note::before { content: "i"; display: inline-grid; place-items: center; width: 18px; height: 18px; margin-right: 8px; border-radius: 50%; background: var(--ad-blue); color: #fff; font: 700 11px/1 Georgia, serif; vertical-align: 1px; }
+
+/* stat tiles: white cards like the reference dashboards */
+html.fx body.admin .tiles { gap: 12px; grid-template-columns: repeat(auto-fill, minmax(190px, 1fr)); }
+html.fx body.admin .tile, html.fx body.admin .tiles > .tile:nth-child(n) { position: relative; overflow: hidden; background: var(--ad-card) !important; color: var(--ad-ink) !important; border: 1px solid var(--ad-line); border-radius: 14px; padding: 16px 18px 16px 22px; box-shadow: var(--ad-shadow); }
+html.fx body.admin .tile::before { content: ""; position: absolute; left: 0; top: 14px; bottom: 14px; width: 3px; border-radius: 0 3px 3px 0; background: var(--ad-blue); }
+html.fx body.admin .tiles > .tile:nth-child(4n+2)::before { background: var(--ad-green); }
+html.fx body.admin .tiles > .tile:nth-child(4n+3)::before { background: var(--ad-amber); }
+html.fx body.admin .tiles > .tile:nth-child(4n)::before { background: #7A5AF8; }
+html.fx body.admin .tile span { font-size: 13px; color: var(--ad-muted); opacity: 1; font-weight: 500; }
+html.fx body.admin .tile b { font-size: 26px; font-weight: 650; letter-spacing: -0.02em; color: var(--ad-ink); }
+html.fx body.admin .tile small { color: var(--ad-muted) !important; opacity: 1 !important; }
+html.fx body.admin .tile.hot { box-shadow: 0 0 0 2px var(--ad-blue); }
+html.fx body.admin button.tile:hover { transform: none; border-color: var(--ad-line-2); box-shadow: 0 4px 12px rgba(16,24,40,.06); }
+
+/* lists: orders, requests, products, reviews */
+html.fx body.admin :is(.item, .prow, .rrow) { background: var(--ad-card); border: 1px solid var(--ad-line); border-radius: 14px; box-shadow: var(--ad-shadow); }
+html.fx body.admin .prow:hover { background: #FBFCFE; border-color: var(--ad-line-2); }
+html.fx body.admin .prow.copy { background: #FFFCF2; }
+html.fx body.admin .prow img, html.fx body.admin .prow .ph { border-radius: 10px; }
+html.fx body.admin .prow-name { font-size: 15.5px; font-weight: 600; }
+html.fx body.admin .item[open] { box-shadow: 0 0 0 2px var(--ad-blue), 0 8px 24px rgba(16,24,40,.06); border-color: transparent; }
+html.fx body.admin .item.is-new { box-shadow: inset 3px 0 0 var(--ad-red), var(--ad-shadow); }
+html.fx body.admin .item[open] > summary { background: #fff; border-radius: 14px 14px 0 0; }
+html.fx body.admin .o-num { background: var(--ad-sunk); border-radius: 8px; font-size: 14px; }
+html.fx body.admin .item[open] .o-num { background: var(--ad-blue-50); color: var(--ad-blue-600); }
+html.fx body.admin .o-who strong { font-size: 15.5px; }
+html.fx body.admin .o-right b { font-size: 17px; font-weight: 600; }
+html.fx body.admin .paybox { background: var(--ad-sunk); border-radius: 12px; }
+
+/* toolbars: one tidy row of filters, actions pushed right */
+html.fx body.admin .toolbar { gap: 10px; align-items: center; padding: 12px; background: var(--ad-card); border: 1px solid var(--ad-line); border-radius: 14px; box-shadow: var(--ad-shadow); }
+html.fx body.admin .toolbar .tb-actions { margin-left: auto; }
+
+/* ================= controls ================= */
+html.fx body.admin .btn { border-radius: var(--ad-r-sm); font-weight: 600; font-size: 14px; }
+html.fx body.admin :is(.btn-primary, .btn-amber) { background: var(--ad-blue) !important; color: #fff !important; box-shadow: 0 1px 2px rgba(16,24,40,.08) !important; }
+html.fx body.admin :is(.btn-primary, .btn-amber):hover { background: var(--ad-blue-600) !important; }
+html.fx body.admin .btn-dark { background: var(--ad-ink) !important; color: #fff !important; }
+html.fx body.admin .btn-soft, html.fx body.admin :is(.card-box, .item, .prow, .rrow, .tile, .bank-edit, .paybox, .toolbar) .btn-soft { background: #fff !important; color: var(--ad-ink-2) !important; border: 1px solid var(--ad-line-2) !important; box-shadow: 0 1px 2px rgba(16,24,40,.04) !important; }
+html.fx body.admin .btn-soft:hover, html.fx body.admin :is(.card-box, .item, .prow, .rrow, .toolbar) .btn-soft:hover { background: var(--ad-sunk) !important; color: var(--ad-ink) !important; }
+html.fx body.admin .link-btn { color: var(--ad-blue-600); text-decoration: none; font-weight: 500; }
+html.fx body.admin .link-btn:hover { text-decoration: underline; }
+html.fx body.admin .badge { border-radius: 999px; font-weight: 600; }
+html.fx body.admin .badge-warn { background: #FFFAEB !important; color: #B54708 !important; }
+html.fx body.admin .badge-amber { background: #FEF3F2 !important; color: #B42318 !important; }
+html.fx body.admin .badge-blue { background: var(--ad-blue-50) !important; color: var(--ad-blue-600) !important; }
+
+/* fields: white with a thin border everywhere */
+html.fx body.admin :is(.field input:not([type=checkbox]):not([type=color]):not([type=range]):not([type=radio]):not([type=file]), .field select, .field textarea, .input, .note-input, .rt-wrap, .rt-area),
+html.fx body.admin :is(.card-box, .item, .paybox, .bank-edit, .tile, .toolbar) :is(.field input:not([type=checkbox]):not([type=color]):not([type=range]):not([type=radio]):not([type=file]), .field select, .field textarea, .input, .note-input, .rt-wrap, .rt-area),
+html.fx body.admin :is(.panel select, .panel input[type=search], .panel input[type=text]:not(.field input)) {
+  background: #fff !important; border: 1px solid var(--ad-line-2) !important; border-radius: var(--ad-r-sm) !important; box-shadow: 0 1px 2px rgba(16,24,40,.04);
+}
+html.fx body.admin :is(.field input, .field select, .field textarea, .input, .note-input, .panel input[type=search]):focus { border-color: var(--ad-blue) !important; box-shadow: 0 0 0 4px rgba(21,112,239,.12) !important; outline: 0; }
+html.fx body.admin .fx-sel, html.fx body.admin :is(.card-box, .custom-form, .toolbar) .fx-sel { background: #fff; border: 1px solid var(--ad-line-2); border-radius: var(--ad-r-sm); min-height: 44px; font-size: 14.5px; }
+html.fx body.admin .fx-sel:focus-visible, html.fx body.admin .fx-sel[aria-expanded="true"] { border-color: var(--ad-blue); box-shadow: 0 0 0 4px rgba(21,112,239,.12); }
+html.fx body.admin .field > span { font-size: 13.5px; color: var(--ad-ink-2); }
+html.fx body.admin .switch input:checked { background: var(--ad-blue); }
+html.fx body.admin input[type=checkbox], html.fx body.admin input[type=radio], html.fx body.admin input[type=range] { accent-color: var(--ad-blue); }
+
+/* segmented controls (sub-sections, filters, device pickers) */
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav) { display: inline-flex; flex-wrap: nowrap; overflow-x: auto; scrollbar-width: none; max-width: 100%; gap: 2px; padding: 4px; border-radius: 12px; background: #E9EEF5; box-shadow: none; }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav)::-webkit-scrollbar { display: none; }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav) button { flex: none; min-height: 36px; padding: 0 14px; border-radius: 9px; border: 0; background: transparent; color: var(--ad-muted); font-size: 14px; font-weight: 600; white-space: nowrap; }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav) button:hover { color: var(--ad-ink); }
+html.fx body.admin :is(.seg, .msg-tabs, .sub-nav) button:is(.on, [aria-selected="true"]) { background: #fff; color: var(--ad-ink); box-shadow: 0 1px 3px rgba(16,24,40,.1); }
+html.fx body.admin .sub-nav { align-self: flex-start; margin-bottom: 2px; }
+html.fx body.admin .sub-nav button { min-height: 40px; padding: 0 18px; }
+html.fx body.admin .fit-seg button { border-radius: 9px; background: #fff; border: 1px solid var(--ad-line-2); }
+html.fx body.admin .fit-seg button.on { background: var(--ad-blue); border-color: var(--ad-blue); color: #fff; }
+
+/* sticky save bar */
+html.fx body.admin .save-bar { background: #fff !important; color: var(--ad-ink); border: 1px solid var(--ad-line) !important; border-radius: 14px !important; box-shadow: 0 -2px 8px rgba(16,24,40,.03), 0 12px 32px rgba(16,24,40,.12) !important; }
+html.fx body.admin .save-bar .muted { color: var(--ad-muted); }
+html.fx body.admin .save-bar .btn-primary { background: var(--ad-blue) !important; color: #fff !important; }
+html.fx body.admin .save-bar[hidden], html.fx body.admin #panel-settings [data-ssub][hidden] { display: none !important; }
+
+/* settings pieces */
+html.fx body.admin :is(.slot-img, .hero-slot) { border-radius: 12px; border-color: var(--ad-line-2); }
+html.fx body.admin .hero-slot .ctrls { border-radius: 0 0 11px 11px; }
+html.fx body.admin .bank-edit { background: var(--ad-sunk); border: 1px solid var(--ad-line); border-radius: 14px; }
+html.fx body.admin .quote { background: linear-gradient(135deg, #0B2A5B, #1570EF); border-radius: 14px; }
+html.fx body.admin :is(.t2-group, .et-colors, .mb-row, .mb-add, .et-all-row, .t2-preset, .et-style) { box-shadow: 0 0 0 1px var(--ad-line); border-radius: 12px; }
+html.fx body.admin :is(.t2-frame-wrap, .et-frame-wrap) { border-radius: 14px; }
+html.fx body.admin :is(.t2-prev, .et-prev) { top: calc(var(--ad-top) + 16px); }
+html.fx body.admin :is(.mb-row.is-sender, .et-all-row.cur, .t2-preset.on, .et-style.on) { box-shadow: 0 0 0 2px var(--ad-blue); }
+html.fx body.admin .mb-pill.sender { background: var(--ad-blue); }
+html.fx body.admin .et-chips button, html.fx body.admin .et-tag.ed { background: var(--ad-blue-50); color: var(--ad-blue-600); }
+html.fx body.admin #panel-v0 .v0-wrap > summary::after { background-color: var(--ad-sunk); }
+
+/* customers page: the header already says "Customers", and the columns sit under a shorter header */
+html.fx body.admin #panel-customers .crm-title h2 { display: none; }
+html.fx body.admin #panel-customers :is(.crm-card, .crm-activity, .crm-convo, .crm-split) { top: calc(var(--ad-top) + 16px); }
+html.fx body.admin #panel-customers :is(.crm-card, .crm-activity) { max-height: calc(100dvh - var(--ad-top) - 36px); border-radius: 16px; }
+html.fx body.admin #panel-customers :is(.crm-convo, .crm-split) { height: calc(100dvh - var(--ad-top) - 36px); }
+html.fx body.admin #panel-customers .crm-convo { border-radius: 16px; }
+
+/* pop-up windows */
+html.fx body.admin dialog::backdrop { background: rgba(16,24,40,.45); }
+html.fx body.admin :is(.sheet, .drawer-panel) { border-radius: 20px !important; box-shadow: 0 24px 64px rgba(16,24,40,.22) !important; }
+html.fx body.admin .sheet-head h2 { font-size: 19px; font-weight: 700; text-transform: none; letter-spacing: -0.015em; }
+html.fx body.admin .sheet-head { border-bottom: 1px solid var(--ad-line) !important; }
+html.fx body.admin .sheet-foot { border-top: 1px solid var(--ad-line) !important; }
+html.fx body.admin .pe-section h3 { font-size: 16px; font-weight: 650; }
+html.fx body.admin :is(.pe-m, .gal-item, .gal-media) { border-radius: 12px; }
+html.fx body.admin .gal-item { box-shadow: 0 0 0 1px var(--ad-line); }
+html.fx body.admin .img-prev { border-radius: 16px; }
+
+/* ================= small screens ================= */
+@media (max-width: 760px) {
+  html.fx body.admin .app .wrap { padding-left: 14px; padding-right: 14px; }
+  html.fx body.admin .topbar-in { padding: 8px 14px; min-height: 64px; gap: 10px; }
+  .page-desc { padding: 0 14px 10px; margin-top: -6px; font-size: 13px; }
+  html.fx body.admin .page-title { font-size: 19px; }
+  .crumbs > span:first-child, .crumbs > i:first-of-type { display: none; }
+  html.fx body.admin .topbar .live-dot { display: none; }
+  html.fx body.admin .topbar .icon-btn { width: 38px; height: 38px; }
+  html.fx body.admin .panel { padding-top: 16px; gap: 12px; }
+  html.fx body.admin .card-box { padding: 16px; border-radius: 14px; }
+  html.fx body.admin .tiles { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+  html.fx body.admin .tile b { font-size: 22px; }
+  html.fx body.admin .toolbar { padding: 10px; }
+  html.fx body.admin .toolbar .tb-actions { margin-left: 0; }
+  html.fx body.admin :is(.sheet, .drawer-panel) { border-radius: 18px 18px 0 0 !important; }
+}
+
+/* Settings: "Collapse all" sits on the same row as the sub-section switch */
+html.fx body.admin #panel-settings { position: relative; }
+html.fx body.admin #panel-settings > .collapse-bar { position: absolute; top: 28px; right: 28px; margin: 0; }
+@media (max-width: 760px) { html.fx body.admin #panel-settings > .collapse-bar { position: static; } }
+
+/* ================= Guides admin (/admin/blog): same look, its own tab row ================= */
+html.fx body.blog-admin .app .wrap { max-width: none; }
+html.fx body.blog-admin .topbar .brand { display: flex; align-items: center; gap: 11px; text-decoration: none; color: var(--ad-ink); }
+html.fx body.blog-admin .topbar .brand-name { font-size: 19px; font-weight: 700; letter-spacing: -0.02em; }
+html.fx body.blog-admin .topbar .badge-blue { background: var(--ad-blue-50) !important; color: var(--ad-blue-600) !important; }
+html.fx body.blog-admin .topbar-in { justify-content: space-between; }
+html.fx body.blog-admin .tabs { display: flex; gap: 4px; overflow-x: auto; padding: 0 28px; border-top: 1px solid var(--ad-line); }
+html.fx body.blog-admin .tabs button { position: relative; min-height: 48px; padding: 0 14px; border-radius: 0; background: transparent !important; color: var(--ad-muted); font-size: 14.5px; font-weight: 600; }
+html.fx body.blog-admin .tabs button:hover { color: var(--ad-ink); }
+html.fx body.blog-admin .tabs button[aria-selected="true"] { color: var(--ad-blue-600); background: transparent; }
+html.fx body.blog-admin .tabs button[aria-selected="true"]::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: -1px; height: 2px; border-radius: 2px; background: var(--ad-blue); }
+html.fx body.blog-admin .tabs .tab-count { background: var(--ad-red) !important; color: #fff !important; }
+@media (max-width: 760px) { html.fx body.blog-admin .tabs { padding: 0 8px; } html.fx body.blog-admin .topbar .badge-blue { display: none; } }
