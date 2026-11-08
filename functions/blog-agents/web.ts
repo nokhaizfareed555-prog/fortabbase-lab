@@ -9,9 +9,9 @@ export async function suggestions(q: string): Promise<string[]> {
   const out = new Set<string>();
   const add = (arr: unknown) => Array.isArray(arr) && arr.forEach((s) => typeof s === "string" && s.length > 3 && out.add(s.toLowerCase().trim()));
   await Promise.all([
-    fetch(`https://suggestqueries.google.com/complete/search?client=firefox&hl=en&gl=pk&q=${encodeURIComponent(q)}`, { headers: { "User-Agent": UA }, signal: T(8000) })
+    fetch(`https://suggestqueries.google.com/complete/search?client=firefox&hl=en&gl=pk&q=${encodeURIComponent(q)}`, { headers: { "User-Agent": UA }, signal: T(4000) })
       .then((r) => (r.ok ? r.json() : null)).then((j) => j && add(j[1])).catch(() => {}),
-    fetch(`https://duckduckgo.com/ac/?type=list&q=${encodeURIComponent(q)}`, { headers: { "User-Agent": UA }, signal: T(8000) })
+    fetch(`https://duckduckgo.com/ac/?type=list&q=${encodeURIComponent(q)}`, { headers: { "User-Agent": UA }, signal: T(4000) })
       .then((r) => (r.ok ? r.json() : null)).then((j) => j && add(j[1])).catch(() => {})
   ]);
   return [...out];

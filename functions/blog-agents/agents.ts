@@ -82,7 +82,9 @@ export async function scout(ctx: Ctx): Promise<Out> {
   const seeds = [...new Set([...(ctx.s.research_seeds || []), ...products.map((p: any) => String(p.name || "").toLowerCase()).filter(Boolean).sort(() => Math.random() - 0.5).slice(0, 4)])].slice(0, 14);
   const mods = (q: string) => [q, `what is ${q}`, `why ${q}`, `${q} for`, `${q} vs`, `${q} symptoms`];
   const found = new Set<string>();
-  for (const seed of seeds) for (const q of mods(seed)) (await web.suggestions(q)).forEach((x) => found.add(x));
+  // asked in small groups at once, so a slow search service can't use up the function's time limit
+  const asks = seeds.flatMap(mods);
+  for (let i = 0; i < asks.length; i += 12) (await Promise.all(asks.slice(i, i + 12).map((q) => web.suggestions(q)))).flat().forEach((x) => found.add(x));
   let gsc: string[] = [];
   if (ctx.secrets.gsc_service_account && ctx.secrets.gsc_property) {
     try {
