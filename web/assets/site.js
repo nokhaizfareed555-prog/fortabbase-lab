@@ -7,7 +7,7 @@ const LZ=C.optimize.lazy?'loading="lazy"':'';
 if(C.optimize.liteOnSlow){const n=navigator.connection;if(n?.saveData||/2g|3g/.test(n?.effectiveType||'')||(navigator.hardwareConcurrency||8)<=2){document.documentElement.classList.add('lite');C.effects.meshOn=false}}
 if(!C.optimize.motionPhones&&matchMedia('(max-width:860px)').matches){C.effects.meshMotion=false;C.hero.waveMotion=false}
 document.documentElement.classList.toggle('glass-btn',!!C.effects.glassButtons);
-FA.setIcon(C.brand.favicon);FA.applyTheme(C);FA.ripple(()=>C.effects);
+FA.setIcon(C.brand.favicon);FA.applyTheme(C);FA.ripple(()=>C.effects);FA.press();
 /* The admin preview can show real forms; nothing typed there may be submitted. */
 if(new URLSearchParams(location.search).has('fa_preview'))document.addEventListener('submit',ev=>{ev.preventDefault();ev.stopImmediatePropagation()},true);
 /* Per-section button settings from admin; anything left at default adds no CSS. */
@@ -151,7 +151,8 @@ const heroInk=()=>{if(page!=='home')return;const has=!!bgEl,force=C.hero.bgText,
  group('.hero .eyebrow,.hero h1,.hero .lead,.hero .stats b,.hero .stats span');if(has&&!solid)group('.logo,.links a');
  ;const h1=document.querySelector('.hero h1');if(h1)document.querySelector('.hero').style.setProperty('--hero-ink',h1.style.color||'var(--base)')};
 const adapt=()=>{if(!C.effects.glassButtons)return;const W=innerWidth,H=innerHeight;document.querySelectorAll('.btn,.chip,.lang').forEach(b=>{const r=b.getBoundingClientRect();if(r.bottom<0||r.top>H||!r.width)return;const y=r.top+r.height/2,pts=[r.left+8,r.left+r.width/2,r.right-8].filter(x=>x>=0&&x<=W).map(x=>under(b,x,y));if(!pts.length)return;const av=[0,1,2].map(i=>pts.reduce((a,p)=>a+p[i],0)/pts.length).map(v=>v*.72+175*.28);const solid=root.classList.contains('lite')||root.classList.contains('no-glass'),w=solid?'dark':wants(av);b.dataset.ink=w;b.style.setProperty('--gb-ink',w==='dark'?'var(--ink)':'#fff')})};
-var q_=0;function sch(){if(q_)return;q_=1;setTimeout(()=>{q_=0;requestAnimationFrame(()=>{placeBg();heroInk();adapt()})},90)}
+/* On phones this waits until scrolling stops, unless a hero background has to follow the scroll. */
+var q_=0,qt_=0;const run_=()=>requestAnimationFrame(()=>{placeBg();heroInk();adapt()});function sch(){if(mq.matches&&!bgEl){clearTimeout(qt_);qt_=setTimeout(run_,180);return}if(q_)return;q_=1;setTimeout(()=>{q_=0;run_()},90)}
 addEventListener('scroll',sch,{passive:true});addEventListener('resize',sch);addEventListener('load',sch);document.addEventListener('load',sch,true);new MutationObserver(sch).observe(document.body,{childList:true,subtree:true});paintBg();heroInk();adapt();
 /* Popup and offers */
 (()=>{const P=C.popup,q=new URLSearchParams(location.search);if(q.has('fa_check')||(q.has('fa_preview')&&!q.has('pop'))||!(P.on||q.has('pop'))||!(P.title||P.text||P.image))return;const pv=q.has('pop'),sig=[P.title,P.text,P.image,P.target].join('|'),K='fa_pop',rd=()=>{try{return JSON.parse(localStorage.getItem(K))||{}}catch{return{}}},wr=o=>{try{localStorage.setItem(K,JSON.stringify(o))}catch{}};

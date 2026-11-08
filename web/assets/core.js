@@ -81,6 +81,13 @@ const FA=window.FA={demo,D,merge,
   /* Rings start below the home section; pages without one use the whole page. */
   const place=()=>{const h=e.meshBehindHero?null:document.querySelector('.hero');m.style.top=(h?h.getBoundingClientRect().bottom+scrollY:0)+'px'};place();
   FA._mo?.disconnect();if(window.ResizeObserver){FA._mo=new ResizeObserver(place);FA._mo.observe(document.body)}},
+ /* Touch screens have no hover: a finger on a button, or dragged across buttons, shows the same animation. */
+ press(){if(FA._p||!matchMedia('(hover:none),(pointer:coarse)').matches)return;FA._p=1;const S='.btn,.chip,.lang,.person,.trust-i';let cur=null,last=0;
+  const set=el=>{if(el===cur)return;if(cur){const o=cur;o._pt=setTimeout(()=>o.classList.remove('press'),170)}cur=el;if(el){clearTimeout(el._pt);el.classList.add('press')}};
+  const at=t=>{const n=document.elementFromPoint(t.clientX,t.clientY);return n&&n.closest?n.closest(S):null};
+  const opt={passive:true,capture:true};document.addEventListener('touchstart',ev=>set(ev.target.closest?.(S)||null),opt);
+  document.addEventListener('touchmove',ev=>{const now=performance.now();if(now-last<48)return;last=now;set(at(ev.touches[0]))},opt);
+  for(const n of['touchend','touchcancel'])document.addEventListener(n,()=>set(null),opt)},
  ripple(getE){if(FA._r)return;FA._r=1;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
   document.addEventListener('pointerdown',ev=>{const e=getE();if(!e||!e.rippleOn)return;const R=e.rippleRadius,I=e.rippleIntensity,A=e.rippleAberration,D_=e.rippleDuration;
    const w=document.createElement('div');w.className='fa-ripple';w.style.cssText=`left:${ev.clientX}px;top:${ev.clientY}px;width:${R*2}px;height:${R*2}px;--d:${D_}ms;--blur:${e.rippleBlur}px`;

@@ -37,7 +37,7 @@
     sec.classList.toggle("dna-still", still);
 
     function size() {
-      const r = cv.parentElement.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, lite ? 1 : r.width < 700 ? 1.6 : 2);
+      const r = cv.parentElement.getBoundingClientRect(), dpr = Math.min(devicePixelRatio || 1, lite ? 1 : r.width < 700 ? 1.35 : 2);
       W = r.width; H = r.height; cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr); ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     }
 
