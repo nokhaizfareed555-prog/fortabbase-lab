@@ -172,7 +172,7 @@ function placeFG(){const hero=page==='home'&&document.querySelector('#main .hero
  if(!on){fgEl?.remove();fgEl=null;fgSize='';return}
  const last=first.id==='trust'&&first.nextElementSibling?.id==='glance'?first.nextElementSibling:first;last.classList.add('fg-last');
  if(!fgEl){fgEl=document.createElement('canvas');fgEl.id='fa-fglass';fgEl.setAttribute('aria-hidden','true');document.body.appendChild(fgEl);fgSize=''}
- const top=Math.round(first.getBoundingClientRect().top+scrollY),H=Math.max(1,Math.round(last.getBoundingClientRect().bottom+scrollY-top)),W=document.documentElement.clientWidth;fgEl.style.top=top+'px';fgEl.style.height=H+'px';const k=W+'x'+H;if(k!==fgSize){fgSize=k;fgPaint(fgEl,W,H)}}
+ const W=document.documentElement.clientWidth,F=Math.round(Math.max(110,Math.min(200,W*.16))),top=Math.round(first.getBoundingClientRect().top+scrollY)-F,H=Math.max(1,Math.round(last.getBoundingClientRect().bottom+scrollY-top)+F);fgEl.style.setProperty('--fg',F+'px');fgEl.style.top=top+'px';fgEl.style.height=H+'px';const k=W+'x'+H;if(k!==fgSize){fgSize=k;fgPaint(fgEl,W,H)}}
 let dnaFgSize='';
 function placeDnaFG(){const cv=document.querySelector('.dna-fg');if(!cv){dnaFgSize='';return}const W=cv.clientWidth,H=cv.clientHeight,k=W+'x'+H;if(W&&H&&(k!==dnaFgSize||!cv.dataset.on)){dnaFgSize=k;cv.dataset.on='1';fgPaint(cv,W,H)}}
 /* On phones this waits until scrolling stops, unless a hero background has to follow the scroll. */
