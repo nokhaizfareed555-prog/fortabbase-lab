@@ -96,3 +96,12 @@ body{background:var(--cv)}
 .stab.dirty::after{content:"";position:absolute;top:4px;inset-inline-end:4px;width:6px;height:6px;border-radius:50%;background:var(--hi,#d81f26)}
 @media(prefers-reduced-motion:reduce){.stab{transition:none}}
 @media(max-width:860px){.stabs{overflow-x:auto;padding-inline:10px;scrollbar-width:none}.strow{width:max-content;min-width:100%}.stab{flex:1 0 66px}.stab:hover,.stab:focus-visible,.stab.on{flex:1 0 auto}}
+
+/* Selected sidebar item: the green glass button used for active choices on the live site. */
+.side button.on{position:relative;color:#fff;font-weight:700;text-shadow:0 1px 2px rgba(10,70,10,.45);background:linear-gradient(180deg,rgba(116,222,88,.94),rgba(46,160,34,.94));-webkit-backdrop-filter:blur(10px) saturate(160%);backdrop-filter:blur(10px) saturate(160%);box-shadow:0 10px 16px -10px rgba(40,150,30,.75),inset 0 1px 0 rgba(255,255,255,.65),inset 0 0 0 1px rgba(255,255,255,.42)}
+.side button.on svg{opacity:1;color:#fff;stroke:#fff}.side button.on:hover{background:linear-gradient(180deg,rgba(116,222,88,.94),rgba(46,160,34,.94))}
+/* Booking filters */
+.bkf{margin-bottom:12px}.bkc{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px}
+.bkt1{min-height:30px;padding:0 10px;border:0;border-radius:99px;background:color-mix(in srgb,var(--base) 6%,#fff);color:var(--ink);font:500 .78rem var(--fb);cursor:pointer}.bkt1 b{margin-inline-start:2px;font-weight:700;opacity:.65}.bkt1:hover{background:color-mix(in srgb,var(--base) 12%,#fff)}.bkt1.warn{background:#fdecea;color:#a3211a}.bkt1.on{background:var(--base);color:#fff}.bkt1.on b{opacity:1}.bkt1:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
+.bkr{display:flex;flex-wrap:wrap;gap:7px;align-items:center;margin-top:7px}.bkr input,.bkr select{min-height:38px;border:1px solid var(--bd);border-radius:9px;padding:0 9px;font:inherit;font-size:.86rem;background:#fff;color:var(--ink)}.bkr input[type=search]{flex:1 1 300px;min-width:0}.bkr label{display:inline-flex;align-items:center;gap:5px;font-size:.82rem;color:var(--muted)}.bkr .btn{margin-inline-start:auto}.bkn{margin:9px 0 0}
+@media(max-width:860px){.bkr select,.bkr label,.bkr label input{flex:1 1 130px;min-width:0}.bkr .btn{width:100%}}
