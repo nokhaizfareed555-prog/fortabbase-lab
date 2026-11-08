@@ -129,7 +129,7 @@
       paint(); raf = requestAnimationFrame(tick);
     }
     function read() {
-      const r = sec.getBoundingClientRect(), room = r.height - cv.parentElement.offsetHeight;
+      const r = sec.getBoundingClientRect(), room = r.height - parseFloat(getComputedStyle(sec).paddingBottom) - cv.parentElement.offsetHeight;
       target = clamp(room > 0 ? -r.top / room : 0);
       if (!raf && target !== cur) raf = requestAnimationFrame(tick);
     }
