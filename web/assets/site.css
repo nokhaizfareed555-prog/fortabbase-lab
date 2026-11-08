@@ -79,3 +79,18 @@ html.no-glass.glass-btn .btn[data-ink=light],html.lite.glass-btn .btn[data-ink=l
 
 /* Long test list: draw only what is on screen, and no blur per row or per button */
 .ti{content-visibility:auto;contain-intrinsic-size:auto 86px}.ti.glass{-webkit-backdrop-filter:none;backdrop-filter:none;background:rgba(255,255,255,.86)}.ti.glass::after{display:none}.glass-btn .ti .btn{-webkit-backdrop-filter:none;backdrop-filter:none}
+
+/* Registration logos shown whole */
+.trust-i img{width:72px;height:72px;flex:none;object-fit:contain;background:#fff;border-radius:12px;padding:5px}
+/* Doctor cards: designation first, details on click */
+.person{grid-row:span 2;cursor:pointer;transition:transform .25s,box-shadow .25s}.person:hover{transform:translateY(-2px)}.person:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.p-role{display:flex;justify-content:space-between;align-items:flex-end;gap:10px;align-self:end;padding-top:12px;border-top:1px solid var(--line);min-height:44px}.p-role b{font:700 1rem/1.3 var(--fh);color:var(--accent)}.p-role i{font-style:normal;font-size:1.3rem;line-height:1;color:var(--muted);margin-left:auto}[lang=ur] .p-role i{transform:scaleX(-1);margin-left:0;margin-right:auto}[lang=ur] .p-role b{line-height:2}
+.docd{position:relative}.docd>.x,.popd>.x{position:absolute;top:8px;right:8px;z-index:2}[lang=ur] .docd>.x,[lang=ur] .popd>.x{right:auto;left:8px}.docd .p-title{font-weight:700;color:var(--accent);margin:14px 0 4px}.docd p{font-size:.92rem}.docd .p-foot{margin-top:12px}.docd .acts{display:flex;gap:8px;justify-content:flex-end;margin-top:14px;flex-wrap:wrap}
+/* Popup */
+.popw{z-index:110}.popd{position:relative;padding:0;overflow:hidden;width:min(460px,100%)}.popd>img{width:100%;max-height:52vh;object-fit:contain;background:#f3f4f7}.popd .in{padding:18px 20px 20px;display:flex;flex-direction:column}.popd .in .btn{align-self:flex-end}.popd>.x{background:rgba(255,255,255,.85);border-radius:50%;width:34px;height:34px;min-width:34px}
+/* One button length across the site, widget buttons in the corner */
+body[data-page] .btn{min-width:172px}.dock .btn,body[data-page] .dock .btn{min-width:0}body[data-page] .ti .btn{min-width:92px}.card .in{flex:1;display:flex;flex-direction:column}.card .in>.btn{margin-top:auto!important;align-self:flex-end}.card .in>p:has(+.btn){margin-bottom:12px}
+/* Glass button: pushed back on hover, text lifts, color split */
+.glass-btn .btn,.glass-btn .lang{-webkit-backdrop-filter:blur(18px) saturate(150%);backdrop-filter:blur(18px) saturate(150%);box-shadow:0 0 22px 3px color-mix(in srgb,var(--base) 16%,transparent),0 16px 26px -14px rgba(20,30,50,.42),0 3px 8px -3px rgba(20,30,50,.16),inset 0 1px 0 rgba(255,255,255,.45);transition:transform .28s cubic-bezier(.2,.8,.2,1),box-shadow .28s,padding .28s,text-shadow .28s,color .3s}
+.glass-btn .btn:hover,.glass-btn .lang:hover{transform:perspective(320px) translateZ(-16px);padding-bottom:4px;text-shadow:-1.2px 0 rgba(255,0,70,.55),1.2px 0 rgba(0,190,255,.6);box-shadow:-1.5px 0 0 rgba(255,0,70,.28),1.5px 0 0 rgba(0,190,255,.3),0 0 16px 2px color-mix(in srgb,var(--base) 12%,transparent),0 8px 14px -10px rgba(20,30,50,.4),inset 0 2px 5px rgba(20,30,50,.14)}
+.glass-btn .btn:active{transform:perspective(320px) translateZ(-30px)}

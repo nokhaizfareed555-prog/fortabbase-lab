@@ -53,3 +53,7 @@ body{background:var(--cv)}
 .urr{display:grid;grid-template-columns:1fr 1fr auto;gap:10px;align-items:center;padding:7px 0;border-top:1px solid var(--bd)}.urr small{font-size:.8rem;color:var(--muted);overflow-wrap:anywhere}.urr input{font-family:"Noto Nastaliq Urdu",system-ui;line-height:2}
 @media(max-width:860px){.vcols,.urr{grid-template-columns:1fr}.pv.mobile{height:540px}}
 .dlg.ie .iep{position:sticky;top:-24px;z-index:3;box-shadow:0 10px 18px -14px rgba(14,24,44,.5)}
+
+.info{position:relative;display:inline-grid;place-items:center;flex:none;width:17px;height:17px;border-radius:50%;background:var(--soft);color:var(--accent);font:700 .68rem Georgia,serif;font-style:italic;cursor:help;margin:0 4px;vertical-align:middle;outline-offset:2px}.info:not(.solo):hover::after,.info:not(.solo):focus::after{content:attr(data-tip);position:absolute;z-index:45;bottom:calc(100% + 7px);left:-6px;width:min(260px,70vw);padding:9px 11px;border-radius:10px;background:var(--ink);color:#fff;font:500 .76rem/1.45 var(--fb);box-shadow:0 12px 26px -10px rgba(0,0,0,.5);white-space:normal;text-align:left}
+.fld>label>span:first-child{margin-right:auto}.fld>label{justify-content:flex-start}.fld>label>.rs:last-child,.fld>label>.info+.rs{margin-left:auto}.trow>span .info{margin-left:6px}
+.dir{display:flex;gap:8px;align-items:flex-start;background:var(--soft);padding:10px 13px;border-radius:12px;font-size:.84rem;margin-bottom:12px}.dir .info{background:#fff;margin:1px 0 0}
