@@ -14,7 +14,7 @@ export default async function handler(req, res) {
   res.setHeader("cache-control", "public, s-maxage=30, stale-while-revalidate=300");
   if (sitemap) {
     const p = await get("select=slug,updated_at");
-    const urls = ["/", "/tests.html", "/blog", ...p.map((x) => `/blog/${x.slug}`)];
+    const urls = ["/", "/about", "/services", "/doctors", "/lab-tests", "/test-panels", "/gallery", "/faq", "/contact", "/blog", ...p.map((x) => `/blog/${x.slug}`)];
     return res.status(200).send(`<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">${urls.map((u) => `<url><loc>${SITE}${u}</loc></url>`).join("")}</urlset>`);
   }
   if (slug) {
