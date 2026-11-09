@@ -124,8 +124,12 @@ const FA=window.FA={demo,D,merge,
   const opt={passive:true,capture:true};document.addEventListener('touchstart',ev=>set(ev.target.closest?.(S0)||null),opt);
   document.addEventListener('touchmove',ev=>{const now=performance.now();if(now-last<48)return;last=now;set(at(ev.touches[0]))},opt);
   for(const n of['touchend','touchcancel'])document.addEventListener(n,()=>set(null),opt)},
+ /* Phone settings are the same keys with m_ in front; a missing one falls back to the desktop value. */
+ fxView(e){if(!e||!matchMedia('(max-width:860px)').matches)return e;const o={...e};for(const k in e)if(k.startsWith('m_'))o[k.slice(2)]=e[k];return o},
+ fx(getE){if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;FA._fxGet=FA._fxGet||getE;const E=FA._fxGet(),on=E&&[E,FA.fxViewPhone(E)].some(x=>x.waveOn||(x.chase&&x.chase!=='none')||(x.click&&x.click!=='none'));if(FA._fxL||!(on||new URLSearchParams(location.search).has('fa_preview')))return;FA._fxL=1;const s=document.createElement('script');s.src='/assets/pointerfx.js?v=20261110fx1';document.head.appendChild(s)},
+ fxViewPhone(e){const o={...e};for(const k in e)if(k.startsWith('m_'))o[k.slice(2)]=e[k];return o},
  ripple(getE){if(FA._r)return;FA._r=1;if(matchMedia('(prefers-reduced-motion: reduce)').matches)return;
-  document.addEventListener('pointerdown',ev=>{const e=getE();if(!e||!e.rippleOn)return;const R=e.rippleRadius,I=e.rippleIntensity,A=e.rippleAberration,D_=e.rippleDuration;
+  document.addEventListener('pointerdown',ev=>{const e=FA.fxView((FA._fxGet||getE)());if(!e||!e.rippleOn)return;const R=e.rippleRadius,I=e.rippleIntensity,A=e.rippleAberration,D_=e.rippleDuration*100/Math.max(10,e.rippleSpeed||100);
    const w=document.createElement('div');w.className='fa-ripple';w.style.cssText=`left:${ev.clientX}px;top:${ev.clientY}px;width:${R*2}px;height:${R*2}px;--d:${D_}ms;--blur:${e.rippleBlur}px`;
    let h='<b class="lens"></b>';for(let i=0;i<e.rippleRings;i++){const dl=i*D_*.14;[['#ff2a55',-A,A*.4],['#22ff99',0,-A*.5],['#2a7bff',A,A*.4]].forEach(([c,x,y])=>{h+=`<u style="border-color:${c};transform-origin:50% 50%;translate:${x}px ${y}px;opacity:${I};animation-delay:${dl}ms"></u>`});h+=`<u style="border-color:${e.rippleTint};border-width:3px;opacity:${I};animation-delay:${dl}ms"></u>`}
    w.innerHTML=h;document.body.appendChild(w);setTimeout(()=>w.remove(),D_*(1+e.rippleRings*.2)+80)},{passive:true})}
