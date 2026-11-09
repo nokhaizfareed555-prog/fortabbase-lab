@@ -7,7 +7,7 @@ const LZ=C.optimize.lazy?'loading="lazy"':'';
 if(C.optimize.liteOnSlow){const n=navigator.connection;if(n?.saveData||/2g|3g/.test(n?.effectiveType||'')||(navigator.hardwareConcurrency||8)<=2){document.documentElement.classList.add('lite');C.effects.meshOn=false}}
 if(!C.optimize.motionPhones&&matchMedia('(max-width:860px)').matches){C.effects.meshMotion=false;C.hero.waveMotion=false}
 document.documentElement.classList.toggle('glass-btn',!!C.effects.glassButtons);
-FA.setIcon(C.brand.favicon);FA.applyTheme(C);FA.ripple(()=>C.effects);FA.fx(()=>C.effects);{const h=C.hover;if(h&&h.on){const s=document.createElement('style');s.id='fa-hover';s.textContent=FA.hoverCss(h);document.head.appendChild(s)}FA.press(h&&h.on&&h.touch?Object.keys(FA.hoverSel).filter(k=>h[k]).map(k=>FA.hoverSel[k]).join(','):'')}
+FA.setIcon(C.brand.favicon);FA.applyTheme(C);FA.fx(()=>C.effects);{const h=C.hover;if(h&&h.on){const s=document.createElement('style');s.id='fa-hover';s.textContent=FA.hoverCss(h);document.head.appendChild(s)}FA.press(h&&h.on&&h.touch?Object.keys(FA.hoverSel).filter(k=>h[k]).map(k=>FA.hoverSel[k]).join(','):'')}
 /* The admin preview can show real forms; nothing typed there may be submitted. */
 if(new URLSearchParams(location.search).has('fa_preview'))document.addEventListener('submit',ev=>{ev.preventDefault();ev.stopImmediatePropagation()},true);
 /* Per-section button settings from admin; anything left at default adds no CSS. */
