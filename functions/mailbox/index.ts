@@ -119,6 +119,8 @@ Deno.serve(async (req) => {
   if (!set?.smtp_user || !sec?.smtp_password) return out({ error: "Finish Messages > Email setup first: add the Hostinger mailbox and its password" }, 400);
   try {
     if (b.action === "sync") return out(await sync(set.smtp_user, sec.smtp_password));
+    // Self-test, only from the database with the shared secret, and only ever to the clinic's own mailbox.
+    if (hook && b.action === "selftest") return await send({ ...b, to: [{ email: set.smtp_user }], cc: [], bcc: [] }, { email: "self-test", name: "Self test" }, set.smtp_user, sec.smtp_password, set.smtp_name);
     if (hook) return out({ error: "Not allowed" }, 403);
     if (b.action === "send") return await send(b, me, set.smtp_user, sec.smtp_password, set.smtp_name);
     if (b.action === "file") {
