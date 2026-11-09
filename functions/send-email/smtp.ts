@@ -79,6 +79,13 @@ export class Smtp {
     await this.write(message.replace(/^\./gm, "..") + "\r\n.\r\n");
     await this.reply(250);
   }
+  async sendMany(from: string, to: string[], message: string) {
+    await this.cmd(`MAIL FROM:<${from}>`, 250);
+    for (const r of to) await this.cmd(`RCPT TO:<${r}>`, 250);
+    await this.cmd("DATA", 354);
+    await this.write(message.replace(/^\./gm, "..") + "\r\n.\r\n");
+    await this.reply(250);
+  }
   async reset() { await this.cmd("RSET", 250); }
   async quit() { try { await this.raw("QUIT"); } catch { /* already closed */ } this.close(); }
   close() { try { this.c.close(); } catch { /* already closed */ } }
