@@ -92,7 +92,7 @@ const newBlank=(f,idp)=>{const o={};f.forEach(x=>o[x.k]=x.t==='toggle'?x.blank!=
 let repFrom=null,me,live,draft,cur,open_={},filter={},vTab='desktop',optBusy=false,urMissing=false,urT=null;
 const toast=m=>{const t=document.createElement('div');t.className='toast';t.textContent=m;document.body.appendChild(t);setTimeout(()=>t.remove(),3200)};
 const loyH=l=>!l||!l.on?'':`<b>${l.points}</b> pts${l.badge?' · '+e(l.badge.icon+' '+l.badge.name):''}`;
-const can=p=>p==='labs'||p==='dashboard'||p==='arrange'||me.real_role==='owner'||me.perms[p]===true;
+const can=p=>p==='panels'?!!(window.FAPanels&&FAPanels.ok()):p==='labs'||p==='dashboard'||p==='arrange'||me.real_role==='owner'||me.perms[p]===true;
 const dk=()=>'fa_draft_'+me.email;
 const dirtyKeys=()=>Object.keys(S).filter(k=>JSON.stringify(draft[k])!==JSON.stringify(live[k]));
 /* Hover animation page: sample cards that use the exact CSS the site gets. */
@@ -615,7 +615,7 @@ async function start(){if(!FA.session())return login();try{me=await FA.rpc('my_p
  live=await FA.content();ensureViews(live);FA.applyTheme(live);siteBtns(live);abApply(live);FA.setIcon(live.brand.adminFavicon);FA.ripple(()=>draft?.effects||live.effects);draft=clone(live);
  let saved=null;try{saved=JSON.parse(localStorage.getItem(dk()))}catch{}
  try{const u=await FA.rpc('admin_ui_get');if(u)UI={views:u.views||null,mine:u.mine||{},manage:!!u.manage,staff:u.staff||[]}}catch{}AR=null;hub=null;
- shell();window.FAPanels&&FAPanels.mount($('#psw'),{me,live,toast});const first=[curL().start,'dashboard','bookings',...Object.keys(S),...Object.keys(PAGES)].find(k=>(S[k]||PAGES[k])&&(k==='users'?me.real_role!=='user':can(k)));cur=first;try{const g=sessionStorage.getItem('fa_chat_go');sessionStorage.removeItem('fa_chat_go');if(g&&(S[g]||PAGES[g])&&(g==='users'?me.real_role!=='user':can(g)))cur=g}catch{}if(location.hash==='#labs')cur='labs';if(!cur){$('#pg').innerHTML='<p>Your account has no sections assigned yet.</p>';$('#side').innerHTML=nav();return}
+ if(window.FAPanels)await FAPanels.load();shell();window.FAPanels&&FAPanels.mount($('#psw'),{me,live,toast});const first=[curL().start,'dashboard','bookings',...Object.keys(S),...Object.keys(PAGES)].find(k=>(S[k]||PAGES[k])&&(k==='users'?me.real_role!=='user':can(k)));cur=first;try{const g=sessionStorage.getItem('fa_chat_go');sessionStorage.removeItem('fa_chat_go');if(g&&(S[g]||PAGES[g])&&(g==='users'?me.real_role!=='user':can(g)))cur=g}catch{}if(location.hash==='#labs')cur='labs';if(!cur){$('#pg').innerHTML='<p>Your account has no sections assigned yet.</p>';$('#side').innerHTML=nav();return}
  if(!wired){wire();wired=true}
  if(saved&&Object.keys(saved).some(k=>S[k]))pop(`<h3>Restore unsaved changes?</h3><p>You have changes that were never saved: ${Object.keys(saved).filter(k=>S[k]).map(k=>e(S[k].label)).join(', ')}.</p><div class="acts"><button class="btn ghost sm" id="n">Keep last saved version</button><button class="btn acc sm" id="y">Restore my changes</button></div>`,p=>{$('#n',p).onclick=()=>{localStorage.removeItem(dk());close();paint()};$('#y',p).onclick=()=>{Object.keys(saved).forEach(k=>{if(S[k])draft[k]=saved[k]});cur=Object.keys(saved).find(k=>S[k]&&can(k))||cur;close();paint()}});
  paint()}
