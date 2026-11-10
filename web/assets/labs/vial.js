@@ -100,9 +100,11 @@
   void main(){ vec2 p=vec2(gl_VertexID==1?3.:-1.,gl_VertexID==2?3.:-1.); gl_Position=vec4(p,.999,1.); }`;
   const FS_FROST = `#version 300 es
   precision highp float;
-  uniform vec2 uRes,uA,uB; uniform vec3 uC1,uC2; uniform float uT,uTile,uPulse,uPulseR,uFill,uGrain;
+  uniform vec2 uRes,uA,uB; uniform vec3 uC1,uC2; uniform float uT,uTile,uPulse,uPulseR,uFill,uGrain,uDark;
   out vec4 o;
-  const vec3 BG=vec3(.953,.957,.957);
+  /* uDark: 0 in light mode, 1 in dark mode (Look > Dark mode) */
+  #define BG mix(vec3(.953,.957,.957),vec3(.05,.07,.105),uDark)
+  #define WH mix(vec3(1.),vec3(.42,.47,.56),uDark)
   float cap(vec2 p){vec2 d=uB-uA;float t=clamp(dot(p-uA,d)/max(dot(d,d),.0001),0.,1.);return length(p-uA-d*t);}
   float hash(vec2 p){return fract(sin(dot(p,vec2(127.1,311.7)))*43758.5453);}
   vec3 glow(vec2 p){
@@ -111,7 +113,7 @@
     vec3 col=mix(uC1*.68,uC1,smoothstep(.24,-.14,p.y-c.y));
     vec2 l=p-c-vec2(.12+sin(uT*.27)*.04,-.13+cos(uT*.36)*.03);
     col=mix(col,uC2,exp(-dot(l,l)/.03));
-    return mix(BG,col,clamp(g+.07,0.,1.));
+    return mix(BG,col*mix(1.,.78,uDark),clamp(g+.07,0.,1.));
   }
   float box(vec2 p,float b,float r){vec2 q=abs(p)-b+r;return length(max(q,0.))+min(max(q.x,q.y),0.)-r;}
   void main(){
@@ -127,18 +129,18 @@
       vec3 t=(glow(cen+f*uTile*.3+off)*.5+glow(cen-f*uTile*.75-off*.6)*.5);
       float edge=smoothstep(.1,.5,max(abs(f.x),abs(f.y)));
       float patch1=exp(-dot(f-vec2(cos(a),sin(a))*.36,f-vec2(cos(a),sin(a))*.36)/.09);
-      t=mix(t,vec3(1.),.08+edge*.09+patch1*.15);
+      t=mix(t,WH,.08+edge*.09+patch1*.15);
       /* Frost: fine grain and a soft sheen, on every tile however far it is from the glow */
       t+=(hash(floor(gl_FragCoord.xy/uGrain)+id)-.5)*.03;
       t*=1.-smoothstep(-.1,-.5,f.y)*.035;
-      t=mix(t,vec3(1.),smoothstep(.12,.5,f.y-f.x*.4)*.1);
+      t=mix(t,WH,smoothstep(.12,.5,f.y-f.x*.4)*.1);
       float l=length(cen-(uA+uB)*.5);
       t+=uPulse*.2*exp(-pow(l-uPulseR*.1,2.)*22.);
       c=mix(c*.95,t,inside);
     }
     /* Thin bright outline with a slightly brighter top-left */
     float line=smoothstep(1.3*px,.3*px,abs(d+px)), near=exp(-pow(cap(p)/.5,2.));
-    c=mix(c,vec3(1.),line*mix(.6,.9,near)*(.75+.25*smoothstep(-.5,.5,f.y-f.x)));
+    c=mix(c,vec3(1.),line*mix(.6,.9,near)*mix(1.,.4,uDark)*(.75+.25*smoothstep(-.5,.5,f.y-f.x)));
     c+=(hash(gl_FragCoord.xy)-.5)/170.;
     o=vec4(c,1.);
   }`;
@@ -344,7 +346,7 @@
       draw(dt); ui(cur);
       if (!still && visible) raf = requestAnimationFrame(frame);
     }
-    const dirty = () => { if (still && !raf) raf = requestAnimationFrame(frame); };
+    const dirty = () => { if (still && !raf) raf = requestAnimationFrame(frame); }; addEventListener("fa-theme", () => { if (still) sec._dk = null; dirty(); });
 
     function draw(dt) {
       size(); const p = cur, v = pose(p);
@@ -380,7 +382,7 @@
       if (frost) {
         const u = pFrost.u, sy = 22 * Math.tan(fov / 2);
         gl.disable(gl.DEPTH_TEST); gl.useProgram(pFrost.p); gl.uniform2f(u.uRes, W, H); gl.uniform1f(u.uT, clock); gl.uniform1f(u.uTile, portrait ? .2 : .19);
-        gl.uniform2f(u.uA, tA[0] / sy, tA[1] / sy); gl.uniform2f(u.uB, tB[0] / sy, tB[1] / sy); gl.uniform1f(u.uPulse, pulse); gl.uniform1f(u.uPulseR, pulseR); gl.uniform1f(u.uFill, clamp(v.fill)); gl.uniform1f(u.uGrain, Math.max(1, W / stage.getBoundingClientRect().width)); gl.uniform3fv(u.uC1, tint(sec.dataset.c1, [.302, .761, .031])); gl.uniform3fv(u.uC2, tint(sec.dataset.c2, [.8, .902, .051]));
+        gl.uniform2f(u.uA, tA[0] / sy, tA[1] / sy); gl.uniform2f(u.uB, tB[0] / sy, tB[1] / sy); gl.uniform1f(u.uPulse, pulse); gl.uniform1f(u.uPulseR, pulseR); gl.uniform1f(u.uFill, clamp(v.fill)); gl.uniform1f(u.uGrain, Math.max(1, W / stage.getBoundingClientRect().width)); gl.uniform3fv(u.uC1, tint(sec.dataset.c1, [.302, .761, .031])); gl.uniform3fv(u.uC2, tint(sec.dataset.c2, [.8, .902, .051])); { const tg = document.documentElement.dataset.theme === "dark" ? 1 : 0; sec._dk = sec._dk == null ? tg : sec._dk + (tg - sec._dk) * .1; } gl.uniform1f(u.uDark, sec._dk);
         gl.bindVertexArray(noVerts); gl.drawArrays(gl.TRIANGLES, 0, 3); gl.enable(gl.DEPTH_TEST);
       } else {
       gl.useProgram(pCube.p); gl.uniformMatrix4fv(pCube.u.uVP, false, VP);

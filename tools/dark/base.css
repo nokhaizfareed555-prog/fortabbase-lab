@@ -1,0 +1,19 @@
+html[data-theme=dark]{color-scheme:dark;
+--sfr:var(--dm-sfr,21 28 40);--sf:rgb(var(--sfr));
+--base-t:color-mix(in srgb,var(--base) 22%,#f1f5fc);--accent-t:color-mix(in srgb,var(--accent) 70%,#fff);
+--ink:var(--dm-ink,#e7ecf4);--muted:var(--dm-muted,#9ba7b9);--line:rgba(255,255,255,.1);
+--bg:var(--dm-bg,#0d131d);
+--card:rgb(var(--sfr) / var(--milk,.62));--card-b:rgba(255,255,255,calc(var(--edge,.75) * .16));--nav-bg:rgb(var(--sfr) / min(.95,calc(var(--milk,.62) + .2)));
+--shadow:0 14px 36px -18px rgba(0,0,0,.7);--gb-ink:var(--ink);
+--cv:var(--dm-bg,#0d131d);--bd:rgba(255,255,255,.09);--soft:color-mix(in srgb,var(--accent) 20%,var(--sf));
+--sh:0 1px 2px rgba(0,0,0,.3),0 8px 24px -14px rgba(0,0,0,.6);
+background:var(--dm-bg,#0d131d)}
+html[data-theme=dark] body{background:radial-gradient(70vw 60vh at 8% 12%,color-mix(in srgb,var(--accent) var(--glow),transparent),transparent 70%) fixed,radial-gradient(60vw 60vh at 92% 70%,color-mix(in srgb,var(--base) calc(var(--glow) * 2),transparent),transparent 70%) fixed,var(--bg)}
+/* Switching between light and dark fades instead of jumping (not on first paint) */
+html.fa-tt,html.fa-tt *,html.fa-tt *::before,html.fa-tt *::after{transition:background-color .35s ease,border-color .35s ease,color .35s ease,fill .35s ease!important}
+/* The visitor's light/dark button */
+.fa-tg{display:inline-grid;place-items:center;width:38px;height:38px;border-radius:50%;border:1px solid var(--line);background:var(--card);color:var(--ink);cursor:pointer;padding:0;flex:none;-webkit-backdrop-filter:blur(10px);backdrop-filter:blur(10px)}
+.fa-tg svg{width:18px;height:18px}.fa-tg:hover{border-color:var(--accent)}
+.fa-tg .fa-moon{display:none}html[data-theme=dark] .fa-tg .fa-moon{display:block}html[data-theme=dark] .fa-tg .fa-sun{display:none}
+.fa-tg.fl{position:fixed;z-index:70;bottom:18px;width:44px;height:44px;box-shadow:var(--shadow)}.fa-tg.fl.r{right:18px}.fa-tg.fl.l{left:18px}
+@media(max-width:860px){.fa-tg.fl{bottom:86px}}

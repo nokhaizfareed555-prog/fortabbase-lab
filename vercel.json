@@ -8,10 +8,10 @@
 "includeFiles":"{labs/**,web/assets/config.js}"
 },
 "api/page.js":{
-"includeFiles":"web/assets/{defaults,config,footer}.js"
+"includeFiles":"web/assets/{defaults,config,footer,theme}.js"
 },
 "api/blog.js":{
-"includeFiles":"web/assets/{defaults.js,guides/blog-md.js,guides/blog-fonts.js}"
+"includeFiles":"web/assets/{defaults.js,theme.js,guides/blog-md.js,guides/blog-fonts.js}"
 }
 },
 "redirects":[

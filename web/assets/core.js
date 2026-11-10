@@ -82,7 +82,7 @@ const FA=window.FA={demo,D,merge,
   const fh=ur?t.urduFont:t.siteFont||t.headingFont,fb=ur?t.urduFont:t.siteFont||t.bodyFont;
   let blur=e.glassBlur*(1+(e.frost??0)/50);if(o.mobileBlurCap&&matchMedia('(max-width:860px)').matches)blur=Math.min(blur,o.mobileBlurCap);
   r.setProperty('--base',t.base);r.setProperty('--accent',t.accent);r.setProperty('--hi',t.highlight);r.setProperty('--radius',t.radius+'px');r.setProperty('--fh',`"${fh}",system-ui,sans-serif`);r.setProperty('--fb',`"${fb}",system-ui,sans-serif`);r.setProperty('--glass-blur',blur.toFixed(1)+'px');
-  r.setProperty('--card',`rgba(255,255,255,${e.frostMilk})`);r.setProperty('--card-b',`rgba(255,255,255,${e.frostEdge})`);r.setProperty('--nav-bg',`rgba(255,255,255,${Math.min(.95,e.frostMilk+.12)})`);r.setProperty('--glass-sat',e.frostSat+'%');r.setProperty('--grain',e.frostGrain);r.setProperty('--glow',e.frostGlow+'%');
+  r.setProperty('--milk',e.frostMilk);r.setProperty('--edge',e.frostEdge);r.setProperty('--glass-sat',e.frostSat+'%');r.setProperty('--grain',e.frostGrain);r.setProperty('--glow',e.frostGlow+'%');
   h.classList.toggle('no-glass',!e.glassOn);
   let l=document.getElementById('fa-fonts');if(!l){l=document.createElement('link');l.id='fa-fonts';l.rel='stylesheet';document.head.appendChild(l)}
   l.href='https://fonts.googleapis.com/css2?'+[...new Set([fh,fb])].map(f=>'family='+encodeURIComponent(f)+':wght@'+(WGHT[f]||'400;500;600;700;800')).join('&')+'&display=swap'},

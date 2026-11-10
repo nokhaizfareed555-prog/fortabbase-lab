@@ -1,0 +1,7 @@
+/* Hand fixes: places the automatic pass cannot judge */
+/* Colors chosen in the admin are kept, only lifted so they read on a dark page */
+html[data-theme=dark] .gl-ic{color:color-mix(in srgb,var(--gli,var(--base)) 45%,#fff)}
+/* Registration logos keep a white tile, like printed certificates */
+html[data-theme=dark] .trust-i img{background:#fff}
+/* Sample care animation text */
+html[data-theme=dark] .vx{--vx-ink:#e7ecf4;--vx-muted:#a3b0c4;--vx-glass:rgb(var(--sfr) / .72);--vx-edge:rgba(255,255,255,.16)}
