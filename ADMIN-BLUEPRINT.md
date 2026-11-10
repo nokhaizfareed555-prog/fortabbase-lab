@@ -32,10 +32,14 @@ Reference build: Fort Abbas Poly Clinic (fortabbaspolyclinic.com/admin, repo nok
 - Toast messages for every save and error. Confirmation dialogs for anything destructive.
 - Separate favicons for site and admin.
 - The admin uses the same button design and animation as the public site (Look > Buttons, glass buttons, hover effect, touch press, click ripple).
+- Look > Admin buttons: "Same as the website" by default; "Own look" starts with the Website look style (identical to the site) and lets every detail be tweaked on top (corners, height, text size, weight, border, shadow, hover, text colors, tint, glare, embossed edges, selected sidebar and tab colors), plus Solid, Outline, Soft and Frosted styles for a completely different look.
+- Notifications page with a bell and count in the top bar for every staff member: things waiting for an owner's confirmation (Approve, Decline with a note, Cancel by the requester) and personal news. Any change that affects everyone goes through it.
+- Views and Arrange admin: built-in views (Front desk, Comprehensive, a niche view), each person's own arrangement, a default view per person, and **Apply for everyone** (owners apply at once, admins need an owner's approval; everyone's own arrangement is kept so they can switch back). Only owners and admins rearrange; everyone can choose a view.
+- Dashboard with Needs attention and one card per area, each opening a hub with its own tabs.
 
 ## 3. Admin panel switcher and single sign-in (like GoHighLevel sub-accounts)
 
-- Top-left switcher on every admin page, owners only, shortcut Ctrl+Shift+P. Shows the current panel with a tick, then every other panel with its letter mark or logo, a short line, "One click" or "Sign in there", and an open-in-new-tab button. Search box when there are more than four. "Manage admin panels" at the bottom.
+- Top-left switcher on every admin page, shortcut Ctrl+Shift+P. Private to the main owner (the business owner's own account), not to every owner; the main owner grants or removes access per person on the Admin panels page. Granted people sign in to other panels with their own email only; only the main owner adds panels, saves keys or changes access. Shows the current panel with a tick, then every other panel with its letter mark or logo, a short line, "One click" or "Sign in there", and an open-in-new-tab button. Search box when there are more than four. "Manage admin panels" at the bottom.
 - Setup > Admin panels: add, edit, reorder, hide, remove panels. Fields: name, short line, letters, colour, logo, admin address, Supabase project address, service key, "Sign in as" email.
 - One-click sign-in: an Edge Function checks the signed-in owner, uses the other project's service key (server-side only) to create a one-time magic link for the same email, and the browser lands on that admin already signed in. Every switch goes in the Audit log.
 - One-time setup per panel: paste its secret/service key; add its admin address to that project's Authentication > URL Configuration > Redirect URLs; have an admin account there with the same email.
