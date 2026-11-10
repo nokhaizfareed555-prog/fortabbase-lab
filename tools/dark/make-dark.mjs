@@ -11,7 +11,7 @@ import path from "node:path";
 
 const ROOT = path.resolve(path.dirname(new URL(import.meta.url).pathname), "../..");
 // Two bundles, each with the stylesheets of its pages in the order the pages load them.
-const BUNDLES = { "dark.css": ["site.css", "glasscards.css", "loyalty.css", "labs/vial.css", "labs/report.css"], "dark-admin.css": ["site.css", "admin.css", "conversations.css", "panels.css"] };
+const BUNDLES = { "dark.css": ["site.css", "glasscards.css", "loyalty.css", "labs/vial.css", "labs/report.css"], "dark-admin.css": ["site.css", "admin.css", "conversations.css", "panels.css"], "dark-blog.css": ["guides/blog.css", "guides/blog-site.css"] };
 const P = "html[data-theme=dark]";
 
 /* ---------- colours ---------- */

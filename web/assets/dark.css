@@ -324,4 +324,6 @@ html[data-theme=dark] .gl-ic{color:color-mix(in srgb,var(--gli,var(--base)) 45%,
 html[data-theme=dark] .trust-i img{background:#fff}
 /* Sample care animation text */
 html[data-theme=dark] .vx{--vx-ink:#e7ecf4;--vx-muted:#a3b0c4;--vx-glass:rgb(var(--sfr) / .72);--vx-edge:rgba(255,255,255,.16)}
+/* Health blog colour variables (guides/blog-site.css) */
+html[data-theme=dark]{--surface-2:#1b2433;--fx-ink:var(--ink);--fx-muted:var(--muted);--fx-soft:rgb(var(--sfr) / .85);--fx-line:rgba(255,255,255,.1);--fx-page:var(--sf);--fx-media:#1c2636;--fx-lime:#123533;--fx-on-lime:#9fe3df;--fx-lav:#1c2440;--fx-on-lav:#c9d6f2}
 
