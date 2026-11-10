@@ -193,3 +193,4 @@ body{background:var(--cv)}
 .aact{display:flex;gap:8px;flex-wrap:wrap;margin-top:14px;padding-top:12px;border-top:1px solid var(--bd)}
 @media(max-width:860px){.vsw{max-width:110px;font-size:.74rem}.dbig{grid-template-columns:1fr}.agr{grid-template-columns:1fr}.arw select{max-width:74px}.htabs .hname{display:none}}
 @media(max-width:480px){.arw select{display:none}.dcards{grid-template-columns:1fr}}
+.abpv{padding:14px;margin-bottom:14px;border:1px solid var(--bd);border-radius:14px;background:#fff}.abpv-r{display:flex;flex-wrap:wrap;gap:8px;align-items:center}
