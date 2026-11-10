@@ -1,6 +1,6 @@
 /* Admin > Messages: compose, templates, contacts, sent log and email setup. */
-window.FAMessages=async function(p,{e,toast,confirm2,close}){
- let tab='compose',M=await FA.rpc('msg_get'),sel=new Set(),tplKey='general',edit=null;
+window.FAMessages=async function(p,{e,toast,confirm2,close,tab:t0}){
+ let tab=['compose','templates','contacts','sent','setup'].includes(t0)?t0:'compose',M=await FA.rpc('msg_get'),sel=new Set(),tplKey='general',edit=null;
  const live=await FA.content().catch(()=>FA.D),ED=window.FA_EMAIL,brand={clinic:live.brand?.name||FA.D.brand.name,phone:live.visit?.phone||FA.D.visit.phone,address:live.visit?.address||FA.D.visit.address};
  const AUTO=['name','email','clinic','phone','address'];
  const clinicLook=()=>({primary:live.theme?.base||ED.DEF.primary,accent:live.theme?.highlight||ED.DEF.accent,bg:ED.DEF.bg});
